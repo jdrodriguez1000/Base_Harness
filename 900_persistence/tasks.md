@@ -25,7 +25,8 @@
 | T-013 | Provisionar un `.gemini/` real en un proyecto destino para validar de punta a punta la fase de provisión de Gemini | pendiente | media |
 | T-014 | Cablear `template/_guideline/principles.md` como comportamiento vinculante en `AGENTS.md`, `CLAUDE.md`, agentes de sesión y `register-harness` | completada | alta |
 | T-015 | Crear `template/_guideline/methodology.md` agnóstico (dos ejes, arquetipos, ciclo de vida) + diferenciación Prototipo (deseabilidad/factibilidad) vs MVP | completada | alta |
-| T-016 | **[PRÓXIMA]** Continuar iterando `template/_guideline/methodology.md` | pendiente | alta |
+| T-016 | Segunda ronda de `methodology.md`: elimina prototipado por-incremento, añade contratos/flujos de observabilidad-evaluación (entregables y código), Revisor de código, especialización de flota; simplifica `AGENTS.md` | completada | alta |
+| T-017 | **[PRÓXIMA]** Continuar iterando `template/_guideline/methodology.md` (estructura física de carpetas por incremento y `_template/`, pendiente de instanciación) | pendiente | alta |
 
 ## Convención de ID
 
@@ -44,8 +45,8 @@
 
 ## Backlog
 
-- [ ] T-016 — **[PRÓXIMA TAREA]** Continuar iterando `template/_guideline/methodology.md` (siguiente ronda de trabajo sobre la metodología agnóstica).
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-009
+- [ ] T-017 — **[PRÓXIMA TAREA]** Continuar iterando `template/_guideline/methodology.md`: definir la estructura física de carpetas para artefactos por incremento y una posible `_template/` de entregables (pendiente de instanciación desde `D-008`). Vigilar el gatillo de división en dos archivos ([[assumptions]] A-001).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-010, D-011, D-012, D-013, [[assumptions]] A-001
 - [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
@@ -82,5 +83,7 @@
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-007
 - [x] T-015 — Crear `template/_guideline/methodology.md` agnóstico (dos tipos de proyecto, dos ejes madurez/incremento, ciclo de vida de 13 pasos, arquetipos de agente) y reescribir §4 (Estadios de madurez) con la distinción Prototipo deseabilidad/factibilidad y la frontera dura Prototipo→MVP.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-009
+- [x] T-016 — Segunda ronda de `methodology.md`: elimina "Prototipar" como fase por-incremento (ciclo 13→11 pasos + spikes de excepción), añade §5.1 (contrato constructor de entregables), §10.1 (flujo observabilidad), §8.1 (flujo evaluación), §3.1 (observabilidad/evaluación TDD), §5.2 (Revisor de código), §5.3 (especialización de flota) y tabla de contenidos; simplifica `template/AGENTS.md` de 273 a 101 líneas (regla de diseño: marco mínimo + punteros, sin duplicar procedimientos).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-010, D-011, D-012, D-013, [[assumptions]] A-001
 
 ## Bloqueadas

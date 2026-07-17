@@ -11,7 +11,7 @@
 
 | ID | Supuesto | Estado | Fecha |
 |---|---|---|---|
-| _(vacío)_ | | | |
+| A-001 | Si el bloque de agentes/evaluación/observabilidad de `methodology.md` supera ~250 líneas, se divide en `methodology.md` (proceso) + `agents-and-evaluation.md` | sin validar | 2026-07-17 |
 
 ## Formato
 
@@ -27,4 +27,8 @@
 
 ## Supuestos
 
-_(Aún no hay supuestos registrados.)_
+### A-001 — Gatillo de división de `methodology.md` en dos archivos
+- **Estado:** sin validar
+- **Impacto si es falso:** Si el umbral (~250 líneas) resulta arbitrario o el bloque agentes/evaluación/observabilidad crece de forma distinta a lo previsto, la división podría hacerse en el momento equivocado (muy pronto, fragmentando innecesariamente; o muy tarde, con el archivo ya difícil de navegar).
+- **Cómo validarlo:** Revisar el tamaño real de ese bloque en próximas iteraciones de `methodology.md`; si se cruza el umbral, ejecutar la división en `methodology.md` (proceso) + `agents-and-evaluation.md` y confirmar que la tabla de contenidos y las referencias cruzadas siguen siendo navegables.
+- **Fecha:** 2026-07-17

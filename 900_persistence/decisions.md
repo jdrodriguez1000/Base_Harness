@@ -19,6 +19,10 @@
 | D-007 | `principles.md` como comportamiento canónico vinculante, referenciado por convención (`_guideline/`), no por ruta fija | aceptada | 2026-07-17 |
 | D-008 | `methodology.md` agnóstico con dos ejes (madurez/incremento) y arquetipos de agente en vez de flota concreta | aceptada | 2026-07-17 |
 | D-009 | Distinción deseabilidad/factibilidad como forma de trabajo del estadio Prototipo, con frontera dura Prototipo→MVP | aceptada | 2026-07-17 |
+| D-010 | Un solo prototipado al inicio del proyecto; se elimina "Prototipar" como fase repetida por incremento | aceptada | 2026-07-17 |
+| D-011 | *Revisor de código* como arquetipo evaluador independiente del Verificador, adoptado bajo E4 | aceptada | 2026-07-17 |
+| D-012 | Especialización de flota (p. ej. frontend/backend) es decisión de instanciación, no de arquetipo, bajo E4 | aceptada | 2026-07-17 |
+| D-013 | Regla de diseño de `AGENTS.md`: marco mínimo + punteros, sin duplicar procedimientos que ya viven en los `SKILL.md` | aceptada | 2026-07-17 |
 
 ## Formato
 
@@ -107,4 +111,36 @@
 - **Decisión:** Reescribir la §4 (Estadios de madurez) de `methodology.md` en subsecciones 4.1–4.5, distinguiendo dos tipos de prototipo — de **deseabilidad** (actividad humana, de diseño, sin agentes) y de **factibilidad** (desde aquí participan agentes) — y estableciendo una disciplina de alcance del prototipo (timebox + feature freeze, camino feliz, roles/actores priorizados, split prototyping, gatekeeper cuantitativo, exclusiones explícitas). Se define una **frontera dura** entre Prototipo y MVP: el MVP es el primer entregable **funcional** (Tracer Bullet), cualitativamente distinto del prototipo.
 - **Alternativas consideradas:** Mantener "Prototipo" como una única etapa sin distinguir deseabilidad de factibilidad (descartada: perdía la frontera humano↔agente, relevante para saber cuándo delegar en agentes). Fusionar prototipo y MVP en una sola etapa continua (descartada: el usuario identificó que la frontera es cualitativa —funcional vs no funcional— y debe quedar explícita).
 - **Consecuencias:** `methodology.md` ahora comunica claramente cuándo el trabajo es humano (deseabilidad) y cuándo pueden intervenir agentes (desde factibilidad en adelante), y evita que un "prototipo" se confunda con un MVP. El archivo temporal `temp.md` no se versiona como fuente; su contenido ya quedó absorbido en `methodology.md`.
+
+### D-010 — Un solo prototipado al inicio del proyecto; se elimina "Prototipar" como fase repetida por incremento
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** `methodology.md` usaba el término "Prototipar" en dos sentidos distintos y confusos: como estadio de madurez inicial (§4) y como paso repetido dentro del ciclo de cada incremento/vertical slice (§3). Esto sugería erróneamente que cada slice vertical era un "prototipo", cuando en realidad las slices son funcionalidad real posterior al MVP.
+- **Decisión:** El prototipo pasa a ser **un único estadio de alto nivel** al comienzo del proyecto (ver D-009), no una fase que se repite en cada incremento. La espina común (§2) se simplifica a `Definir → Especificar → Planear → Construir → Verificar → Integrar`; el ciclo de incremento (§3) pasa de 13 a 11 pasos. Se añade una nota de excepción para *spikes* (prototipado técnico puntual y opcional dentro de un incremento, distinto del estadio Prototipo).
+- **Alternativas consideradas:** Mantener "Prototipar" en ambos sentidos aclarando con texto la diferencia (descartada: ambigüedad de vocabulario persistente, alto riesgo de confusión futura). Eliminar el estadio Prototipo inicial y dejar solo el prototipado por incremento (descartada: contradice D-009, que fija el prototipo de deseabilidad/factibilidad como frontera humano↔agente al inicio).
+- **Consecuencias:** Vocabulario más limpio: "prototipo" = estadio inicial; "vertical slice" = incremento de funcionalidad real. §5 reubica al *Prototipador* en el estadio inicial. §6 ajusta sus gates al nuevo ciclo de 11 pasos. Los *spikes* quedan documentados como mecanismo de excepción opcional, no como parte del flujo estándar.
+
+### D-011 — *Revisor de código* como arquetipo evaluador independiente del Verificador
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** `methodology.md` ya definía un juez LLM de calidad para entregables (§8.1) y un Verificador para código, pero no existía un arquetipo evaluador análogo al juez LLM aplicado específicamente al código (revisión de calidad/estilo/mantenibilidad, más allá de que los tests pasen).
+- **Decisión:** Añadir el arquetipo *Revisor de código* (§5.2) como evaluador independiente, distinto del Verificador (que valida conformidad funcional/tests). Su adopción se rige por E4 (evolución incremental de la flota), no es obligatorio desde el día uno.
+- **Alternativas consideradas:** Fusionar la revisión de código dentro del rol del Verificador (descartada: mezcla dos evaluaciones de naturaleza distinta —conformidad determinista vs juicio de calidad— igual que se separaron para entregables en §8.1/§10.1). No definir el arquetipo y dejarlo implícito (descartada: rompe la simetría con el patrón ya establecido para entregables).
+- **Consecuencias:** La metodología ahora tiene un patrón evaluador simétrico para entregables (juez LLM, §8.1/§10.1) y para código (Revisor de código, §5.2), ambos adoptables de forma incremental bajo E4.
+
+### D-012 — Especialización de flota (frontend/backend) es decisión de instanciación, no de arquetipo
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** Surgió la pregunta de si la metodología agnóstica debía definir arquetipos separados para frontend y backend, lo cual acoplaría el molde a un stack/dominio concreto (violando el requisito fundacional de agnosticidad, ver `CLAUDE.md`).
+- **Decisión:** La especialización de la flota (p. ej. dividir un arquetipo constructor en variantes frontend/backend) es una **decisión de instanciación** de cada proyecto concreto, tomada bajo E4 (evolución incremental), no una definición fija en el molde agnóstico.
+- **Alternativas consideradas:** Definir arquetipos frontend/backend explícitos en `methodology.md` (descartada: acopla el molde a proyectos con esa topología, excluyendo p. ej. proyectos de ciencia de datos/ML o CLI puros).
+- **Consecuencias:** `methodology.md` permanece agnóstica al stack; cada proyecto instanciado decide su propia especialización de flota como parte de su evolución (E4), documentándola en su propia memoria (`decisions.md` de la instancia).
+
+### D-013 — Regla de diseño de `AGENTS.md`: marco mínimo + punteros, sin duplicar procedimientos
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** `template/AGENTS.md` había crecido a 273 líneas, duplicando contenido (protocolos de inicio/cierre completos, tablas de portabilidad a opencode/Gemini) que ya vivía de forma canónica en los `SKILL.md` correspondientes (ver D-005 y su riesgo de desincronización documentado en `lessons` L-001). Mantener dos copias del mismo procedimiento es frágil.
+- **Decisión:** `AGENTS.md` se simplifica a un marco mínimo (101 líneas) que **apunta** a la fuente canónica de cada procedimiento en vez de duplicarlo íntegro. Se añade una "Regla de diseño" explícita en el header del archivo: no duplicar procedimientos, solo referenciarlos.
+- **Alternativas consideradas:** Mantener el contenido íntegro en `AGENTS.md` por ser el único archivo que todas las herramientas leen de forma garantizada (descartada: el costo de sincronización manual supera el beneficio, y el patrón de puntero ya funciona para otros casos en el harness). Eliminar el espejo de portabilidad de `AGENTS.md` por completo (descartada: seguiría haciendo falta un punto de entrada mínimo para la bootstrap-paradoja, ver D-005; se resuelve con un puntero corto, no con el contenido completo).
+- **Consecuencias:** `AGENTS.md` queda más mantenible y con menor riesgo de desincronización; el detalle procedimental vive en un único lugar (los `SKILL.md`). Requiere disciplina: al crear nuevos procedimientos, seguir el patrón de puntero en vez de volver a duplicar contenido en `AGENTS.md`.
 
