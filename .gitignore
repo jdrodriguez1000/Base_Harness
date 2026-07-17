@@ -1,0 +1,47 @@
+# ==============================================================
+# .gitignore — Harness base (agnóstico)
+# Enfocado en lo universal: SO, editores, secretos, logs y deps.
+# ==============================================================
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editores / IDE ---
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Entorno y secretos (NUNCA versionar credenciales) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+credentials.json
+secrets.*
+
+# --- Logs y temporales ---
+*.log
+logs/
+tmp/
+.tmp/
+
+# --- Dependencias / artefactos comunes (según el stack del proyecto) ---
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/
+target/
+
+# --- Contexto potencialmente sensible ---
+# Descomenta si business.md llegará a contener datos sensibles de la empresa
+# que no deban versionarse:
+# 905_context/business.md
+# _context/business.md
