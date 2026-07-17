@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-17 | Validación real de la auditoría `register-harness` en `proyecto_prueba` | completado | `#2026-07-17--validación-real-de-la-auditoría-register-harness-en-proyecto_prueba` |
 | 2026-07-17 | Primer versionado en git y skill `register-harness` para portabilidad multi-agente | completado | `#2026-07-17--primer-versionado-en-git-y-skill-register-harness-para-portabilidad-multi-agente` |
 | 2026-07-17 | Inicialización del harness base | completado | `#2026-07-17--inicialización-del-harness-base` |
 | 2026-07-17 | Capa de persistencia con índices y separación molde/instancia | completado | `#2026-07-17--capa-de-persistencia-con-índices-y-separación-moldeinstancia` |
@@ -30,6 +31,12 @@
 ---
 
 ## Historial
+
+### [2026-07-17] — Validación real de la auditoría `register-harness` en `proyecto_prueba`
+- **Estado:** completado
+- **Resumen:** No se escribió código nuevo en el harness principal; la sesión fue de validación y planificación. Se validó con éxito el skill `register-harness` (modo auditoría) en una prueba real: el usuario creó una carpeta `proyecto_prueba`, copió el contenido de `template/` (incluyendo `register-harness`) a la raíz, y ejecutó la auditoría desde Claude Code. Resultado correcto: fuente de verdad completa; `AGENTS.md` en la raíz cubierto (baseline); faltan los 4 elementos nativos de opencode (`.opencode/skills/startup-protocol/SKILL.md`, `.opencode/skills/closing-protocol/SKILL.md`, `.opencode/agents/sesion-starter.md`, `.opencode/agents/sesion-closer.md`). El patrón de auditoría queda validado de punta a punta. Se clarificó también el flujo objetivo de provisión: estando en Claude Code se ejecuta `register-harness`, que (una vez construida la fase de provisión) creará la carpeta `.opencode/` con los skills (copia directa) y los agentes (traducidos a formato opencode), y luego el usuario abre opencode y trabaja con todo nativo. Se confirmó que el nombre correcto de la carpeta es `.opencode` (no "open_code") y que hoy `register-harness` SOLO audita, no provisiona.
+- **Siguiente paso:** La próxima sesión será construir la fase de PROVISIÓN de `register-harness` para opencode (T-008): crear `.opencode/skills/` copiando los `SKILL.md` y `.opencode/agents/` traduciendo el frontmatter Claude→opencode, con confirmación del usuario antes de escribir.
+- **Referencias:** `.claude/skills/register-harness/SKILL.md`, `template/`, [[tasks]] T-008, [[decisions]] D-004
 
 ### [2026-07-17] — Primer versionado en git y skill `register-harness` para portabilidad multi-agente
 - **Estado:** completado

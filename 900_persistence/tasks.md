@@ -17,7 +17,7 @@
 | T-005 | Decidir si `business.md` se versiona (posible información sensible) o va a `.gitignore` | pendiente | media |
 | T-006 | Añadir IDs `P-XXX` a `progress.md` para uniformar la búsqueda por ID | pendiente | baja |
 | T-007 | Crear `.gitignore` agnóstico y hacer el primer `git push` a GitHub | completada | alta |
-| T-008 | Fase de PROVISIÓN de `register-harness` para opencode (crear `.opencode/skills` copiando `SKILL.md`, traducir agentes a formato opencode, asegurar `AGENTS.md` en raíz) | pendiente | alta |
+| T-008 | **[PRÓXIMA]** Fase de PROVISIÓN de `register-harness` para opencode (crear `.opencode/skills` copiando `SKILL.md`, traducir agentes a formato opencode, asegurar `AGENTS.md` en raíz) | pendiente | alta |
 | T-009 | Espejar el procedimiento de `register-harness` dentro de `AGENTS.md` (resolver la bootstrap-paradoja para poder ejecutarlo desde dentro de opencode/codex) | pendiente | media |
 | T-010 | Extender `register-harness` a Codex y Gemini | pendiente | media |
 | T-011 | Verificar mecanismos de Gemini (`GEMINI.md`, comandos) con documentación oficial | pendiente | media |
@@ -39,6 +39,8 @@
 
 ## Backlog
 
+- [ ] T-008 — **[PRÓXIMA TAREA]** Fase de PROVISIÓN de `register-harness` para opencode: crear `.opencode/skills/` copiando `SKILL.md`, traducir agentes a formato opencode (`.opencode/agents/*.md`), asegurar `AGENTS.md` en raíz. Confirmado con prueba real en `proyecto_prueba` (ver [[progress]] 2026-07-17).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-004
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
       Prioridad: alta · Responsable: — · Ref: [[progress]]
 - [ ] T-004 — Evaluar hooks SessionStart/Stop para forzar técnicamente los protocolos de inicio/cierre.
@@ -47,8 +49,6 @@
       Prioridad: media · Responsable: — · Ref: [[progress]]
 - [ ] T-006 — Considerar añadir IDs `P-XXX` a `progress.md` para uniformar la búsqueda por ID.
       Prioridad: baja · Responsable: — · Ref: [[progress]]
-- [ ] T-008 — Fase de PROVISIÓN de `register-harness` para opencode: crear `.opencode/skills/` copiando `SKILL.md`, traducir agentes a formato opencode (`.opencode/agents/*.md`), asegurar `AGENTS.md` en raíz.
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-004
 - [ ] T-009 — Espejar el procedimiento de `register-harness` dentro de `AGENTS.md` para resolver la bootstrap-paradoja (poder ejecutarlo desde dentro de opencode/codex, sin depender de `.claude/`).
       Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-004
 - [ ] T-010 — Extender `register-harness` a Codex y Gemini.
