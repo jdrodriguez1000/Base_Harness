@@ -1,0 +1,17 @@
+# project.yaml — Contexto declarativo del proyecto
+#
+# Contexto REAL de este proyecto (la construcción del harness base).
+# Fuente única de verdad de sus metadatos.
+
+project:
+  name: Base_Harness
+  description: Harness base reutilizable y agnóstico para arrancar proyectos de desarrollo de software con Claude Code, Codex, opencode y Gemini.
+
+repository:
+  url: https://github.com/jdrodriguez1000/Base_Harness.git
+  default_branch: main
+  auto_push: false
+
+persistence:
+  # La memoria real de este proyecto vive en 900_persistence (ver decisión D-002).
+  dir: 900_persistence

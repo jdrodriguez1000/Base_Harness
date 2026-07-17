@@ -1,0 +1,25 @@
+# project.yaml — Contexto declarativo del proyecto
+#
+# Fuente ÚNICA de verdad de los metadatos del proyecto. La leen los agentes
+# (Claude Code, Codex, opencode, Gemini) para conocer el repositorio, la rama,
+# la política de push y el directorio de memoria activo.
+#
+# Rellenar los valores <entre-corchetes> al iniciar un proyecto nuevo.
+
+project:
+  name: <nombre-del-proyecto>
+  description: <descripción breve del proyecto>
+
+repository:
+  # URL del repositorio remoto en GitHub. Es la fuente de verdad:
+  # si el repo local no tiene 'origin', el agente lo configura desde aquí.
+  url: <https://github.com/usuario/repositorio.git>
+  default_branch: main
+  # false = el agente pide confirmación antes de hacer push.
+  # true  = el agente hace push automáticamente al cerrar la sesión.
+  auto_push: false
+
+persistence:
+  # Directorio de memoria activo del proyecto (Paso 0 de los protocolos).
+  # En un proyecto normal es '_persistence'.
+  dir: _persistence
