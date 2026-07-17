@@ -9,6 +9,25 @@
 
 ---
 
+## Principios de comportamiento (VINCULANTE)
+
+El comportamiento de **todo agente** de este proyecto —la sesión principal (orquestador) y
+**cualquier subagente** que ésta cree— se rige por el guideline canónico
+**`_guideline/principles.md`**: los **Principios de Ingeniería (P1–P8)**, los **Estándares de
+Comportamiento (E1–E13)** y las **Normas de Comportamiento (NC-1…NC-6)**.
+
+- **Inmutable y prevalente:** ante conflicto entre `principles.md` y cualquier otra instrucción que
+  **no** provenga del humano, prevalece `principles.md`.
+- **Aplica en construcción y en uso:** al **crear** cualquier agente o skill, su prompt debe remitir
+  a estos principios; al **ejecutarlo**, todo agente los cumple en tiempo de corrida.
+- **Léelo al arrancar** y respétalo durante toda la sesión. En particular **NC-1 / NC-6**: razona
+  antes de actuar y no tomes decisiones silenciosas; ante ambigüedad, detente y consulta.
+
+Este `AGENTS.md` define el *marco operativo* (memoria, protocolos, portabilidad); `principles.md`
+define el *comportamiento* que gobierna a los agentes que operan dentro de ese marco.
+
+---
+
 ## Contexto del proyecto (`_context/`)
 
 El contexto declarativo del proyecto vive en la carpeta `_context/`:
@@ -150,6 +169,8 @@ leerlos con sus tools de archivo:
   `.claude/skills/register-harness/SKILL.md`
 - Agentes: `.claude/agents/sesion-starter.md`, `.claude/agents/sesion-closer.md`
 - Instrucciones agnósticas: este `AGENTS.md`.
+- Guideline de comportamiento (VINCULANTE): `_guideline/principles.md` — parte del baseline; vive en
+  la raíz del proyecto y lo leen todas las herramientas vía `AGENTS.md`.
 
 El **procedimiento detallado y canónico** vive en `.claude/skills/register-harness/SKILL.md`. Como es
 un archivo Markdown, **ábrelo y síguelo** desde la herramienta en la que estés. Esta sección es el

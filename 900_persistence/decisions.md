@@ -16,6 +16,9 @@
 | D-004 | `register-harness` como mecanismo oficial de portabilidad/sincronización; fuente única de verdad = `.claude/`; arquitectura de dos niveles | aceptada | 2026-07-17 |
 | D-005 | Resolver la bootstrap-paradoja con doble frente: espejo del procedimiento en `AGENTS.md` + autoprovisión de `register-harness` en el destino | aceptada | 2026-07-17 |
 | D-006 | Los protocolos de inicio/cierre se ejecutan SIEMPRE delegando en su agente especializado, no directamente desde la sesión principal | aceptada | 2026-07-17 |
+| D-007 | `principles.md` como comportamiento canónico vinculante, referenciado por convención (`_guideline/`), no por ruta fija | aceptada | 2026-07-17 |
+| D-008 | `methodology.md` agnóstico con dos ejes (madurez/incremento) y arquetipos de agente en vez de flota concreta | aceptada | 2026-07-17 |
+| D-009 | Distinción deseabilidad/factibilidad como forma de trabajo del estadio Prototipo, con frontera dura Prototipo→MVP | aceptada | 2026-07-17 |
 
 ## Formato
 
@@ -80,4 +83,28 @@
 - **Decisión:** El `CLAUDE.md` de la raíz (secciones "Inicio de sesión" y "Cierre de sesión") se actualiza para hacer obligatorio invocar el agente especializado: inicio → agente `sesion-starter`; cierre → agente `sesion-closer`. La sesión principal no debe ejecutar el skill directamente.
 - **Alternativas consideradas:** Mantener ambas vías como equivalentes (skill directo o agente) — descartada porque el usuario prefiere una única vía consistente y auditable a través del agente dedicado.
 - **Consecuencias:** Mayor consistencia y trazabilidad (el agente aplica el protocolo de forma aislada y reporta un resumen); pequeño costo adicional de indirección (una invocación de agente en vez de un skill directo). Ver también [[constrains]] C-002.
+
+### D-007 — `principles.md` como comportamiento canónico vinculante, referenciado por convención
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** `template/_guideline/principles.md` (P1–P8, E1–E13, NC-1…NC-6) existía pero ningún archivo de instrucciones (agentes de sesión, `AGENTS.md`, `CLAUDE.md`, `register-harness`) lo señalaba explícitamente como comportamiento obligatorio. Se auditó y se confirmó que el archivo en sí es totalmente agnóstico (sin referencias a dominio, lenguaje ni stack), por lo que no necesitaba cambios propios.
+- **Decisión:** Cablear `principles.md` como fuente canónica de comportamiento **vinculante** en los puntos de entrada de cualquier agente: `template/AGENTS.md` (sección "Principios de comportamiento (VINCULANTE)"), `CLAUDE.md` de la raíz, los agentes `sesion-starter`/`sesion-closer` (bullet "Comportamiento vinculante", énfasis en NC-1/NC-6) y `register-harness` (se añade a la fuente única de verdad/baseline que se propaga a opencode/Gemini). La referencia se hace por **convención de carpeta** (`_guideline/`), igual que la persistencia (`_persistence/`), no por ruta fija hardcodeada.
+- **Alternativas consideradas:** Hardcodear la ruta exacta `template/_guideline/principles.md` en cada agente (descartada: rompe la agnosticidad si un proyecto futuro reubica el guideline). Crear una carpeta de instancia `905_guideline/` análoga a `905_context/`/`900_persistence/` (descartada por ahora: fuera de alcance de esta sesión, `principles.md` no tiene contenido específico de este proyecto que separar de un molde).
+- **Consecuencias:** Cualquier agente que arranque leyendo `AGENTS.md`/`CLAUDE.md` o se delegue a `sesion-starter`/`sesion-closer` queda obligado a cumplir P1–P8/E1–E13/NC-1…NC-6 como comportamiento prevalente e inmutable. Pendiente evaluar si en el futuro se necesita una carpeta de instancia para el guideline.
+
+### D-008 — `methodology.md` agnóstico con dos ejes y arquetipos de agente
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** El molde `template/_guideline/` tenía una versión de `methodology.md` acoplada al proyecto ZeroLeak (referencia, no genérica), lo que violaba el requisito fundacional de agnosticidad del harness (ver `CLAUDE.md`).
+- **Decisión:** Reemplazar `methodology.md` por una versión totalmente agnóstica que cubre dos tipos de proyecto (Software y Ciencia de datos/ML) con una espina común, dos ejes independientes (MADUREZ: Prototipo→MVP→Evolucionado; INCREMENTO: slices verticales), un ciclo de vida de 13 pasos con gates humanos, gates de calidad, capa de persistencia, evaluación dimensionada, evolución (E4) y observabilidad (E13). Los agentes se describen a nivel de **arquetipo** (constructores de ENTREGABLES vs constructores de CÓDIGO), no como una flota concreta de agentes nombrados.
+- **Alternativas consideradas:** Mantener `methodology.md` como documento de referencia específico de ZeroLeak fuera del molde (descartada: el molde debe ser agnóstico de punta a punta). Definir una flota de agentes concreta y nombrada en la metodología (descartada: acoplaría el molde a una implementación particular; se prefiere el nivel de arquetipo, más portable).
+- **Consecuencias:** El molde queda coherente con el requisito de agnosticidad. La estructura física de carpetas para artefactos por incremento y una posible `_template/` de entregables queda **pendiente de instanciación** (no se inventó numeración de carpetas en esta sesión). Trabajo de continuación previsto en `T-016`.
+
+### D-009 — Distinción deseabilidad/factibilidad en el estadio Prototipo, con frontera dura Prototipo→MVP
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** A partir de un archivo temporal (`temp.md`, no versionado, provisto por el usuario y que será borrado) se identificó una distinción agnóstica valiosa dentro del estadio "Prototipo" de `methodology.md`, que antes era un único concepto indiferenciado.
+- **Decisión:** Reescribir la §4 (Estadios de madurez) de `methodology.md` en subsecciones 4.1–4.5, distinguiendo dos tipos de prototipo — de **deseabilidad** (actividad humana, de diseño, sin agentes) y de **factibilidad** (desde aquí participan agentes) — y estableciendo una disciplina de alcance del prototipo (timebox + feature freeze, camino feliz, roles/actores priorizados, split prototyping, gatekeeper cuantitativo, exclusiones explícitas). Se define una **frontera dura** entre Prototipo y MVP: el MVP es el primer entregable **funcional** (Tracer Bullet), cualitativamente distinto del prototipo.
+- **Alternativas consideradas:** Mantener "Prototipo" como una única etapa sin distinguir deseabilidad de factibilidad (descartada: perdía la frontera humano↔agente, relevante para saber cuándo delegar en agentes). Fusionar prototipo y MVP en una sola etapa continua (descartada: el usuario identificó que la frontera es cualitativa —funcional vs no funcional— y debe quedar explícita).
+- **Consecuencias:** `methodology.md` ahora comunica claramente cuándo el trabajo es humano (deseabilidad) y cuándo pueden intervenir agentes (desde factibilidad en adelante), y evita que un "prototipo" se confunda con un MVP. El archivo temporal `temp.md` no se versiona como fuente; su contenido ya quedó absorbido en `methodology.md`.
 

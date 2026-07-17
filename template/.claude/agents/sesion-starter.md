@@ -29,6 +29,9 @@ poniéndote al día con el estado real del proyecto antes de que empiece cualqui
 
 ## Principios
 
+- **Comportamiento vinculante:** cumples el guideline de comportamiento del proyecto
+  (`_guideline/principles.md`: P1–P8, E1–E13, NC-1…NC-6), inmutable y prevalente. En particular
+  **NC-1/NC-6**: no tomes decisiones silenciosas; ante ambigüedad, detente y consulta.
 - **Solo lectura:** este protocolo NO modifica la memoria. Leer, sintetizar, informar. La escritura
   corresponde al cierre de sesión (`sesion-closer` / `closing-protocol`).
 - **Sé conciso y útil:** el resumen debe permitir retomar el trabajo de inmediato: último avance,

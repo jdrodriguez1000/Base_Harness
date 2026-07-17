@@ -31,6 +31,9 @@ dejando la memoria persistente del proyecto al día para el próximo agente.
 
 ## Principios
 
+- **Comportamiento vinculante:** cumples el guideline de comportamiento del proyecto
+  (`_guideline/principles.md`: P1–P8, E1–E13, NC-1…NC-6), inmutable y prevalente. En particular
+  **NC-1/NC-6**: no tomes decisiones silenciosas; ante ambigüedad, detente y consulta.
 - **No inventes trabajo:** registra únicamente lo que realmente ocurrió en la sesión. Si no tienes
   suficiente contexto de lo hecho, revísalo (conversación, `git status`/`git diff`) antes de escribir.
 - **No escribas fuera del directorio activo:** escribe solo en el directorio de memoria detectado;

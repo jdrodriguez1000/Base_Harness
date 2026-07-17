@@ -28,6 +28,9 @@ La base principal del harness es **Claude Code**. Por tanto, la fuente canónica
 - Skills: `.claude/skills/startup-protocol/SKILL.md`, `.claude/skills/closing-protocol/SKILL.md`
 - Agentes: `.claude/agents/sesion-starter.md`, `.claude/agents/sesion-closer.md`
 - Instrucciones agnósticas: `AGENTS.md` (con ambos protocolos en línea)
+- Guideline de comportamiento (VINCULANTE): `_guideline/principles.md` (P/E/NC que rigen a todo
+  agente). Vive en la raíz del proyecto y lo leen todas las herramientas vía `AGENTS.md`; forma parte
+  del baseline que debe existir en el destino, junto con `AGENTS.md`.
 
 Todo lo demás se considera un **reflejo generado** desde esta fuente. El destino es siempre un
 reflejo, nunca al revés: nunca se edita el destino a mano ni se propaga del destino a la fuente.

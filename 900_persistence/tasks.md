@@ -21,8 +21,11 @@
 | T-009 | Espejar el procedimiento de `register-harness` dentro de `AGENTS.md` + autoprovisión (resolver la bootstrap-paradoja para poder ejecutarlo desde dentro de opencode) | completada | media |
 | T-010 | Extender `register-harness` a Codex y Gemini | en progreso (Gemini hecho, falta Codex) | media |
 | T-011 | Verificar mecanismos de Gemini (`GEMINI.md`, comandos) con documentación oficial | completada | media |
-| T-012 | **[PRÓXIMA]** Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009 (modelos, descripciones de agentes, autosuficiencia, README) | pendiente | alta |
+| T-012 | Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009 (modelos, descripciones de agentes, autosuficiencia, README) | pendiente | alta |
 | T-013 | Provisionar un `.gemini/` real en un proyecto destino para validar de punta a punta la fase de provisión de Gemini | pendiente | media |
+| T-014 | Cablear `template/_guideline/principles.md` como comportamiento vinculante en `AGENTS.md`, `CLAUDE.md`, agentes de sesión y `register-harness` | completada | alta |
+| T-015 | Crear `template/_guideline/methodology.md` agnóstico (dos ejes, arquetipos, ciclo de vida) + diferenciación Prototipo (deseabilidad/factibilidad) vs MVP | completada | alta |
+| T-016 | **[PRÓXIMA]** Continuar iterando `template/_guideline/methodology.md` | pendiente | alta |
 
 ## Convención de ID
 
@@ -41,7 +44,9 @@
 
 ## Backlog
 
-- [ ] T-012 — **[PRÓXIMA TAREA]** Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
+- [ ] T-016 — **[PRÓXIMA TAREA]** Continuar iterando `template/_guideline/methodology.md` (siguiente ronda de trabajo sobre la metodología agnóstica).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-009
+- [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
       Prioridad: alta · Responsable: — · Ref: [[progress]]
@@ -73,5 +78,9 @@
       Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [x] T-011 — Verificar mecanismos de Gemini (skills nativos en `.gemini/skills/<n>/SKILL.md`, agentes en `.gemini/agents/<n>.md`) con documentación oficial (ctx7 + web) antes de extender `register-harness`.
       Prioridad: media · Responsable: — · Ref: [[progress]], [[tasks]] T-010
+- [x] T-014 — Cablear `template/_guideline/principles.md` (confirmado agnóstico, P1–P8/E1–E13/NC-1…NC-6) como comportamiento vinculante en `template/AGENTS.md`, `CLAUDE.md`, agentes de sesión (`sesion-starter`/`sesion-closer`, ambas copias) y `register-harness` (fuente única de verdad/baseline).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-007
+- [x] T-015 — Crear `template/_guideline/methodology.md` agnóstico (dos tipos de proyecto, dos ejes madurez/incremento, ciclo de vida de 13 pasos, arquetipos de agente) y reescribir §4 (Estadios de madurez) con la distinción Prototipo deseabilidad/factibilidad y la frontera dura Prototipo→MVP.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-009
 
 ## Bloqueadas
