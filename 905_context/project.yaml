@@ -10,7 +10,7 @@ project:
 repository:
   url: https://github.com/jdrodriguez1000/Base_Harness.git
   default_branch: main
-  auto_push: false
+  auto_push: true
 
 persistence:
   # La memoria real de este proyecto vive en 900_persistence (ver decisión D-002).
