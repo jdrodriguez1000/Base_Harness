@@ -17,10 +17,11 @@
 | T-005 | Decidir si `business.md` se versiona (posible información sensible) o va a `.gitignore` | pendiente | media |
 | T-006 | Añadir IDs `P-XXX` a `progress.md` para uniformar la búsqueda por ID | pendiente | baja |
 | T-007 | Crear `.gitignore` agnóstico y hacer el primer `git push` a GitHub | completada | alta |
-| T-008 | **[PRÓXIMA]** Fase de PROVISIÓN de `register-harness` para opencode (crear `.opencode/skills` copiando `SKILL.md`, traducir agentes a formato opencode, asegurar `AGENTS.md` en raíz) | pendiente | alta |
-| T-009 | Espejar el procedimiento de `register-harness` dentro de `AGENTS.md` (resolver la bootstrap-paradoja para poder ejecutarlo desde dentro de opencode/codex) | pendiente | media |
+| T-008 | Fase de PROVISIÓN de `register-harness` para opencode (crear `.opencode/skills` copiando `SKILL.md`, traducir agentes a formato opencode, asegurar `AGENTS.md` en raíz) | completada | alta |
+| T-009 | Espejar el procedimiento de `register-harness` dentro de `AGENTS.md` + autoprovisión (resolver la bootstrap-paradoja para poder ejecutarlo desde dentro de opencode) | completada | media |
 | T-010 | Extender `register-harness` a Codex y Gemini | pendiente | media |
 | T-011 | Verificar mecanismos de Gemini (`GEMINI.md`, comandos) con documentación oficial | pendiente | media |
+| T-012 | **[PRÓXIMA]** Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009 (modelos, descripciones de agentes, autosuficiencia, README) | pendiente | alta |
 
 ## Convención de ID
 
@@ -39,8 +40,8 @@
 
 ## Backlog
 
-- [ ] T-008 — **[PRÓXIMA TAREA]** Fase de PROVISIÓN de `register-harness` para opencode: crear `.opencode/skills/` copiando `SKILL.md`, traducir agentes a formato opencode (`.opencode/agents/*.md`), asegurar `AGENTS.md` en raíz. Confirmado con prueba real en `proyecto_prueba` (ver [[progress]] 2026-07-17).
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-004
+- [ ] T-012 — **[PRÓXIMA TAREA]** Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
       Prioridad: alta · Responsable: — · Ref: [[progress]]
 - [ ] T-004 — Evaluar hooks SessionStart/Stop para forzar técnicamente los protocolos de inicio/cierre.
@@ -49,8 +50,6 @@
       Prioridad: media · Responsable: — · Ref: [[progress]]
 - [ ] T-006 — Considerar añadir IDs `P-XXX` a `progress.md` para uniformar la búsqueda por ID.
       Prioridad: baja · Responsable: — · Ref: [[progress]]
-- [ ] T-009 — Espejar el procedimiento de `register-harness` dentro de `AGENTS.md` para resolver la bootstrap-paradoja (poder ejecutarlo desde dentro de opencode/codex, sin depender de `.claude/`).
-      Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-004
 - [ ] T-010 — Extender `register-harness` a Codex y Gemini.
       Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-004
 - [ ] T-011 — Verificar mecanismos de Gemini (`GEMINI.md`, comandos) con documentación oficial (ctx7) antes de extender `register-harness`.
@@ -66,5 +65,9 @@
       Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-004
 - [x] T-007 — Crear `.gitignore` agnóstico (SO, editores, secretos, logs, deps) y hacer el primer `git push` a `https://github.com/jdrodriguez1000/Base_Harness.git` (rama `main`).
       Prioridad: alta · Responsable: — · Ref: [[progress]]
+- [x] T-008 — Fase de PROVISIÓN de `register-harness` para opencode: skills por copia directa, agentes por traducción de frontmatter (tablas de campos/tools/modelos), con puerta de confirmación. Incluye los dos ajustes posteriores: `description` de agentes con frases naturales (activación) y modelos destino `openai/gpt-5.6-luna` / `-terra` (suscripción, no API Anthropic).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-004, [[lessons]] L-002
+- [x] T-009 — Resolver la bootstrap-paradoja para opencode: sección *Portabilidad del harness* en `AGENTS.md` (espejo del procedimiento) + autoprovisión de `register-harness` en `.opencode/skills/` (autosuficiencia). Documentada la regla de oro y el modo re-sync.
+      Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 
 ## Bloqueadas

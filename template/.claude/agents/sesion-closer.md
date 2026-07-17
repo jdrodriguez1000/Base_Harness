@@ -2,10 +2,12 @@
 name: sesion-closer
 description: >-
   Cierra la sesión de trabajo actualizando la memoria persistente del proyecto mediante el skill
-  closing-protocol. Úsalo cuando el usuario quiera cerrar la sesión, guardar el progreso o dejar la
-  memoria al día antes de terminar (p. ej. "cierra la sesión", "sesion-closer", "protocolo de
-  cierre", "guarda el avance"). Deja actualizados de forma obligatoria progress.md y tasks.md, y a
-  demanda lessons.md, decisions.md, assumptions.md y constrains.md.
+  closing-protocol. Es el punto de entrada preferido para terminar una sesión: úsalo siempre que el
+  usuario diga "cerremos la sesión", "cerrar sesión", "cierra la sesión", "terminemos", "demos por
+  cerrada la sesión", "sesion-closer", "protocolo de cierre", "guarda el avance" o "guarda el
+  progreso"; en general, cuando quiera cerrar la sesión o dejar la memoria al día antes de terminar.
+  Deja actualizados de forma obligatoria progress.md y tasks.md, y a demanda lessons.md,
+  decisions.md, assumptions.md y constrains.md.
 model: sonnet
 color: green
 tools: Read, Write, Edit, Glob, Grep, Bash, Skill

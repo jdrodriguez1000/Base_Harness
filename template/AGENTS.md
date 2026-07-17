@@ -127,3 +127,90 @@ para el próximo agente.
 - No inventar trabajo: registrar únicamente lo que realmente ocurrió en la sesión.
 - Nunca empujar a GitHub sin confirmación si `auto_push` es `false`. La URL sale de `project.yaml`.
 - Idioma de la memoria: el del proyecto (por defecto, español).
+
+---
+
+## Portabilidad del harness a otras herramientas (`register-harness`)
+
+Este harness nace en **Claude Code**, pero está pensado para usarse también en **opencode**, **Codex**
+y **Gemini**. El mecanismo que lo hace portable se llama **`register-harness`**: audita qué falta en
+una herramienta destino y, con tu confirmación, la **provisiona** (crea sus skills y agentes nativos).
+
+> **Por qué esta sección existe (bootstrap).** `register-harness` es, en Claude Code, un skill. Si
+> estás en **otra** herramienta y aún no se ha provisionado, no tendrías el skill nativo para
+> arrancar. Por eso el procedimiento se describe aquí, en `AGENTS.md`, que **todas** las herramientas
+> leen. Con esto, cualquier agente puede portar el harness aunque parta de cero.
+
+### Fuente única de verdad
+
+La base canónica son **archivos de texto plano** (no una app concreta). Cualquier herramienta puede
+leerlos con sus tools de archivo:
+
+- Skills: `.claude/skills/startup-protocol/SKILL.md`, `.claude/skills/closing-protocol/SKILL.md`,
+  `.claude/skills/register-harness/SKILL.md`
+- Agentes: `.claude/agents/sesion-starter.md`, `.claude/agents/sesion-closer.md`
+- Instrucciones agnósticas: este `AGENTS.md`.
+
+El **procedimiento detallado y canónico** vive en `.claude/skills/register-harness/SKILL.md`. Como es
+un archivo Markdown, **ábrelo y síguelo** desde la herramienta en la que estés. Esta sección es el
+resumen autosuficiente para arrancar.
+
+### Regla de oro
+
+Editas **siempre la fuente** (`.claude/…` o este `AGENTS.md`) y luego **re-sincronizas**. **Nunca**
+edites a mano los archivos generados en el destino (`.opencode/…`): son un reflejo y el próximo
+re-sync los sobrescribe. El destino es un reflejo de la fuente, **nunca al revés**.
+
+> **¿Y si estoy en opencode y debo ajustar un skill/agente?** No vuelves a Claude Code como *app*:
+> editas el archivo fuente en `.claude/` (es solo texto) y ejecutas `register-harness` en modo
+> re-sync. Tras la primera provisión, opencode tiene su propia copia nativa de `register-harness`
+> (ver más abajo), así que puede re-sincronizarse por sí mismo.
+
+### Procedimiento (destino: opencode)
+
+**Ubicaciones en opencode** y transformación desde la fuente:
+
+| Componente | Ubicación destino | Transformación |
+|---|---|---|
+| Instrucciones | `AGENTS.md` (raíz) | Ninguna — mismo archivo agnóstico |
+| Skills | `.opencode/skills/<nombre>/SKILL.md` | **Copia directa** (formato `SKILL.md` compatible) |
+| Agentes | `.opencode/agents/<nombre>.md` | **Traducir frontmatter** (ver tabla) |
+
+1. **Auditar (solo lectura):** comprobar la presencia de cada elemento y anotar ✅/❌:
+   - `AGENTS.md` en la raíz con los protocolos en línea (baseline).
+   - `.opencode/skills/startup-protocol/SKILL.md`, `.opencode/skills/closing-protocol/SKILL.md`.
+   - `.opencode/skills/register-harness/SKILL.md` (autosuficiencia: permite re-sincronizar desde opencode).
+   - `.opencode/agents/sesion-starter.md`, `.opencode/agents/sesion-closer.md`.
+
+2. **Provisionar (solo con confirmación):** crear los ❌. Enumerar primero los archivos que se van a
+   crear y pedir el visto bueno. No sobrescribir lo presente salvo re-sync explícito.
+   - **Skills** → copiar el contenido tal cual desde `.claude/skills/<nombre>/SKILL.md` (incluido el
+     propio `register-harness`, para que opencode quede autosuficiente).
+   - **Agentes** → traducir el frontmatter Claude → opencode y conservar el cuerpo como `prompt`.
+
+3. **Confirmar:** re-auditar; todo debe quedar ✅.
+
+**Traducción de frontmatter de agentes (Claude → opencode):**
+
+| Claude | opencode | Regla |
+|---|---|---|
+| `name:` | *(se elimina)* | el id del agente = nombre de archivo |
+| `description:` | `description:` | igual |
+| *(implícito subagente)* | `mode: subagent` | se añade |
+| `model:` | `model:` | asignar el modelo destino por agente (ver abajo) |
+| `color:` | *(se elimina)* | opencode no tiene este campo |
+| `tools: A, B` (CSV) | `tools:` (mapa `x: true`) | minúsculas; en solo-lectura, `write: false`, `edit: false` |
+| *(cuerpo)* | *(cuerpo = `prompt`)* | igual |
+
+**Modelos destino en opencode** (el usuario trabaja por suscripción, no por API de Anthropic):
+
+| Agente | Modelo |
+|---|---|
+| `sesion-starter` | `openai/gpt-5.6-luna` |
+| `sesion-closer` | `openai/gpt-5.6-terra` |
+
+### Otras herramientas
+
+**Codex** y **Gemini** siguen el mismo patrón (auditar → provisionar) con **sus propias ubicaciones
+y traducción**, aún por implementar/verificar. Consulta `.claude/skills/register-harness/SKILL.md`
+para el estado actual antes de portar a esas herramientas.

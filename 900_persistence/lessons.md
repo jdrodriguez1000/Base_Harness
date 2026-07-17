@@ -11,6 +11,7 @@
 | ID | Lección | Fecha |
 |---|---|---|
 | L-001 | Duplicar `.claude/` (raíz vs `template/.claude/`) autocontiene el entregable pero crea riesgo de desincronización | 2026-07-17 |
+| L-002 | En opencode, skills y subagentes compiten por su `description`; el subagente no se activa si le faltan las frases naturales del usuario | 2026-07-17 |
 
 ## Formato
 
@@ -32,4 +33,11 @@
 - **Problema:** Al haber dos copias físicas de los mismos skills/agentes, cualquier cambio futuro en la raíz (correcciones, nuevas versiones) no se propaga automáticamente a `template/.claude/`, y viceversa. Sin disciplina o automatización, ambas copias pueden divergir silenciosamente.
 - **Solución / aprendizaje:** Se documentó explícitamente que la raíz es la fuente de verdad y `template/.claude/` es un reflejo; se registró como tarea pendiente (T-002) evaluar un script de re-copia.
 - **Cómo aplicarlo:** Antes de dar por cerrada una sesión que tocó skills/agentes, verificar si `template/.claude/` necesita re-sincronizarse; no asumir que un cambio en la raíz ya se refleja en el entregable.
+- **Fecha:** 2026-07-17
+
+### L-002 — En opencode los skills y subagentes compiten por su `description`
+- **Contexto:** Tras provisionar el harness en opencode, el usuario dio la instrucción "iniciemos la sesión" esperando que se activara el subagente `sesion-starter`, pero se ejecutó directamente el skill `startup-protocol`.
+- **Problema:** En opencode, un subagente se invoca automáticamente **según su `description`** (o manualmente con `@nombre`), igual que un skill. Ambos compiten por la misma intención del usuario. La `description` de `sesion-starter` no contenía la frase natural "iniciemos la sesión" (solo "protocolo de inicio", "ponte al día", etc.), así que el agente principal eligió el skill, que sí matcheaba mejor.
+- **Solución / aprendizaje:** Enriquecer la `description` de los agentes con las **frases naturales** que el usuario realmente dice ("iniciemos/cierra la sesión", etc.) y marcarlos como punto de entrada preferido. Alternativa siempre disponible en opencode: forzar el subagente con `@sesion-starter` / `@sesion-closer`.
+- **Cómo aplicarlo:** Al crear o traducir un agente cuya activación deba ganarle a un skill homónimo, front-loadear en su `description` los disparadores literales del usuario. La `description` no es decorativa: es el criterio de enrutamiento.
 - **Fecha:** 2026-07-17

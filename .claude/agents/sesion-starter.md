@@ -2,8 +2,10 @@
 name: sesion-starter
 description: >-
   Inicia la sesión de trabajo poniéndose al día con la memoria persistente del proyecto mediante el
-  skill startup-protocol. Úsalo al comenzar a trabajar, retomar el proyecto o cuando el usuario diga
-  "protocolo de inicio", "sesion-starter", "ponte al día" o "retoma el proyecto". Lee de forma
+  skill startup-protocol. Es el punto de entrada preferido para arrancar una sesión: úsalo siempre
+  que el usuario diga "iniciemos la sesión", "iniciar sesión", "inicia la sesión", "empecemos",
+  "arranquemos", "comencemos a trabajar", "protocolo de inicio", "sesion-starter", "ponte al día" o
+  "retoma el proyecto"; también al comenzar a trabajar o retomar el proyecto. Lee de forma
   obligatoria progress.md y tasks.md, y a demanda lessons.md, decisions.md, assumptions.md y
   constrains.md, y entrega un resumen del estado y las próximas tareas.
 model: haiku

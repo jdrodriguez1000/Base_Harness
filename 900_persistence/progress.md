@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-17 | Provisión opencode (T-008), bootstrap-paradoja (T-009) y README de portabilidad | completado | `#2026-07-17--provisión-opencode-t-008-bootstrap-paradoja-t-009-y-readme-de-portabilidad` |
 | 2026-07-17 | Validación real de la auditoría `register-harness` en `proyecto_prueba` | completado | `#2026-07-17--validación-real-de-la-auditoría-register-harness-en-proyecto_prueba` |
 | 2026-07-17 | Primer versionado en git y skill `register-harness` para portabilidad multi-agente | completado | `#2026-07-17--primer-versionado-en-git-y-skill-register-harness-para-portabilidad-multi-agente` |
 | 2026-07-17 | Inicialización del harness base | completado | `#2026-07-17--inicialización-del-harness-base` |
@@ -31,6 +32,12 @@
 ---
 
 ## Historial
+
+### [2026-07-17] — Provisión opencode (T-008), bootstrap-paradoja (T-009) y README de portabilidad
+- **Estado:** completado
+- **Resumen:** Sesión de construcción sobre `register-harness`. **(1) T-008 — fase de PROVISIÓN para opencode:** se extendió el skill de "solo auditar" a "auditar + provisionar" con puerta de confirmación (Paso 3): skills por copia directa, agentes por traducción de frontmatter Claude→opencode (tablas concretas de campos, tools y modelos; `mode: subagent`, se eliminan `name`/`color`, `tools` como mapa booleano con `write:false`/`edit:false` en el de solo lectura). Formato opencode verificado con doc oficial vía ctx7. **(2) Dos ajustes pedidos por el usuario tras prueba real:** (a) el agente `sesion-starter` no se activaba porque su `description` no contenía frases naturales ("iniciemos la sesión") y el agente principal elegía el skill; se enriquecieron las `description` de ambos agentes con frases naturales y se marcaron como punto de entrada preferido (además, en opencode se puede forzar con `@nombre`); (b) el usuario trabaja en opencode por **suscripción** (modelos OpenAI, no API Anthropic), así que los modelos destino pasaron a `sesion-starter → openai/gpt-5.6-luna` y `sesion-closer → openai/gpt-5.6-terra`. **(3) T-009 — bootstrap-paradoja resuelta para opencode** en dos frentes: (b) se añadió a `AGENTS.md` la sección *Portabilidad del harness* (espejo resumido del procedimiento, ya que todas las herramientas leen `AGENTS.md`) que apunta al detalle canónico en `.claude/skills/register-harness/SKILL.md`; (a) la provisión ahora **copia el propio `register-harness`** a `.opencode/skills/` → opencode queda autosuficiente para re-sincronizarse solo. Se documentó la **regla de oro** (editar la fuente `.claude/`, re-sync; nunca editar el reflejo `.opencode/`) y el modo **re-sync** (sobrescribe). **(4)** Se creó `template/README.md`: guía práctica de las dos modalidades (auditar / provisionar + sub-modo re-sync), el flujo para ajustar un agente/skill desde cualquier herramienta, y cuándo cambiar el procedimiento de portabilidad (tocando skill + espejo de `AGENTS.md`). Todo lo tocado en `.claude/` se sincronizó al molde `template/.claude/` (verificado idéntico).
+- **Siguiente paso:** Re-provisionar `proyecto_prueba` (re-sync) para recoger los cambios (modelos, descripciones, autosuficiencia). Luego atacar T-010/T-011 (Codex y Gemini): verificar sus mecanismos con doc oficial antes de implementar su mapa de auditoría/provisión.
+- **Referencias:** `.claude/skills/register-harness/SKILL.md`, `.claude/agents/`, `template/AGENTS.md`, `template/README.md`, [[tasks]] T-008, T-009, T-012, [[decisions]] D-004, D-005, [[lessons]] L-002
 
 ### [2026-07-17] — Validación real de la auditoría `register-harness` en `proyecto_prueba`
 - **Estado:** completado
