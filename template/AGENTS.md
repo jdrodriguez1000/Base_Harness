@@ -209,8 +209,43 @@ re-sync los sobrescribe. El destino es un reflejo de la fuente, **nunca al revé
 | `sesion-starter` | `openai/gpt-5.6-luna` |
 | `sesion-closer` | `openai/gpt-5.6-terra` |
 
+### Procedimiento (destino: Gemini CLI)
+
+Gemini CLI tiene **skills** y **subagentes** nativos, con rutas de proyecto análogas a opencode.
+
+| Componente | Ubicación destino | Transformación |
+|---|---|---|
+| Instrucciones | `AGENTS.md` (raíz) o `GEMINI.md` (puntero) | Ninguna — mismo archivo agnóstico |
+| Skills | `.gemini/skills/<nombre>/SKILL.md` | **Copia directa** (formato `SKILL.md` compatible) |
+| Agentes | `.gemini/agents/<nombre>.md` | **Traducir frontmatter** (ver tabla) |
+
+Auditar y provisionar igual que en opencode (auditar ✅/❌ → confirmar → crear los ❌ → re-auditar),
+incluyendo `.gemini/skills/register-harness/SKILL.md` para autosuficiencia.
+
+**Traducción de frontmatter de agentes (Claude → Gemini CLI):**
+
+| Claude | Gemini CLI | Regla |
+|---|---|---|
+| `name:` | `name:` | **se conserva** (Gemini lo usa como id) |
+| `description:` | `description:` | igual |
+| *(implícito subagente)* | `kind: local` | se añade |
+| `model:` | `model:` | id Gemini por agente (ver abajo) |
+| `color:` | *(se elimina)* | Gemini no tiene este campo |
+| `tools: A, B` (CSV) | `tools:` (lista YAML) | nombres nativos; en solo-lectura, omitir `write_file`/`replace` |
+| *(cuerpo)* | *(cuerpo = system prompt)* | igual |
+
+**Tools (Claude → Gemini):** `Read`→`read_file`, `Write`→`write_file`, `Edit`→`replace`,
+`Glob`→`glob`, `Grep`→`grep_search`, `Bash`→`run_shell_command`, `Skill`→`activate_skill`.
+
+**Modelos destino en Gemini** (ajustar a los que tenga el usuario):
+
+| Agente | Modelo |
+|---|---|
+| `sesion-starter` | `gemini-3-flash` |
+| `sesion-closer` | `gemini-3-pro` |
+
 ### Otras herramientas
 
-**Codex** y **Gemini** siguen el mismo patrón (auditar → provisionar) con **sus propias ubicaciones
-y traducción**, aún por implementar/verificar. Consulta `.claude/skills/register-harness/SKILL.md`
-para el estado actual antes de portar a esas herramientas.
+**Codex** sigue el mismo patrón (auditar → provisionar) con **sus propias ubicaciones y traducción**,
+aún por implementar/verificar. Consulta `.claude/skills/register-harness/SKILL.md` para el estado
+actual antes de portar a esa herramienta.

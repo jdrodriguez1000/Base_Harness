@@ -15,6 +15,7 @@
 | D-003 | Añadir `_context/project.yaml` como contexto declarativo; su sección `repository` es la fuente de verdad de la URL del repo (Rol B) | aceptada | 2026-07-17 |
 | D-004 | `register-harness` como mecanismo oficial de portabilidad/sincronización; fuente única de verdad = `.claude/`; arquitectura de dos niveles | aceptada | 2026-07-17 |
 | D-005 | Resolver la bootstrap-paradoja con doble frente: espejo del procedimiento en `AGENTS.md` + autoprovisión de `register-harness` en el destino | aceptada | 2026-07-17 |
+| D-006 | Los protocolos de inicio/cierre se ejecutan SIEMPRE delegando en su agente especializado, no directamente desde la sesión principal | aceptada | 2026-07-17 |
 
 ## Formato
 
@@ -71,4 +72,12 @@
 - **Decisión:** Resolverla con **dos frentes complementarios**. **(b) Espejo en `AGENTS.md`:** añadir la sección *Portabilidad del harness* con el procedimiento resumido (auditar/provisionar, ubicaciones destino, traducción de frontmatter, modelos), que apunta al detalle canónico en `.claude/skills/register-harness/SKILL.md`. Como **todas** las herramientas leen `AGENTS.md`, cualquier agente puede portar el harness aunque parta de cero. **(a) Autoprovisión:** la fase de provisión copia el propio `register-harness` a `.opencode/skills/register-harness/SKILL.md`, dejando a la herramienta destino **autosuficiente** para re-auditar/re-sincronizar sin depender de Claude Code. Fundamento común: la fuente de verdad son **archivos de texto** (`.claude/…`) que cualquier herramienta lee con sus tools de archivo; no es una capacidad exclusiva de Claude.
 - **Alternativas consideradas:** (a solo) copiar `register-harness` al destino sin espejo en `AGENTS.md` (descartada: no resuelve el arranque *inicial*, cuando aún no hay nada provisionado). (b solo) espejar únicamente en `AGENTS.md` sin autoprovisión (descartada: obliga a re-sincronizar siempre "a mano" siguiendo el texto, sin skill nativo). Mantener una sola copia del procedimiento (descartada: el bootstrap exige que el arranque no dependa de `.claude/`).
 - **Consecuencias:** El procedimiento de portabilidad queda **duplicado** en dos sitios (skill `register-harness` + sección de `AGENTS.md`) que hay que mantener **alineados** al cambiarlo (ver [[lessons]] L-001 sobre riesgo de desincronización). Por ahora resuelto solo para **opencode**; Codex y Gemini replicarán el patrón (`T-010`/`T-011`). La regla operativa: editar la fuente `.claude/` y re-sincronizar (modo re-sync, que sobrescribe); nunca editar el reflejo del destino.
+
+### D-006 — Los protocolos de inicio/cierre se ejecutan SIEMPRE delegando en su agente especializado
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** Hasta ahora el `CLAUDE.md` de la raíz permitía ejecutar los protocolos de inicio/cierre invocando directamente su skill (`startup-protocol`/`closing-protocol`) **o** delegando en su agente (`sesion-starter`/`sesion-closer`). El usuario dio feedback explícito de que quiere que la sesión principal delegue siempre en el agente, no que ejecute el skill por su cuenta.
+- **Decisión:** El `CLAUDE.md` de la raíz (secciones "Inicio de sesión" y "Cierre de sesión") se actualiza para hacer obligatorio invocar el agente especializado: inicio → agente `sesion-starter`; cierre → agente `sesion-closer`. La sesión principal no debe ejecutar el skill directamente.
+- **Alternativas consideradas:** Mantener ambas vías como equivalentes (skill directo o agente) — descartada porque el usuario prefiere una única vía consistente y auditable a través del agente dedicado.
+- **Consecuencias:** Mayor consistencia y trazabilidad (el agente aplica el protocolo de forma aislada y reporta un resumen); pequeño costo adicional de indirección (una invocación de agente en vez de un skill directo). Ver también [[constrains]] C-002.
 

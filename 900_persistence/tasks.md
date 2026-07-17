@@ -19,9 +19,10 @@
 | T-007 | Crear `.gitignore` agnóstico y hacer el primer `git push` a GitHub | completada | alta |
 | T-008 | Fase de PROVISIÓN de `register-harness` para opencode (crear `.opencode/skills` copiando `SKILL.md`, traducir agentes a formato opencode, asegurar `AGENTS.md` en raíz) | completada | alta |
 | T-009 | Espejar el procedimiento de `register-harness` dentro de `AGENTS.md` + autoprovisión (resolver la bootstrap-paradoja para poder ejecutarlo desde dentro de opencode) | completada | media |
-| T-010 | Extender `register-harness` a Codex y Gemini | pendiente | media |
-| T-011 | Verificar mecanismos de Gemini (`GEMINI.md`, comandos) con documentación oficial | pendiente | media |
+| T-010 | Extender `register-harness` a Codex y Gemini | en progreso (Gemini hecho, falta Codex) | media |
+| T-011 | Verificar mecanismos de Gemini (`GEMINI.md`, comandos) con documentación oficial | completada | media |
 | T-012 | **[PRÓXIMA]** Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009 (modelos, descripciones de agentes, autosuficiencia, README) | pendiente | alta |
+| T-013 | Provisionar un `.gemini/` real en un proyecto destino para validar de punta a punta la fase de provisión de Gemini | pendiente | media |
 
 ## Convención de ID
 
@@ -50,12 +51,13 @@
       Prioridad: media · Responsable: — · Ref: [[progress]]
 - [ ] T-006 — Considerar añadir IDs `P-XXX` a `progress.md` para uniformar la búsqueda por ID.
       Prioridad: baja · Responsable: — · Ref: [[progress]]
-- [ ] T-010 — Extender `register-harness` a Codex y Gemini.
-      Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-004
-- [ ] T-011 — Verificar mecanismos de Gemini (`GEMINI.md`, comandos) con documentación oficial (ctx7) antes de extender `register-harness`.
+- [ ] T-013 — Provisionar un `.gemini/` real en un proyecto destino para validar de punta a punta la fase de provisión de Gemini (análoga a la validación ya hecha con opencode).
       Prioridad: media · Responsable: — · Ref: [[progress]]
 
 ## En progreso
+
+- [~] T-010 — Extender `register-harness` a Codex y Gemini. Gemini completado (Paso 4 del skill, verificado con doc oficial vía ctx7); falta Codex.
+      Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-004
 
 ## Completadas
 
@@ -69,5 +71,7 @@
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-004, [[lessons]] L-002
 - [x] T-009 — Resolver la bootstrap-paradoja para opencode: sección *Portabilidad del harness* en `AGENTS.md` (espejo del procedimiento) + autoprovisión de `register-harness` en `.opencode/skills/` (autosuficiencia). Documentada la regla de oro y el modo re-sync.
       Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-005
+- [x] T-011 — Verificar mecanismos de Gemini (skills nativos en `.gemini/skills/<n>/SKILL.md`, agentes en `.gemini/agents/<n>.md`) con documentación oficial (ctx7 + web) antes de extender `register-harness`.
+      Prioridad: media · Responsable: — · Ref: [[progress]], [[tasks]] T-010
 
 ## Bloqueadas

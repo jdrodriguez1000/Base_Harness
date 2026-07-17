@@ -63,8 +63,8 @@ entrada por su ID/fecha sin leer el archivo completo.
 **Ninguna sesión de trabajo debe comenzar sin ejecutar antes el protocolo de inicio.** Es un paso
 obligatorio, no opcional: evita empezar a ciegas, sin conocer el avance ni el estado del proyecto.
 
-- **Cómo ejecutarlo:** invocar el skill **`startup-protocol`** o delegar en el agente
-  **`sesion-starter`**.
+- **Cómo ejecutarlo:** delegar **siempre** en el agente **`sesion-starter`** (no ejecutar el skill
+  `startup-protocol` desde la sesión principal). El agente es quien invoca el skill.
 - **Qué garantiza:** el agente se pone al día con la memoria. Lee de forma **obligatoria**
   `progress.md` y `tasks.md` (avance, estado, tareas hechas y próximas tareas), y **a demanda**
   `lessons.md`, `decisions.md`, `assumptions.md` y `constrains.md`.
@@ -79,8 +79,8 @@ repetir trabajo ya hecho o contradecir decisiones previas. Evítalo.
 **Ninguna sesión de trabajo se considera cerrada hasta ejecutar el protocolo de cierre.** Es un
 paso obligatorio, no opcional.
 
-- **Cómo ejecutarlo:** invocar el skill **`closing-protocol`** o delegar en el agente
-  **`sesion-closer`**.
+- **Cómo ejecutarlo:** delegar **siempre** en el agente **`sesion-closer`** (no ejecutar el skill
+  `closing-protocol` desde la sesión principal). El agente es quien invoca el skill.
 - **Qué garantiza:** deja la memoria persistente al día para el próximo agente. Actualiza de forma
   **obligatoria** `progress.md` y `tasks.md`, y **a demanda** `lessons.md`, `decisions.md`,
   `assumptions.md` y `constrains.md`, manteniendo sus índices sincronizados.

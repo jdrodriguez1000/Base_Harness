@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-17 | Regla de protocolos vía agente y soporte de Gemini en `register-harness` (T-011) | completado | `#2026-07-17--regla-de-protocolos-vía-agente-y-soporte-de-gemini-en-register-harness-t-011` |
 | 2026-07-17 | Provisión opencode (T-008), bootstrap-paradoja (T-009) y README de portabilidad | completado | `#2026-07-17--provisión-opencode-t-008-bootstrap-paradoja-t-009-y-readme-de-portabilidad` |
 | 2026-07-17 | Validación real de la auditoría `register-harness` en `proyecto_prueba` | completado | `#2026-07-17--validación-real-de-la-auditoría-register-harness-en-proyecto_prueba` |
 | 2026-07-17 | Primer versionado en git y skill `register-harness` para portabilidad multi-agente | completado | `#2026-07-17--primer-versionado-en-git-y-skill-register-harness-para-portabilidad-multi-agente` |
@@ -32,6 +33,12 @@
 ---
 
 ## Historial
+
+### [2026-07-17] — Regla de protocolos vía agente y soporte de Gemini en `register-harness` (T-011)
+- **Estado:** completado
+- **Resumen:** Dos frentes. **(1) Regla de trabajo nueva (feedback del usuario):** los protocolos de sesión deben ejecutarse SIEMPRE delegando en su agente especializado, nunca directamente desde la sesión principal — inicio → agente `sesion-starter`, cierre → agente `sesion-closer`. Se actualizó `CLAUDE.md` de la raíz (secciones "Inicio de sesión" y "Cierre de sesión") para hacerlo obligatorio vía agente, no solo vía skill. Registrado como `D-006` y `C-002`. **(2) T-011 completada + avance de T-010 (Gemini):** se verificó con documentación oficial de Gemini CLI (vía ctx7 + web) que Gemini tiene skills y subagentes NATIVOS con rutas de proyecto análogas a opencode: skills en `.gemini/skills/<n>/SKILL.md` (copia directa) y agentes en `.gemini/agents/<n>.md` (traducción de frontmatter). Se extendió `.claude/skills/register-harness/SKILL.md` con un nuevo "Paso 4 — Destino: Gemini CLI" (auditar + provisionar): tablas de ubicaciones, traducción de frontmatter Claude→Gemini (`name` SE CONSERVA, se añade `kind: local`, se elimina `color`, `tools` como lista YAML de nombres nativos: Read→read_file, Write→write_file, Edit→replace, Glob→glob, Grep→grep_search, Bash→run_shell_command, Skill→activate_skill), tabla de modelos destino (`sesion-starter → gemini-3-flash`, `sesion-closer → gemini-3-pro`) y los dos agentes de ejemplo traducidos. Se actualizaron el frontmatter/descripción del skill y el Paso 0 (herramientas soportadas: opencode y Gemini); la sección "Extensibilidad" ahora solo lista Codex como pendiente. Se amplió `template/AGENTS.md` (sección *Portabilidad del harness*, espejo de bootstrap) y `template/README.md` ("Herramientas soportadas hoy: opencode y Gemini") con el mismo contenido. Se re-sincronizó `template/.claude/skills/register-harness/SKILL.md` con la fuente (verificado idéntico por diff). No se creó un `.gemini/` real en este repo (los reflejos se generan al provisionar un proyecto destino, igual que se hizo con opencode).
+- **Siguiente paso:** Provisionar un `.gemini/` real en un proyecto destino para validar de punta a punta la fase de provisión de Gemini (análoga a la validación ya hecha con opencode). Completar T-010 con el soporte de Codex. Sigue pendiente T-012 (re-provisionar `proyecto_prueba` en opencode).
+- **Referencias:** `.claude/skills/register-harness/SKILL.md`, `template/AGENTS.md`, `template/README.md`, `template/.claude/skills/register-harness/SKILL.md`, `CLAUDE.md`, [[tasks]] T-010, T-011, [[decisions]] D-006, [[constrains]] C-002
 
 ### [2026-07-17] — Provisión opencode (T-008), bootstrap-paradoja (T-009) y README de portabilidad
 - **Estado:** completado

@@ -116,5 +116,5 @@ Cambia el procedimiento cuando:
 | Preparar el harness por primera vez | Provisionar | *"provisiona \<herramienta\>"* |
 | Propagar un cambio de la fuente | Re-sync | *"re-sincroniza \<herramienta\>"* |
 
-**Herramienta soportada hoy:** opencode. Codex y Gemini están en el mapa, pendientes de
+**Herramientas soportadas hoy:** opencode y Gemini. Codex está en el mapa, pendiente de
 implementación/verificación.

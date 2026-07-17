@@ -7,8 +7,8 @@ description: >-
   (`.claude/`) con las ubicaciones y formatos que esa herramienta espera, e informa qué falta.
   Si el usuario lo confirma, PROVISIONA: crea los skills y agentes nativos que faltan. Úsalo cuando
   el usuario diga "registrar harness", "register harness", "¿qué falta para usar el harness en
-  opencode/codex/gemini?", "provisiona opencode" o vaya a cambiar de herramienta. Herramienta
-  soportada por ahora: opencode.
+  opencode/codex/gemini?", "provisiona opencode" o vaya a cambiar de herramienta. Herramientas
+  soportadas por ahora: opencode y Gemini.
 ---
 
 # register-harness — Portabilidad del harness (auditar + provisionar)
@@ -46,8 +46,8 @@ reflejo, nunca al revés: nunca se edita el destino a mano ni se propaga del des
 2. **Verificar la fuente de verdad.** Comprobar que existen los 4 archivos canónicos y `AGENTS.md`.
    Si falta alguno de la fuente, reportarlo primero: sin fuente no hay nada que portar. **No** se
    puede provisionar si la fuente está incompleta.
-3. **Determinar la herramienta destino.** Si el usuario no la indicó, preguntar. Soportada por
-   ahora: **opencode**. (Codex y Gemini quedan para próximas iteraciones.)
+3. **Determinar la herramienta destino.** Si el usuario no la indicó, preguntar. Soportadas por
+   ahora: **opencode** (Paso 1–3) y **Gemini** (Paso 4). (Codex queda para próximas iteraciones.)
 4. **Determinar el modo.** Por defecto, AUDITAR. Solo pasar a PROVISIONAR si el usuario lo pide
    explícitamente ("provisiona", "créalos", "hazlo") o lo confirma tras ver el reporte de auditoría.
 
@@ -243,13 +243,138 @@ se toca lo que ya está presente.
 
 ---
 
+## Paso 4 — Destino: Gemini CLI  (auditar + provisionar)
+
+Gemini CLI busca sus componentes en estas ubicaciones (verificado en su documentación oficial):
+
+| Componente | Ubicación en Gemini CLI | ¿Contenido reutilizable desde la fuente? |
+|---|---|---|
+| Instrucciones | `AGENTS.md` (raíz) o `GEMINI.md` (puntero) | Sí — mismo archivo agnóstico |
+| Skills | `.gemini/skills/<nombre>/SKILL.md` | **Sí** — mismo formato `SKILL.md`; copia directa |
+| Agentes (subagentes) | `.gemini/agents/<nombre>.md` | Parcial — requiere **traducir el frontmatter** |
+
+> Gemini CLI tiene **skills nativas** (herramienta `activate_skill`) y **subagentes nativos**, con las
+> mismas rutas de proyecto que opencode. A nivel de usuario serían `~/.gemini/skills/` y
+> `~/.gemini/agents/`; aquí provisionamos a nivel de **proyecto** (`.gemini/`), que es lo que se
+> comparte al clonar el repo.
+
+### 4.1 Auditar (solo lectura) — anotar ✅ presente / ❌ falta
+- [ ] `AGENTS.md` en la raíz con ambos protocolos en línea (baseline).
+- [ ] `.gemini/skills/startup-protocol/SKILL.md`
+- [ ] `.gemini/skills/closing-protocol/SKILL.md`
+- [ ] `.gemini/skills/register-harness/SKILL.md` — **autosuficiencia** (re-sincronizar desde Gemini).
+- [ ] `.gemini/agents/sesion-starter.md`
+- [ ] `.gemini/agents/sesion-closer.md`
+
+### 4.2 Reporte y puerta de confirmación
+Igual que en opencode (Paso 2): presentar la tabla ✅/❌ y, si faltan elementos, **ofrecer
+provisionar** enumerando los archivos a crear y esperar confirmación explícita. Sin confirmación, no
+se escribe nada.
+
+### 4.3 Provisionar (SOLO con confirmación)
+
+**Skills — copia directa** (byte a byte, incluido el propio `register-harness` para autosuficiencia):
+
+| Fuente | Destino |
+|---|---|
+| `.claude/skills/startup-protocol/SKILL.md` | `.gemini/skills/startup-protocol/SKILL.md` |
+| `.claude/skills/closing-protocol/SKILL.md` | `.gemini/skills/closing-protocol/SKILL.md` |
+| `.claude/skills/register-harness/SKILL.md` | `.gemini/skills/register-harness/SKILL.md` |
+
+**Agentes — traducción de frontmatter (Claude → Gemini CLI):**
+
+| Claude (`.claude/agents/*.md`) | Gemini (`.gemini/agents/*.md`) | Regla |
+|---|---|---|
+| `name:` | `name:` | **se conserva** (Gemini lo usa como identificador) |
+| `description:` | `description:` | se conserva igual |
+| *(implícito: es subagente)* | `kind: local` | se añade siempre |
+| `model:` (shorthand) | `model:` (id Gemini) | ver tabla de modelos |
+| `color:` | *(se elimina)* | Gemini no tiene este campo |
+| `tools: A, B, C` (lista CSV) | `tools:` (lista YAML) | nombres nativos, ver tabla de tools |
+| *(cuerpo del archivo)* | *(cuerpo = system prompt)* | se conserva sin cambios |
+
+**Tabla de tools (Claude → Gemini CLI):** Gemini usa nombres propios y una **lista** (allowlist).
+Para un agente de **solo lectura** basta con **no incluir** las tools de escritura (`write_file`,
+`replace`) — no hace falta el `write:false` de opencode.
+
+| Claude | Gemini CLI |
+|---|---|
+| `Read` | `read_file` |
+| `Write` | `write_file` |
+| `Edit` | `replace` |
+| `Glob` | `glob` |
+| `Grep` | `grep_search` |
+| `Bash` | `run_shell_command` |
+| `Skill` | `activate_skill` |
+
+**Tabla de modelos (por agente del harness → id destino en Gemini):**
+
+| Agente | Modelo destino en Gemini | Rol |
+|---|---|---|
+| `sesion-starter` | `gemini-3-flash` | sesión de inicio, solo lectura |
+| `sesion-closer` | `gemini-3-pro` | sesión de cierre, escribe memoria |
+
+> Ajustar estos ids a los modelos que el usuario tenga disponibles en su Gemini CLI. Gemini no valida
+> el id al arrancar; si no existe en su configuración, cae al modelo de la sesión. Si en el futuro se
+> añaden más agentes, asignarles aquí su modelo destino.
+
+**Resultado esperado para los dos agentes del harness:**
+
+`.gemini/agents/sesion-starter.md` (solo lectura → `gemini-3-flash`, sin tools de escritura):
+```markdown
+---
+name: sesion-starter
+description: >-
+  <misma description que la fuente>
+kind: local
+model: gemini-3-flash
+tools:
+  - read_file
+  - glob
+  - grep_search
+  - run_shell_command
+  - activate_skill
+---
+
+<cuerpo idéntico al de .claude/agents/sesion-starter.md>
+```
+
+`.gemini/agents/sesion-closer.md` (escribe memoria → `gemini-3-pro`):
+```markdown
+---
+name: sesion-closer
+description: >-
+  <misma description que la fuente>
+kind: local
+model: gemini-3-pro
+tools:
+  - read_file
+  - write_file
+  - replace
+  - glob
+  - grep_search
+  - run_shell_command
+  - activate_skill
+---
+
+<cuerpo idéntico al de .claude/agents/sesion-closer.md>
+```
+
+### 4.4 Reporte de provisión
+Tras escribir, listar los archivos creados y volver a auditar (Paso 4.1) para confirmar que todo
+está ✅. Cerrar con: *"Gemini provisionado — N elementos creados"*. El **re-sync** funciona igual que
+en opencode (sobrescribe los destinos con la versión actual de la fuente, solo si el usuario lo pide).
+
+---
+
 ## Extensibilidad (próximas iteraciones)
 
-Para añadir otra herramienta, replicar los Pasos 1 y 3 con su mapa de ubicaciones y su traducción:
+Para añadir otra herramienta, replicar los pasos de auditoría/provisión con su mapa de ubicaciones y
+su traducción:
 
 - **Codex:** skills en `.agents/skills/<n>/SKILL.md` (formato compatible); agentes en
-  `~/.codex/agents/*.toml` (TOML, a nivel de usuario) o solo skills.
-- **Gemini:** instrucciones en `GEMINI.md`; comandos en `.gemini/commands/*.toml` (por verificar).
+  `~/.codex/agents/*.toml` (TOML, a nivel de usuario) o solo skills. **Por verificar** con doc oficial
+  antes de implementar.
 
 ---
 
