@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-17 | Tercera ronda de `methodology.md`: §7.1 estado por incremento (`state.yaml`) y §5.2 hermano de seguridad (T-017) | completado | `#2026-07-17--tercera-ronda-de-methodologymd-71-estado-por-incremento-stateyaml-y-52-hermano-de-seguridad-t-017` |
 | 2026-07-17 | Segunda ronda de `methodology.md` (elimina prototipado por-incremento, observabilidad/evaluación, Revisor de código) y simplificación de `AGENTS.md` (T-016) | completado | `#2026-07-17--segunda-ronda-de-methodologymd-elimina-prototipado-por-incremento-observabilidadevaluación-revisor-de-código-y-simplificación-de-agentsmd-t-016` |
 | 2026-07-17 | `principles.md` cableado como comportamiento vinculante y creación de `methodology.md` agnóstico (T-014, T-015) | completado | `#2026-07-17--principlesmd-cableado-como-comportamiento-vinculante-y-creación-de-methodologymd-agnóstico-t-014-t-015` |
 | 2026-07-17 | Regla de protocolos vía agente y soporte de Gemini en `register-harness` (T-011) | completado | `#2026-07-17--regla-de-protocolos-vía-agente-y-soporte-de-gemini-en-register-harness-t-011` |
@@ -35,6 +36,12 @@
 ---
 
 ## Historial
+
+### [2026-07-17] — Tercera ronda de `methodology.md`: §7.1 estado por incremento (`state.yaml`) y §5.2 hermano de seguridad (T-017)
+- **Estado:** completado
+- **Resumen:** Continuación de T-017, arrancando desde una muestra `state.json` de un flujo previo del usuario (`temp.md`, sin versionar como fuente). **(1) §7 enriquecida + §7.1 nueva (Estado por incremento `state.yaml`):** se formalizó el modelo de persistencia por vertical slice. Dos capas de persistencia con naturaleza distinta: `_persistence/` es narrativa (Markdown, bitácora) y `state.yaml` de la slice es estructurado (máquina de estado del ciclo de vida §3, consumida por el orquestador y por checks de conformidad §10). Reglas del modelo: **espina única de 11 pasos** — el ciclo NO se bifurca por capa técnica; frontend/backend/DB no son pasos sino *tareas etiquetadas* (`component` + `owner`) dentro de Construir (paso 8); si algo es valor end-to-end independiente, es OTRA slice (otro `state.yaml`). Las **revisiones transversales** (calidad de código §5.2, seguridad) son entradas de evaluación en Verificar (paso 10), no pasos nuevos; la seguridad-*comportamiento* es criterio de aceptación en la spec. **Single Writer:** el orquestador (sesión principal) es el escritor único de `state.yaml`; cada artefacto lo escribe solo su agente productor. `state.yaml` vive en la rama de la slice y se archiva al integrar (mecanismo de reanudación). Se incluyó un sketch YAML compacto con ejemplo de `construir` (cases etiquetados por `component`/`owner`) y `verificar` (evaluadores `spec_verifier`/`code_review`/`security_review`). **(2) §5.2 nota "Hermano de seguridad":** `security-reviewer` como evaluador transversal análogo al Revisor de código (mismas reglas: independiente, contexto fresco, hallazgos → tests que fallan, adoptar por E4), distinguiendo seguridad-revisión de seguridad-comportamiento. **(3)** Tabla de contenidos actualizada con la fila 7.1. Nota: el modelo simplifica el `state.json` previo del usuario eliminando el stage `notebook_writer` (coherente con D-010, un solo prototipado al inicio). Registrado en `D-014`, `D-015`, `D-016`, `D-017`.
+- **Siguiente paso:** Seguir trabajando en `state.yaml`: modelar los **gates con sus resoluciones** (como en la muestra `temp.md`: `gate_paso_5/7/9` con `status`, `fecha` y lista de `resoluciones`) y el modelado de los **casos TDD** dentro de Construir. Relacionar con T-018 (estructura física de carpetas / `_template/`), donde se aterrizará la ruta real de `_increments/<id>/`.
+- **Referencias:** `template/_guideline/methodology.md`, [[tasks]] T-017, T-018, [[decisions]] D-014, D-015, D-016, D-017
 
 ### [2026-07-17] — Segunda ronda de `methodology.md` (elimina prototipado por-incremento, observabilidad/evaluación, Revisor de código) y simplificación de `AGENTS.md` (T-016)
 - **Estado:** completado

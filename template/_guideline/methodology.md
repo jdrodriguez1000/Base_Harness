@@ -38,6 +38,7 @@ referencias cruzadas.
 | 5.3 | · Especialización de flota | Frontend/backend y otras variantes de instanciación |
 | **6** | Gates de aprobación | Gates automáticos vs humanos (GateKeeper) |
 | **7** | Persistencia y trazabilidad | Filesystem como fuente de verdad; Single Writer |
+| 7.1 | · Estado por incremento (`state.yaml`) | Máquina de estado de la slice: espina única + capas etiquetadas |
 | **8** | Evaluación | Cómo se evalúa el **producto** según la naturaleza de la salida |
 | 8.1 | · Flujo de evaluación (ejemplo) | Las tres capas de evaluación de un entregable |
 | **9** | Evolución del harness | Mínima complejidad (E4) y prueba de remoción |
@@ -389,6 +390,12 @@ lo ejecutable.
   si la evidencia muestra defectos de calidad escapándose de forma sistemática, se **automatiza** como
   arquetipo. Se añade un componente cuando su ausencia degrada la calidad, no antes.
 
+> **Hermano de seguridad.** La **revisión de seguridad** (auditoría de vulnerabilidades del código) es
+> un evaluador **transversal análogo**, con las mismas reglas (independiente, contexto fresco, hallazgos
+> → tests que fallan, adoptar por E4). Puede ser el mismo *Revisor* con un perfil de seguridad o un
+> arquetipo `security-reviewer` aparte. **La seguridad que es *comportamiento*** (autorización,
+> validación de input) **no** es revisión: es un **criterio de aceptación** en la spec (§3, paso 4).
+
 ### 5.3 Especialización de flota (instanciación)
 
 Los arquetipos son **agnósticos**; la **flota real** puede especializarlos al instanciar cuando el
@@ -424,15 +431,52 @@ el trabajo entre sesiones y ante fallos (E1, E5).
 
 | Capa | Dónde | Qué guarda |
 |---|---|---|
-| Proyecto / sesión | `_persistence/` | `progress` · `tasks` · `lessons` · `decisions` · `assumptions` · `constrains` |
-| Por incremento | estado del incremento (según la estructura del proyecto) | máquina de estado del ciclo de vida (§3) |
+| Proyecto / sesión | `_persistence/` | `progress` · `tasks` · `lessons` · `decisions` · `assumptions` · `constrains` (narrativa, Markdown) |
+| Por incremento | `state.yaml` de la slice (§7.1; ruta física según la instanciación) | máquina de estado del ciclo de vida (§3), estructurada |
 
-- **Single Writer Rule:** cada archivo de estado tiene **un único responsable de escritura**, para
-  evitar condiciones de carrera. En el plan, el responsable de cada tarea es el único que actualiza su
-  estado.
+- **Dos naturalezas distintas.** `_persistence/` es **narrativa** (bitácora en Markdown con `## Índice`);
+  el estado de una slice es **estructurado** (§7.1), porque lo lee el orquestador para reanudar y los
+  checks de conformidad (§10) para auditar.
+- **Single Writer Rule:** cada archivo de estado tiene **un único responsable de escritura** para evitar
+  condiciones de carrera. El `state.yaml` lo escribe **solo el orquestador**; cada **artefacto**
+  (`definition`, `spec`, `plan`, código, tests) lo escribe **solo su agente productor**.
 - **Git y reanudación:** commit por etapa con prefijo convencional; el **push** se hace en el cierre
   de sesión (agente *closer*, respetando `auto_push`). Para retomar un incremento interrumpido, la
-  sesión principal lee su estado y reinvoca al arquetipo correspondiente con contexto fresco.
+  sesión principal lee su `state.yaml` y reinvoca al arquetipo del paso pendiente con contexto fresco.
+
+### 7.1 Estado por incremento (`state.yaml`)
+
+Cada vertical slice lleva su propia **máquina de estado del ciclo de vida** (§3) en un archivo
+**estructurado** (convención `state.yaml`; la ruta física se fija al instanciar). Reglas del modelo:
+
+- **Espina única de 11 pasos.** `state.yaml` modela **un solo** ciclo §3 (Definir → … → Integrar) con el
+  estado de cada paso y el resultado de cada gate. **No se bifurca por capa técnica:** una slice es
+  end-to-end (NC-4). Si algo es valor de usuario independiente end-to-end, es **otra slice** (otro
+  `state.yaml`), no una rama de esta.
+- **Las capas viven dentro de Construir.** Frontend, backend y base de datos **no son pasos**: son
+  *tareas etiquetadas* dentro de Planear/Construir. Cada caso/tarea lleva su `component` (fe/be/db) y su
+  `owner` (agente de la flota, §5.3). `definition`/`spec`/`plan` son **unificadas** para toda la slice;
+  el plan las descompone por capa.
+- **Las revisiones transversales viven en Verificar.** Calidad de código (§5.2) y seguridad (su
+  hermano) son **entradas de evaluación** en Verificar, no pasos nuevos. La seguridad-*comportamiento*
+  es un **criterio de aceptación** en la spec.
+- **Escritor único:** el **orquestador** (§7). Los subagentes reportan; él verifica (§10) y transcribe.
+
+```yaml
+construir:                 # paso 8 — un solo stage; tareas etiquetadas por capa
+  status: in_progress
+  cases:
+    - { id: 1, component: backend,  owner: be-coder, ca: [CA-01], status: green }
+    - { id: 7, component: frontend, owner: fe-coder, ca: [CA-10], status: pending }
+    - { id: 9, component: db,       owner: be-coder, ca: [CA-14], status: pending }  # migración = backend
+verificar:                 # paso 10 — evaluadores transversales (por E4)
+  spec_verifier:   { status: pending }
+  code_review:     { status: pending, archetype: code-reviewer }      # §5.2
+  security_review: { status: pending, archetype: security-reviewer }  # hermano de §5.2
+```
+
+> **Reanudación y git.** El `state.yaml` vive en la **rama de la slice**; al integrar se **archiva** como
+> registro de trazabilidad. Es el mecanismo que hace **reanudable** un incremento interrumpido (§7).
 
 ---
 

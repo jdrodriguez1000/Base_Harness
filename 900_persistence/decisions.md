@@ -23,6 +23,10 @@
 | D-011 | *Revisor de código* como arquetipo evaluador independiente del Verificador, adoptado bajo E4 | aceptada | 2026-07-17 |
 | D-012 | Especialización de flota (p. ej. frontend/backend) es decisión de instanciación, no de arquetipo, bajo E4 | aceptada | 2026-07-17 |
 | D-013 | Regla de diseño de `AGENTS.md`: marco mínimo + punteros, sin duplicar procedimientos que ya viven en los `SKILL.md` | aceptada | 2026-07-17 |
+| D-014 | `state.yaml` estructurado (no Markdown narrativo) como estado por-incremento | aceptada | 2026-07-17 |
+| D-015 | Orquestador como escritor único (Single Writer) de `state.yaml` | aceptada | 2026-07-17 |
+| D-016 | Espina única de 11 pasos en `state.yaml`: capas técnicas como tareas etiquetadas, revisiones transversales como entradas de evaluación en Verificar | aceptada | 2026-07-17 |
+| D-017 | `security-reviewer` como arquetipo evaluador transversal hermano del Revisor de código | aceptada | 2026-07-17 |
 
 ## Formato
 
@@ -143,4 +147,36 @@
 - **Decisión:** `AGENTS.md` se simplifica a un marco mínimo (101 líneas) que **apunta** a la fuente canónica de cada procedimiento en vez de duplicarlo íntegro. Se añade una "Regla de diseño" explícita en el header del archivo: no duplicar procedimientos, solo referenciarlos.
 - **Alternativas consideradas:** Mantener el contenido íntegro en `AGENTS.md` por ser el único archivo que todas las herramientas leen de forma garantizada (descartada: el costo de sincronización manual supera el beneficio, y el patrón de puntero ya funciona para otros casos en el harness). Eliminar el espejo de portabilidad de `AGENTS.md` por completo (descartada: seguiría haciendo falta un punto de entrada mínimo para la bootstrap-paradoja, ver D-005; se resuelve con un puntero corto, no con el contenido completo).
 - **Consecuencias:** `AGENTS.md` queda más mantenible y con menor riesgo de desincronización; el detalle procedimental vive en un único lugar (los `SKILL.md`). Requiere disciplina: al crear nuevos procedimientos, seguir el patrón de puntero en vez de volver a duplicar contenido en `AGENTS.md`.
+
+### D-014 — `state.yaml` estructurado como estado por-incremento
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** §7 de `methodology.md` mencionaba "estado del incremento" sin definir su formato. A partir de una muestra `state.json` del flujo previo del usuario (`temp.md`) se identificó la necesidad de fijar el formato del estado por-incremento, distinto de la persistencia narrativa de `_persistence/`.
+- **Decisión:** El estado por incremento se modela como archivo **estructurado** por convención `state.yaml` (YAML), no como Markdown narrativo. Es la máquina de estado del ciclo de vida (§3) de la vertical slice: la consumen el orquestador (para reanudar) y los checks de conformidad (§10, para auditar), no un lector humano en primera instancia.
+- **Alternativas consideradas:** Reutilizar el patrón narrativo de `_persistence/` (Markdown con `## Índice`) también para el estado por incremento (descartada: mezcla dos naturalezas distintas — bitácora humana vs máquina de estado consumida programáticamente — y dificulta el parseo determinista para los checks de conformidad).
+- **Consecuencias:** `methodology.md` distingue explícitamente dos capas de persistencia con formatos distintos (§7). La ruta física exacta de `state.yaml` queda pendiente de instanciación (relacionado con T-018, estructura de `_increments/<id>/`).
+
+### D-015 — Orquestador como escritor único (Single Writer) de `state.yaml`
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** Si varios agentes de la flota escribieran directamente el estado de la slice, se generarían condiciones de carrera y un estado no confiable para la reanudación.
+- **Decisión:** El **orquestador** (sesión principal) es el **único** responsable de escribir `state.yaml`. Cada **artefacto** (`definition`, `spec`, `plan`, código, tests) lo escribe solo su agente productor; los subagentes reportan resultados y el orquestador verifica y transcribe al `state.yaml`.
+- **Alternativas consideradas:** Que cada agente/etapa escriba directamente su sección del `state.yaml` (descartada: multiplica escritores concurrentes sobre un mismo archivo, rompiendo la Single Writer Rule ya adoptada para la persistencia narrativa en §7).
+- **Consecuencias:** Consistencia garantizada del estado; el orquestador se vuelve el punto único de verdad y de fallo para la reanudación de una slice interrumpida.
+
+### D-016 — Espina única de 11 pasos en `state.yaml`
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** Al modelar el `state.yaml` surgió la tentación de bifurcar el ciclo de vida por capa técnica (frontend/backend/DB) o por tipo de revisión (código/seguridad), lo que habría multiplicado la máquina de estado y roto la coherencia con la espina común de 11 pasos ya fijada en D-010.
+- **Decisión:** `state.yaml` modela **un solo** ciclo §3 (Definir → … → Integrar) por slice. Las capas técnicas **no son pasos**: son *tareas etiquetadas* (`component` + `owner`) dentro de Construir (paso 8). Las revisiones transversales (calidad de código §5.2, seguridad) son **entradas de evaluación** dentro de Verificar (paso 10), no pasos nuevos. Si algo es valor end-to-end independiente de otra funcionalidad, es **otra slice** (otro `state.yaml`), no una rama de la actual.
+- **Alternativas consideradas:** Bifurcar el ciclo por capa técnica (paso "Construir-FE", "Construir-BE", "Construir-DB" separados) — descartada: contradice NC-4 (una slice es end-to-end) y multiplica la máquina de estado sin necesidad. Añadir pasos nuevos para revisión de código/seguridad — descartada: ya existe el paso Verificar (10) como punto de entrada de evaluación; añadir pasos rompería la espina única de D-010.
+- **Consecuencias:** El `state.yaml` permanece simple y uniforme entre slices, independientemente de cuántas capas técnicas o revisores transversales participen. Queda pendiente modelar el detalle de gates con resoluciones y los casos TDD dentro de Construir (T-017 continúa).
+
+### D-017 — `security-reviewer` como arquetipo evaluador transversal hermano del Revisor de código
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** D-011 definió el *Revisor de código* como evaluador independiente del Verificador. Faltaba resolver dónde encaja la revisión de seguridad, que es conceptualmente análoga pero de un dominio distinto.
+- **Decisión:** `security-reviewer` es un arquetipo evaluador transversal **hermano** del Revisor de código (§5.2): mismas reglas (independiente, contexto fresco, hallazgos → tests que fallan), adoptable por E4. Se distingue explícitamente la **seguridad-revisión** (auditoría de vulnerabilidades, rol de `security-reviewer`) de la **seguridad-comportamiento** (autorización, validación de input), que **no** es revisión sino un **criterio de aceptación** en la spec (§3, paso 4).
+- **Alternativas consideradas:** Fusionar seguridad dentro del Revisor de código genérico sin arquetipo propio (descartada: la revisión de seguridad puede requerir un perfil/contexto distinto al de calidad de código general, aunque puede ser el mismo agente con otro perfil). Tratar toda la seguridad como criterio de aceptación sin evaluador transversal (descartada: pierde la capacidad de detectar vulnerabilidades no cubiertas por specs explícitas).
+- **Consecuencias:** El patrón evaluador transversal (§5.2) queda simétrico y extensible: Revisor de código y `security-reviewer` comparten reglas de adopción bajo E4; en `state.yaml` (§7.1) ambos aparecen como entradas de evaluación en Verificar (`code_review`, `security_review`).
 

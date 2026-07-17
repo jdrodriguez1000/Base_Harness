@@ -26,7 +26,8 @@
 | T-014 | Cablear `template/_guideline/principles.md` como comportamiento vinculante en `AGENTS.md`, `CLAUDE.md`, agentes de sesión y `register-harness` | completada | alta |
 | T-015 | Crear `template/_guideline/methodology.md` agnóstico (dos ejes, arquetipos, ciclo de vida) + diferenciación Prototipo (deseabilidad/factibilidad) vs MVP | completada | alta |
 | T-016 | Segunda ronda de `methodology.md`: elimina prototipado por-incremento, añade contratos/flujos de observabilidad-evaluación (entregables y código), Revisor de código, especialización de flota; simplifica `AGENTS.md` | completada | alta |
-| T-017 | **[PRÓXIMA]** Continuar iterando `template/_guideline/methodology.md` (estructura física de carpetas por incremento y `_template/`, pendiente de instanciación) | pendiente | alta |
+| T-017 | Tercera ronda de `methodology.md`: §7.1 estado por incremento (`state.yaml`) — espina única, capas etiquetadas, Single Writer, hermano de seguridad (§5.2) | completada (modelo base; gates/TDD continúan en T-018) | alta |
+| T-018 | **[PRÓXIMA]** Modelar en `state.yaml` los gates con sus resoluciones (`gate_paso_5/7/9`: `status`, `fecha`, `resoluciones`) y los casos TDD dentro de Construir; relacionar con la estructura física de `_increments/<id>/` y `_template/` | pendiente | alta |
 
 ## Convención de ID
 
@@ -45,8 +46,8 @@
 
 ## Backlog
 
-- [ ] T-017 — **[PRÓXIMA TAREA]** Continuar iterando `template/_guideline/methodology.md`: definir la estructura física de carpetas para artefactos por incremento y una posible `_template/` de entregables (pendiente de instanciación desde `D-008`). Vigilar el gatillo de división en dos archivos ([[assumptions]] A-001).
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-010, D-011, D-012, D-013, [[assumptions]] A-001
+- [ ] T-018 — **[PRÓXIMA TAREA]** Modelar en `state.yaml` (§7.1) los **gates con sus resoluciones** (como en la muestra `temp.md`: `gate_paso_5/7/9` con `status`, `fecha` y lista de `resoluciones`) y el modelado de los **casos TDD** dentro de Construir. Relacionar con la estructura física de carpetas para artefactos por incremento y una posible `_template/` de entregables (pendiente de instanciación desde `D-008`), donde se aterrizará la ruta real de `_increments/<id>/`. Vigilar el gatillo de división en dos archivos ([[assumptions]] A-001).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-014, D-015, D-016, D-017, [[assumptions]] A-001
 - [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
@@ -85,5 +86,7 @@
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-009
 - [x] T-016 — Segunda ronda de `methodology.md`: elimina "Prototipar" como fase por-incremento (ciclo 13→11 pasos + spikes de excepción), añade §5.1 (contrato constructor de entregables), §10.1 (flujo observabilidad), §8.1 (flujo evaluación), §3.1 (observabilidad/evaluación TDD), §5.2 (Revisor de código), §5.3 (especialización de flota) y tabla de contenidos; simplifica `template/AGENTS.md` de 273 a 101 líneas (regla de diseño: marco mínimo + punteros, sin duplicar procedimientos).
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-010, D-011, D-012, D-013, [[assumptions]] A-001
+- [x] T-017 — Tercera ronda de `methodology.md`: §7.1 estado por incremento (`state.yaml`) — espina única de 11 pasos, capas técnicas como tareas etiquetadas (`component`/`owner`), revisiones transversales como entradas de evaluación en Verificar, Single Writer (orquestador), reanudación vía rama de la slice; §5.2 nota "hermano de seguridad" (`security-reviewer`).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-014, D-015, D-016, D-017
 
 ## Bloqueadas
