@@ -89,22 +89,28 @@ al instanciar. Borra los ejemplos y los comentarios <!-- --> al rellenar.
        - El del GENERADOR es OBLIGATORIO para arrancar → lo construye el Prototipador primero.
        - Operador y administrador: BAJO DEMANDA (cuando la app lo requiera, días/semanas
          después); mientras tanto se difieren o se simulan (mago de Oz, §4.3). NO en secuencia
-         inmediata tras el generador. -->
+         inmediata tras el generador.
+     MEDIO/CANAL POR ACTOR (§4.2): el medio es propiedad de CADA actor, no del proyecto — un actor
+     vive en app, otro en web, etc.; "ambos" = dos actores en dos medios, construidos en momentos
+     distintos, no un actor en dos medios. Es una decisión de PRODUCTO del cliente (la elicita el
+     interviewer). El Prototipador la lee y obedece. OJO: el medio del PROTOTIPO desechable no tiene
+     por qué ser el del producto final — se materializa en la tecnología más barata que valide la
+     hipótesis (p. ej. un HTML clicable que simula un móvil). -->
 
-### Generador — <actor> · **[obligatorio · lo construye el Prototipador primero]**
+### Generador — <actor> · **[obligatorio · lo construye el Prototipador primero]** · medio: <app | web | notebook | CLI | …>
 
 1. <paso 1 del camino feliz>
 2. <paso 2>
 3. <resultado / valor generado>
 
-### Operador — <actor o —> · [bajo demanda]
+### Operador — <actor o —> · [bajo demanda] · medio: <app | web | … | —>
 
 <!-- Si el operador está ausente/colapsado, escribe "N/A — ver §5" y no inventes flujo. -->
 
 1. <paso 1>
 2. <…>
 
-### Administrador — <actor o —> · [bajo demanda]
+### Administrador — <actor o —> · [bajo demanda] · medio: <app | web | … | —>
 
 1. <paso 1>
 2. <…>

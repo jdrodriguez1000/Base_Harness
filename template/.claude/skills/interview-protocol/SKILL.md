@@ -31,8 +31,9 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
 1. Leer `_guideline/methodology.md` **§4.3** (taxonomía de actores) y **§5** (arquetipos) para saber
    **qué** elicitar y con qué lente.
 2. Tomar el **esqueleto de temas** de `_templates/discovery_temp.md`: sus secciones (§1 objetivo, §2
-   hipótesis de valor, §3 tipo de prototipo, §4 stakeholders, §5 actores, §6 camino feliz, §7
-   Gatekeeper, §8 timebox, §9 exclusiones, §10 split) son las **áreas** que la entrevista debe cubrir.
+   hipótesis de valor, §3 tipo de prototipo, §4 stakeholders, §5 actores, §6 camino feliz **+ medio por
+   actor**, §7 Gatekeeper, §8 timebox, §9 exclusiones, §10 split) son las **áreas** que la entrevista
+   debe cubrir.
 3. Tomar el **formato de registro** de `_templates/interview_temp.md`.
 4. Determinar el destino `<INTERVIEW>` = `interview_document.md` en la carpeta del estadio de prototipo.
    - **Si ya existe** un `<INTERVIEW>` en estado `en curso`: leerlo, ver qué áreas quedaron cubiertas
@@ -57,6 +58,9 @@ Guías de contenido (para elegir qué preguntar, no para interpretar):
   **Administrador**— aunque la respuesta sea que alguno falta o colapsa en otro. Registrar la respuesta
   tal cual; **no** clasifiques tú.
 - **Camino feliz (§6):** priorizar el del **generador** (es el que el prototipo construye primero).
+- **Medio/canal por actor (§6):** preguntar **por dónde interactúa cada actor** (app, web, notebook,
+  CLI…). Es una decisión de producto del cliente; el medio es **por actor**, no del proyecto. Registrar
+  la respuesta; no la decidas tú.
 - **Gatekeeper (§7):** elicitar una métrica de éxito **medible** y su umbral.
 
 > **No interpretes.** Tu salida es el diálogo transcrito. Meter actores en la taxonomía, redactar el

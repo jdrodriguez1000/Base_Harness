@@ -251,12 +251,18 @@ El estadio de prototipo mitiga **riesgo**, y hay dos riesgos distintos → dos t
   datos/ML** suele mandar aquí: si un modelo no alcanza utilidad mínima, lo demás no importa.
 - A menudo se hacen **ambos en secuencia**: deseabilidad → factibilidad → MVP.
 
-> **Frontera humano ↔ agente.** El **descubrimiento** (entender cliente, stakeholders, actores y camino
-> feliz) lo **conduce un agente** —el *Descubridor* (§5)— entrevistando al humano. La **materialización**
-> del prototipo de deseabilidad (mockups, wireframes, "mago de Oz") sigue siendo una actividad **humana /
-> de diseño**; los agentes de **construcción** entran de lleno desde la **factibilidad** (spike/notebook)
-> en adelante. El prototipo es **desechable**: informa, no se "gradúa" a producción — los tests y el
-> Tracer Bullet aplican **desde el MVP** (por eso el prototipo no contradice NC-4/NC-5).
+> **Frontera humano ↔ agente.** No corre por *deseabilidad vs factibilidad*, sino por **juicio vs.
+> materialización**. El **juicio de producto/UX** —qué validar, qué se le muestra a quién, con qué
+> usuarios se prueba— y la **simulación viva del "mago de Oz"** (una persona finge en vivo ser el
+> sistema/backend) son **humanos**: el humano es dueño del riesgo de mercado. La **materialización** del
+> prototipo la construye el **agente** *Prototipador* (§5), guiado por el `discovery.md` y la dirección
+> de diseño del humano: **wireframes / mockups / HTML clicable** cuando domina la **deseabilidad**, o
+> **spike / notebook / PoC** cuando domina la **factibilidad** (§3 del discovery). El **descubrimiento**
+> también lo conduce un agente (el *Descubridor*). Regla de medio: el prototipo se materializa en la
+> **tecnología más barata que valide la hipótesis** (p. ej. un HTML clicable que simula una pantalla de
+> móvil), que **no** tiene por qué ser el medio del producto final. El prototipo es **desechable**:
+> informa, no se "gradúa" a producción — los tests y el Tracer Bullet aplican **desde el MVP** (por eso
+> el prototipo no contradice NC-4/NC-5).
 
 ### 4.3 Disciplina de alcance en el prototipo (control de *scope creep*)
 
@@ -352,11 +358,14 @@ nombres y modelos— se define **al instanciar cada proyecto**, respetando estos
 > La flota real puede fundir o renombrar ambos al instanciar (§5).
 
 > **Prototipador (fuera del ciclo de incremento).** El **estadio de Prototipo de alto nivel** (§4) usa
-> un *Prototipador* que toma el *entregable de descubrimiento* y construye el **camino feliz desechable**
-> (spike/notebook/PoC de factibilidad) **empezando por el generador**; los demás actores, bajo demanda
-> (§4.3). Es un arquetipo del **estadio inicial**, desechable, **no del ciclo de incremento**: las slices
-> se construyen con los arquetipos de arriba, no con el Prototipador. Orden del estadio: **Descubridor →
-> Prototipador**.
+> un *Prototipador* que toma el *entregable de descubrimiento* y **materializa** el **camino feliz
+> desechable** del actor —**wireframe/mockup/HTML clicable** si domina la deseabilidad, o
+> **spike/notebook/PoC** si domina la factibilidad (§3 del discovery)—, en el **medio de ese actor**
+> (app, web, notebook…) declarado en §6 del discovery y con la tecnología **más barata que valide la
+> hipótesis**. **Empieza por el generador**; los demás actores, bajo demanda (§4.3). El **juicio de UX y
+> el mago de Oz** siguen siendo humanos (§4.2). Es un arquetipo del **estadio inicial**, desechable, **no
+> del ciclo de incremento**: las slices se construyen con los arquetipos de arriba, no con el
+> Prototipador. Orden del estadio: **Descubridor → Prototipador**.
 
 **Coordinación:**
 - **Sesión principal (orquestador):** analiza el objetivo, fija la estrategia, guarda su plan en la

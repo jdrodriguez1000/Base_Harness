@@ -31,8 +31,9 @@
 | T-019 | Cablear `methodology.md` en `template/AGENTS.md` (sección "Metodología de construcción", hermana de la de `principles.md`) | completada | alta |
 | T-020 | Prototipado Parte 1 (método): taxonomía de actores por defecto (§4.3) y arquetipo Descubridor (§5) conectado con el Prototipador | completada | alta |
 | T-021 | Prototipado Parte 2 (Descubridor): plantilla `_templates/discovery_temp.md` + arquetipo Descubridor materializado como dos agentes (`onboarding-interviewer` + `onboarding-writer`), `_templates/interview_temp.md` | completada | alta |
-| T-022 | **[PRÓXIMA]** Prototipado Parte 2 (Prototipador): construir el agente+skill `prototipador` (patrón wrapper+skill) | pendiente | alta |
-| T-023 | Re-sync a opencode/Gemini de los nuevos agentes/skills/plantillas del Descubridor (`onboarding-interviewer`, `onboarding-writer`, `interview-protocol`, `discovery-protocol`) vía `register-harness` | pendiente | media |
+| T-022 | Prototipado Parte 2 (Prototipador): construir el agente+skill `prototype-builder`/`prototype-protocol` (patrón wrapper+skill), reubicación de la frontera §4.2 (D-025) y observabilidad §10 (D-026) | completada | alta |
+| T-023 | **[PRÓXIMA]** Re-sync a opencode/Gemini de los nuevos agentes/skills/plantillas del Descubridor y del Prototipador (`onboarding-interviewer`, `onboarding-writer`, `interview-protocol`, `discovery-protocol`, `prototype-builder`, `prototype-protocol`) vía `register-harness` | pendiente | media |
+| T-024 | Probar `prototype-builder` end-to-end con un `discovery.md` real (usar el caso de reciclaje como fixture) | pendiente | alta |
 
 ## Convención de ID
 
@@ -51,10 +52,10 @@
 
 ## Backlog
 
-- [ ] T-022 — **[PRÓXIMA TAREA]** Prototipado Parte 2 (Prototipador): construir el agente+skill `prototipador` (agnóstico, patrón wrapper+skill), consumiendo `discovery.md` producido por `onboarding-writer`. Incluye replicar el patrón de "perfil de conformidad" (D-023) para el propio Prototipador. La construcción del motor genérico de traza/conformidad, el dataset de fixtures con defectos sembrados y el juez LLM calibrado para `onboarding-writer` (diseño ya escrito en D-023, D-024) queda DIFERIDA por E4 hasta tener evidencia real de uso; retomar como parte del alcance de esta tarea o como tarea nueva cuando el Prototipador exista.
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-020, D-021, D-022, D-023, D-024
-- [ ] T-023 — Re-sync a opencode/Gemini (vía `register-harness`) de los nuevos agentes/skills/plantillas del Descubridor: `onboarding-interviewer`, `onboarding-writer`, skills `interview-protocol`/`discovery-protocol`, plantillas `discovery_temp.md`/`interview_temp.md`.
-      Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-021
+- [ ] T-023 — **[PRÓXIMA TAREA]** Re-sync a opencode/Gemini (vía `register-harness`) de los nuevos agentes/skills/plantillas del Descubridor Y del Prototipador: `onboarding-interviewer`, `onboarding-writer`, skills `interview-protocol`/`discovery-protocol`, plantillas `discovery_temp.md`/`interview_temp.md`, agente `prototype-builder`, skill `prototype-protocol`.
+      Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-021, D-026
+- [ ] T-024 — Probar `prototype-builder` end-to-end con un `discovery.md` real (usar el caso de reciclaje como fixture); sin esta evidencia el motor genérico de traza/conformidad y el juez LLM calibrado siguen diferidos por E4.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-026
 - [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
@@ -103,5 +104,7 @@
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-020
 - [x] T-021 — Prototipado Parte 2 (Descubridor): plantilla `template/_templates/discovery_temp.md` (10 secciones del entregable de descubrimiento); arquetipo Descubridor materializado como dos agentes — `onboarding-interviewer` (+ skill `interview-protocol`, conduce la entrevista, log append-only reanudable `interview_document.md`) y `onboarding-writer` (+ skill `discovery-protocol`, subagente autónomo que sintetiza el log en `discovery.md`); plantilla `template/_templates/interview_temp.md`; nota en `methodology.md` §5. Todo solo en `template/.claude` (deliverable-only). Continuación: perfiles de conformidad §10 escritos en ambos agentes (checks I1–I7 / W1–W6), oráculo de trazabilidad log→discovery (T1–T4), y confirmación de conservar `interview_document.md` como traza.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-021, D-022, D-023, D-024, [[assumptions]] A-002
+- [x] T-022 — Prototipado Parte 2 (Prototipador): reubicación de la frontera humano↔agente de *deseabilidad/factibilidad* a *juicio vs. materialización* (§4.2, D-025), con la "regla de medio" y el campo medio/canal por actor (§6 de `discovery_temp.md`, elicitado en `interview-protocol`/`discovery-protocol`); arquetipo Prototipador materializado como un solo agente `prototype-builder` + skill `prototype-protocol` (deliverable-only, autónomo pero agéntico, ramifica por §3 discovery, construye solo el camino feliz del generador, artefacto en `<estadio-prototipo>/prototype/`), con perfil de conformidad §10 (checks P1–P8), oráculo de trazabilidad discovery→prototype (T1–T2) y evaluación anclada al Gatekeeper humano (D-026).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-025, D-026
 
 ## Bloqueadas

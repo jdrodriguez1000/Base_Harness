@@ -48,6 +48,8 @@ log. El campo `área (§n)` de cada entrada del log indica a qué sección perte
    **declarar** cuáles existen, faltan o **colapsan** en otro. No forzar tres actores.
 5. **Camino feliz por actor (§6):** redactar el flujo crítico de cada actor presente; marcar el del
    **generador** como el que construirá primero el Prototipador. Operador/administrador: **bajo demanda**.
+   Registrar el **medio/canal de cada actor** (app, web, notebook, CLI…) en la cabecera de su flujo,
+   tal como se elicitó; el medio es **por actor**, no del proyecto. Si no se elicitó, declararlo hueco.
 6. **Gatekeeper (§7):** formalizar como métrica **medible** + umbral + método.
 7. **Timebox (§8)** y **exclusiones explícitas (§9)**; **split (§10)** solo si el log lo justifica.
 

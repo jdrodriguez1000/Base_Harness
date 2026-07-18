@@ -33,8 +33,8 @@ comentarios al instanciar.
 
 <!-- El "área" mapea a la sección de discovery_temp.md que la pregunta busca cubrir
      (§1 objetivo · §2 hipótesis · §3 tipo de prototipo · §4 stakeholders ·
-      §5 actores · §6 camino feliz · §7 Gatekeeper · §8 timebox · §9 exclusiones ·
-      §10 split). Sirve para que el writer sepa dónde colocar cada respuesta. -->
+      §5 actores · §6 camino feliz + medio por actor · §7 Gatekeeper · §8 timebox ·
+      §9 exclusiones · §10 split). Sirve para que el writer sepa dónde colocar cada respuesta. -->
 
 ## Registro de la entrevista
 
