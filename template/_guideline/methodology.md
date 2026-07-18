@@ -343,6 +343,14 @@ nombres y modelos— se define **al instanciar cada proyecto**, respetando estos
 > entregables sigue el contrato de §5.1 y es **observable y evaluable** (perfil de conformidad §10 +
 > rúbrica §8).
 
+> **Realización concreta del Descubridor (instanciación).** En el harness base el Descubridor se
+> materializa como **dos agentes** que separan *elicitar* de *estructurar* (E4): el
+> **`onboarding-interviewer`** conduce la entrevista y registra crudo cada pregunta/respuesta en
+> `interview_document.md` (append-only, por eso la entrevista es **reanudable**: el log es el estado);
+> el **`onboarding-writer`** sintetiza ese log en el `discovery.md` estructurado. El interviewer es
+> interactivo (dialoga con el humano); el writer es un **subagente autónomo** (su insumo es un archivo).
+> La flota real puede fundir o renombrar ambos al instanciar (§5).
+
 > **Prototipador (fuera del ciclo de incremento).** El **estadio de Prototipo de alto nivel** (§4) usa
 > un *Prototipador* que toma el *entregable de descubrimiento* y construye el **camino feliz desechable**
 > (spike/notebook/PoC de factibilidad) **empezando por el generador**; los demás actores, bajo demanda

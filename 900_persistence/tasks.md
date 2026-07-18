@@ -30,7 +30,9 @@
 | T-018 | Modelar en `state.yaml` los gates con sus resoluciones y los casos TDD dentro de Construir; plantilla física `template/_templates/state_temp.yaml` | completada | alta |
 | T-019 | Cablear `methodology.md` en `template/AGENTS.md` (sección "Metodología de construcción", hermana de la de `principles.md`) | completada | alta |
 | T-020 | Prototipado Parte 1 (método): taxonomía de actores por defecto (§4.3) y arquetipo Descubridor (§5) conectado con el Prototipador | completada | alta |
-| T-021 | **[PRÓXIMA]** Prototipado Parte 2: definir campos del "entregable de descubrimiento" + plantilla `_templates/discovery_temp.md`, luego construir los agentes+skills `descubridor` y `prototipador` (patrón wrapper+skill) | pendiente | alta |
+| T-021 | Prototipado Parte 2 (Descubridor): plantilla `_templates/discovery_temp.md` + arquetipo Descubridor materializado como dos agentes (`onboarding-interviewer` + `onboarding-writer`), `_templates/interview_temp.md` | completada | alta |
+| T-022 | **[PRÓXIMA]** Prototipado Parte 2 (Prototipador): construir el agente+skill `prototipador` (patrón wrapper+skill) | pendiente | alta |
+| T-023 | Re-sync a opencode/Gemini de los nuevos agentes/skills/plantillas del Descubridor (`onboarding-interviewer`, `onboarding-writer`, `interview-protocol`, `discovery-protocol`) vía `register-harness` | pendiente | media |
 
 ## Convención de ID
 
@@ -49,8 +51,10 @@
 
 ## Backlog
 
-- [ ] T-021 — **[PRÓXIMA TAREA]** Prototipado Parte 2: fijar los campos concretos del "entregable de descubrimiento" (actores + camino feliz por actor + stakeholders + Gatekeeper + exclusiones) y crear la plantilla `_templates/discovery_temp.md`; luego construir los agentes+skills `descubridor` y `prototipador` (agnósticos, patrón wrapper+skill). La Parte 3 (perfil de conformidad §10 + rúbrica §8 por agente, motor genérico de traza/conformidad, juez LLM) es tarea aparte posterior.
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-018, D-019, D-020
+- [ ] T-022 — **[PRÓXIMA TAREA]** Prototipado Parte 2 (Prototipador): construir el agente+skill `prototipador` (agnóstico, patrón wrapper+skill), consumiendo `discovery.md` producido por `onboarding-writer`. La Parte 3 (perfil de conformidad §10 + rúbrica §8 por agente, motor genérico de traza/conformidad, juez LLM) es tarea aparte posterior.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-020, D-021, D-022
+- [ ] T-023 — Re-sync a opencode/Gemini (vía `register-harness`) de los nuevos agentes/skills/plantillas del Descubridor: `onboarding-interviewer`, `onboarding-writer`, skills `interview-protocol`/`discovery-protocol`, plantillas `discovery_temp.md`/`interview_temp.md`.
+      Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-021
 - [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
@@ -97,5 +101,7 @@
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-019
 - [x] T-020 — Prototipado Parte 1 (método): §4.3 taxonomía de actores por defecto (GENERADOR→OPERADOR→ADMINISTRADOR, piso no techo, prioridad no lineal), §5 nuevo arquetipo Descubridor (conecta con el Prototipador, orden Descubridor→Prototipador), ajuste de §4.2 (frontera humano↔agente).
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-020
+- [x] T-021 — Prototipado Parte 2 (Descubridor): plantilla `template/_templates/discovery_temp.md` (10 secciones del entregable de descubrimiento); arquetipo Descubridor materializado como dos agentes — `onboarding-interviewer` (+ skill `interview-protocol`, conduce la entrevista, log append-only reanudable `interview_document.md`) y `onboarding-writer` (+ skill `discovery-protocol`, subagente autónomo que sintetiza el log en `discovery.md`); plantilla `template/_templates/interview_temp.md`; nota en `methodology.md` §5. Todo solo en `template/.claude` (deliverable-only).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-021, D-022
 
 ## Bloqueadas
