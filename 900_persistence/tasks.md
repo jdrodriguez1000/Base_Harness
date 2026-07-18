@@ -27,7 +27,10 @@
 | T-015 | Crear `template/_guideline/methodology.md` agnóstico (dos ejes, arquetipos, ciclo de vida) + diferenciación Prototipo (deseabilidad/factibilidad) vs MVP | completada | alta |
 | T-016 | Segunda ronda de `methodology.md`: elimina prototipado por-incremento, añade contratos/flujos de observabilidad-evaluación (entregables y código), Revisor de código, especialización de flota; simplifica `AGENTS.md` | completada | alta |
 | T-017 | Tercera ronda de `methodology.md`: §7.1 estado por incremento (`state.yaml`) — espina única, capas etiquetadas, Single Writer, hermano de seguridad (§5.2) | completada (modelo base; gates/TDD continúan en T-018) | alta |
-| T-018 | **[PRÓXIMA]** Modelar en `state.yaml` los gates con sus resoluciones (`gate_paso_5/7/9`: `status`, `fecha`, `resoluciones`) y los casos TDD dentro de Construir; relacionar con la estructura física de `_increments/<id>/` y `_template/` | pendiente | alta |
+| T-018 | Modelar en `state.yaml` los gates con sus resoluciones y los casos TDD dentro de Construir; plantilla física `template/_templates/state_temp.yaml` | completada | alta |
+| T-019 | Cablear `methodology.md` en `template/AGENTS.md` (sección "Metodología de construcción", hermana de la de `principles.md`) | completada | alta |
+| T-020 | Prototipado Parte 1 (método): taxonomía de actores por defecto (§4.3) y arquetipo Descubridor (§5) conectado con el Prototipador | completada | alta |
+| T-021 | **[PRÓXIMA]** Prototipado Parte 2: definir campos del "entregable de descubrimiento" + plantilla `_templates/discovery_temp.md`, luego construir los agentes+skills `descubridor` y `prototipador` (patrón wrapper+skill) | pendiente | alta |
 
 ## Convención de ID
 
@@ -46,8 +49,8 @@
 
 ## Backlog
 
-- [ ] T-018 — **[PRÓXIMA TAREA]** Modelar en `state.yaml` (§7.1) los **gates con sus resoluciones** (como en la muestra `temp.md`: `gate_paso_5/7/9` con `status`, `fecha` y lista de `resoluciones`) y el modelado de los **casos TDD** dentro de Construir. Relacionar con la estructura física de carpetas para artefactos por incremento y una posible `_template/` de entregables (pendiente de instanciación desde `D-008`), donde se aterrizará la ruta real de `_increments/<id>/`. Vigilar el gatillo de división en dos archivos ([[assumptions]] A-001).
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-008, D-014, D-015, D-016, D-017, [[assumptions]] A-001
+- [ ] T-021 — **[PRÓXIMA TAREA]** Prototipado Parte 2: fijar los campos concretos del "entregable de descubrimiento" (actores + camino feliz por actor + stakeholders + Gatekeeper + exclusiones) y crear la plantilla `_templates/discovery_temp.md`; luego construir los agentes+skills `descubridor` y `prototipador` (agnósticos, patrón wrapper+skill). La Parte 3 (perfil de conformidad §10 + rúbrica §8 por agente, motor genérico de traza/conformidad, juez LLM) es tarea aparte posterior.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-018, D-019, D-020
 - [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
@@ -88,5 +91,11 @@
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-010, D-011, D-012, D-013, [[assumptions]] A-001
 - [x] T-017 — Tercera ronda de `methodology.md`: §7.1 estado por incremento (`state.yaml`) — espina única de 11 pasos, capas técnicas como tareas etiquetadas (`component`/`owner`), revisiones transversales como entradas de evaluación en Verificar, Single Writer (orquestador), reanudación vía rama de la slice; §5.2 nota "hermano de seguridad" (`security-reviewer`).
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-014, D-015, D-016, D-017
+- [x] T-018 — Modelar en `state.yaml` los gates con sus resoluciones (modelo reutilizable aplicable a pasos 5/7/11) y los casos TDD dentro de Construir (`stage`, `caracterizacion`); plantilla física creada en `template/_templates/state_temp.yaml`; §7.1 de `methodology.md` enriquecida con el árbol de `_increments/<id>/`.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-018
+- [x] T-019 — Cablear `methodology.md` en `template/AGENTS.md` (sección "Metodología de construcción", hermana de la de `principles.md`); referencia va en `AGENTS.md` (SSOT), no en `CLAUDE.md`.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-019
+- [x] T-020 — Prototipado Parte 1 (método): §4.3 taxonomía de actores por defecto (GENERADOR→OPERADOR→ADMINISTRADOR, piso no techo, prioridad no lineal), §5 nuevo arquetipo Descubridor (conecta con el Prototipador, orden Descubridor→Prototipador), ajuste de §4.2 (frontera humano↔agente).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-020
 
 ## Bloqueadas

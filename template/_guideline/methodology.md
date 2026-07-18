@@ -251,11 +251,12 @@ El estadio de prototipo mitiga **riesgo**, y hay dos riesgos distintos → dos t
   datos/ML** suele mandar aquí: si un modelo no alcanza utilidad mínima, lo demás no importa.
 - A menudo se hacen **ambos en secuencia**: deseabilidad → factibilidad → MVP.
 
-> **Frontera humano ↔ agente.** El prototipo de **deseabilidad** suele ser una actividad **humana / de
-> diseño** (puede usar herramientas no-code) y sirve de insumo; los **agentes** de construcción entran
-> típicamente desde el prototipo de **factibilidad** (spike/notebook) en adelante. El prototipo es
-> **desechable**: informa, no se "gradúa" a producción — los tests y el Tracer Bullet aplican **desde
-> el MVP** (por eso el prototipo no contradice NC-4/NC-5).
+> **Frontera humano ↔ agente.** El **descubrimiento** (entender cliente, stakeholders, actores y camino
+> feliz) lo **conduce un agente** —el *Descubridor* (§5)— entrevistando al humano. La **materialización**
+> del prototipo de deseabilidad (mockups, wireframes, "mago de Oz") sigue siendo una actividad **humana /
+> de diseño**; los agentes de **construcción** entran de lleno desde la **factibilidad** (spike/notebook)
+> en adelante. El prototipo es **desechable**: informa, no se "gradúa" a producción — los tests y el
+> Tracer Bullet aplican **desde el MVP** (por eso el prototipo no contradice NC-4/NC-5).
 
 ### 4.3 Disciplina de alcance en el prototipo (control de *scope creep*)
 
@@ -265,9 +266,21 @@ El prototipo se mantiene barato y rápido con reglas estrictas de alcance:
   las mejoras estéticas/secundarias se posponen.
 - **Camino feliz (Core Path).** Solo los flujos críticos que validan la hipótesis de valor; lo demás
   se excluye.
-- **Roles/actores priorizados.** Clasificar los actores del sistema por criticidad para la hipótesis y
-  diseñar solo el camino feliz de los **actores clave**. Los roles secundarios/administrativos se
-  **posponen al MVP**, donde se construyen en código con plantillas/componentes prefabricados.
+- **Roles/actores priorizados (taxonomía por defecto).** Clasificar los actores por criticidad y
+  diseñar **solo el camino feliz** de cada uno. Como *lente de elicitación* —un **piso, no un techo**—
+  todo sistema se examina contra al menos **tres arquetipos de actor**, definidos por su relación con el
+  valor (no por su cargo):
+  - **Generador** — origina el valor central por su **uso directo**; es la **razón de ser** (sin
+    generador no hay sistema).
+  - **Operador** — **aprovecha lo que el generador produce** y lo convierte en valor posterior.
+  - **Administrador** — **sostiene y gobierna** el sistema (altas/bajas, configuración, métricas) sin
+    participar del flujo de valor central.
+
+  **Siempre se pregunta por los tres**, pero pueden **faltar o colapsar** (sin operador, sin
+  administrador, ambos en un mismo actor, o los tres concentrados en el generador); se declara
+  explícitamente cuáles existen. **Prioridad no lineal:** el camino feliz del **generador es obligatorio**
+  para arrancar el proyecto; los de operador y administrador se construyen **bajo demanda** (cuando la
+  aplicación lo requiera —días o semanas después—), **no** en una secuencia inmediata tras el generador.
 - **Artefactos segmentados por audiencia (*split*).** En vez de un artefacto monolítico, generar
   validaciones **especializadas por audiencia** (p. ej. una para pruebas de usabilidad con usuarios y
   otra como herramienta de demostración para clientes/aliados), cada una enfocada en su objetivo.
@@ -279,6 +292,12 @@ El prototipo se mantiene barato y rápido con reglas estrictas de alcance:
 
 > Agnóstico por tipo de proyecto: en software/producto el "camino feliz" son flujos de UI; en DS/ML es
 > la **hipótesis de valor central** (p. ej. que la señal existe en los datos y un baseline la captura).
+
+> **El generador basta para avanzar.** Un proyecto puede pasar al **MVP con solo el camino feliz del
+> generador** construido; las funciones de operador y administrador se cubren provisionalmente con un
+> **humano que simula la aplicación (mago de Oz, §4.2)** hasta que su construcción se justifique. Es
+> **mínima complejidad (E4)** aplicada al eje de actores: se construye el actor crítico y se **difiere o
+> simula** el resto, sin bloquear la entrega de valor.
 
 ### 4.4 Frontera Prototipo → MVP
 
@@ -312,10 +331,24 @@ nombres y modelos— se define **al instanciar cada proyecto**, respetando estos
   sin cambiar comportamiento), *Integrador de pruebas* (suite end-to-end), *Revisor de código*
   (evaluación independiente de calidad/seguridad/diseño — §5.2).
 
+> **Descubridor (estadio de Prototipo, fuera del ciclo de incremento).** Antes de prototipar, alguien
+> tiene que **preguntar**. El *Descubridor* **conduce la entrevista con el humano/cliente** para elicitar
+> qué quiere el cliente, los **stakeholders**, los **actores** (taxonomía de §4.3) y el **camino feliz de
+> cada actor**. Se distingue del resto en que su insumo no es un artefacto previo sino el **diálogo con el
+> humano**. **Alcance acotado (crítico):** busca un entendimiento **rápido y suficiente para arrancar**
+> —lo justo para prototipar el camino feliz del **generador**—, no un relevamiento exhaustivo; evita el
+> cuestionario infinito que lleva a la **parálisis por diseño** (§4.3). **Produce** un *entregable de
+> descubrimiento* (actores clasificados con ausencias/colapsos declarados, camino feliz por actor,
+> stakeholders y el **Gatekeeper** de §4.3), que es el **insumo del Prototipador**. Como constructor de
+> entregables sigue el contrato de §5.1 y es **observable y evaluable** (perfil de conformidad §10 +
+> rúbrica §8).
+
 > **Prototipador (fuera del ciclo de incremento).** El **estadio de Prototipo de alto nivel** (§4) usa
-> un *Prototipador* que produce el spike/notebook/PoC de factibilidad. Es un arquetipo del **estadio
-> inicial**, desechable, **no del ciclo de incremento**: las slices se construyen con los arquetipos de
-> arriba, no con el Prototipador.
+> un *Prototipador* que toma el *entregable de descubrimiento* y construye el **camino feliz desechable**
+> (spike/notebook/PoC de factibilidad) **empezando por el generador**; los demás actores, bajo demanda
+> (§4.3). Es un arquetipo del **estadio inicial**, desechable, **no del ciclo de incremento**: las slices
+> se construyen con los arquetipos de arriba, no con el Prototipador. Orden del estadio: **Descubridor →
+> Prototipador**.
 
 **Coordinación:**
 - **Sesión principal (orquestador):** analiza el objetivo, fija la estrategia, guarda su plan en la
@@ -457,18 +490,46 @@ Cada vertical slice lleva su propia **máquina de estado del ciclo de vida** (§
   *tareas etiquetadas* dentro de Planear/Construir. Cada caso/tarea lleva su `component` (fe/be/db) y su
   `owner` (agente de la flota, §5.3). `definition`/`spec`/`plan` son **unificadas** para toda la slice;
   el plan las descompone por capa.
+- **Construir es un bucle TDD.** Cada caso recorre **RED → GREEN → REFACTOR** (§5.3); el campo `stage`
+  marca la fase. Un caso de **caracterización** (`caracterizacion: true`) es un test que **nace verde**:
+  fija conducta ya existente, no dirige código nuevo.
 - **Las revisiones transversales viven en Verificar.** Calidad de código (§5.2) y seguridad (su
   hermano) son **entradas de evaluación** en Verificar, no pasos nuevos. La seguridad-*comportamiento*
   es un **criterio de aceptación** en la spec.
+- **Los gates dejan traza.** Cada gate humano (pasos 5, 7 y 11) registra `status`
+  (`PENDIENTE`/`APROBADO`/`APROBADO_CON_CAMBIOS`/`RECHAZADO`), `fecha` y una lista de `resoluciones`
+  —qué se decidió y **contra** qué alternativa—. **Ningún agente cruza un gate** (P5).
 - **Escritor único:** el **orquestador** (§7). Los subagentes reportan; él verifica (§10) y transcribe.
 
+**Carpeta del incremento.** El `state.yaml` no vive suelto: encabeza la carpeta de la slice, junto a los
+artefactos que produce cada paso. La numeración de carpeta (`_increments/`, `NNN_…`) es convención del
+proyecto, no obligación (ver nota del Apéndice); lo fijo es la **relación** entre el estado y sus
+artefactos hermanos:
+
+```
+_increments/<id>/
+├── state.yaml         ← máquina de estado (único que escribe el orquestador)
+├── contract.md        ← paso 2 · estrella polar / definición de Terminado
+├── definition.md      ← paso 3
+├── spec.md            ← paso 4  (gate paso 5)
+├── plan.md            ← paso 6  (gate paso 7)
+└── verification.md    ← paso 10 · veredicto + matriz de trazabilidad
+```
+
+**Plantilla.** La forma completa (espina de 11 pasos, gate reutilizable, bucle TDD en Construir y
+evaluadores en Verificar) vive en **`_templates/state_temp.yaml`**: se copia a `_increments/<id>/state.yaml`
+al abrir el incremento y se rellena. Estructura esencial:
+
 ```yaml
-construir:                 # paso 8 — un solo stage; tareas etiquetadas por capa
-  status: in_progress
+meta:      { incremento: "<id>", rama: "<rama-git>", estado_global: in_progress, paso_actual: 8 }
+pasos:                     # espina §3 — un solo ciclo, sin bifurcar por capa (NC-4)
+  5_gate_spec: { status: done, gate: { status: APROBADO_CON_CAMBIOS, fecha: "<f>", resoluciones: [
+    { punto: "<qué>", decision: "<qué se resolvió>", contra: "<alternativa descartada>" } ] } }
+  8_construir: { status: in_progress }
+construir:                 # paso 8 — bucle TDD; capas = tareas etiquetadas
   cases:
-    - { id: 1, component: backend,  owner: be-coder, ca: [CA-01], status: green }
-    - { id: 7, component: frontend, owner: fe-coder, ca: [CA-10], status: pending }
-    - { id: 9, component: db,       owner: be-coder, ca: [CA-14], status: pending }  # migración = backend
+    - { id: 1, ca: [CA-01], component: backend,  owner: implementador, stage: green,   caracterizacion: false }
+    - { id: 7, ca: [CA-10], component: frontend, owner: implementador, stage: pending, caracterizacion: false }
 verificar:                 # paso 10 — evaluadores transversales (por E4)
   spec_verifier:   { status: pending }
   code_review:     { status: pending, archetype: code-reviewer }      # §5.2

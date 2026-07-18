@@ -26,6 +26,18 @@ NC-1…NC-6). **Léelo al arrancar.**
 
 ---
 
+## Metodología de construcción (`_guideline/methodology.md`)
+
+El **cómo** se construye software en este harness —agnóstico a lenguaje y stack— vive en
+**`_guideline/methodology.md`**: los dos ejes del trabajo, los estadios de madurez, el **ciclo de vida
+de un incremento** (11 pasos con gates humanos, §3), los arquetipos de agente (§5), la evaluación (§8)
+y el **estado por incremento** (`state.yaml`, §7.1; su plantilla en `_templates/state_temp.yaml`).
+
+Mientras `principles.md` fija el **comportamiento** (vinculante), `methodology.md` fija el
+**procedimiento de construcción**. Consúltalo al planear o construir un incremento.
+
+---
+
 ## Contexto del proyecto (`_context/`)
 
 El contexto declarativo del proyecto vive en `_context/`:

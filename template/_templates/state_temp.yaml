@@ -1,0 +1,69 @@
+# ============================================================================
+# state_temp.yaml — PLANTILLA del estado por incremento (§7.1 de methodology.md)
+# ----------------------------------------------------------------------------
+# Máquina de estado del ciclo de vida (§3) de UNA vertical slice.
+# Al abrir un incremento se copia a  _increments/<id>/state.yaml  y se rellena.
+# Escritor ÚNICO: el orquestador (§7). Los subagentes REPORTAN; él verifica
+# (§10) y transcribe. Es el mecanismo que hace REANUDABLE un incremento
+# interrumpido: la sesión principal lo lee y reinvoca el paso pendiente.
+# Modela la FORMA, no un caso real: los <marcadores> se sustituyen al instanciar.
+# ============================================================================
+
+meta:
+  incremento: "<id-slice>"        # slug; nombra la carpeta  _increments/<id-slice>/
+  rama: "<rama-git>"              # el state.yaml vive en esta rama; al integrar se archiva (§7)
+  estado_global: in_progress      # not_started | in_progress | blocked | done
+  paso_actual: 8                  # puntero de reanudación: el orquestador reinvoca AQUÍ
+
+# --- FORMA DE UN GATE (pasos 5, 7 y 11) -------------------------------------
+# Ningún agente cruza un gate: solo el humano (P5). Las `resoluciones` son la
+# traza de qué se decidió y CONTRA qué alternativa — lo más valioso del gate.
+#   gate:
+#     status: APROBADO_CON_CAMBIOS   # PENDIENTE | APROBADO | APROBADO_CON_CAMBIOS | RECHAZADO
+#     fecha: "<YYYY-MM-DD>"
+#     resoluciones:
+#       - punto:    "<qué se discutió>"
+#         decision: "<qué se resolvió>"
+#         contra:   "<alternativa descartada y por qué>"
+
+# --- ESPINA DE 11 PASOS (§3) — un solo ciclo, sin bifurcar por capa (NC-4) ---
+# Una slice es end-to-end. Si algo es valor de usuario independiente end-to-end,
+# es OTRA slice (otro state.yaml), no una rama de esta.
+pasos:
+  1_definir:      { status: done,        owner: humano+main }
+  2_contrato:     { status: done,        owner: main,           artifact: contract.md }
+  3_definir:      { status: done,        owner: definidor,      artifact: definition.md }
+  4_especificar:  { status: done,        owner: especificador,  artifact: spec.md }
+  5_gate_spec:    { status: done,        gate: { status: APROBADO, fecha: "<fecha>", resoluciones: [] } }
+  6_planear:      { status: done,        owner: planificador,   artifact: plan.md }
+  7_gate_plan:    { status: done,        gate: { status: APROBADO, fecha: "<fecha>", resoluciones: [] } }
+  8_construir:    { status: in_progress }                       # detalle abajo en `construir`
+  9_integracion:  { status: pending,     owner: integrador_pruebas }
+  10_verificar:   { status: pending,     owner: verificador,    artifact: verification.md }
+  11_integrar:    { status: pending,     gate: { status: PENDIENTE } }   # PR → 🚦 el humano prueba y mergea
+
+# --- PASO 8 · CONSTRUIR — bucle TDD (§5.3) ----------------------------------
+# Las capas (fe/be/db) son TAREAS ETIQUETADAS dentro de Construir, no pasos.
+# Cada caso recorre RED → GREEN → REFACTOR; `stage` marca en qué fase está.
+construir:
+  status: in_progress
+  cases:
+    - id: 1
+      ca: [CA-01]              # criterios de aceptación de la spec que cubre el caso
+      component: backend       # fe | be | db  (migración = backend)
+      owner: implementador     # probador → implementador → refactorizador (§5.3)
+      stage: green             # pending | red | green | refactor | done
+      caracterizacion: false   # true = test que NACE verde (fija conducta ya existente, no dirige código)
+    - id: 2
+      ca: [CA-02]
+      component: frontend
+      owner: implementador
+      stage: pending
+      caracterizacion: false
+
+# --- PASO 10 · VERIFICAR — evaluadores transversales en contexto fresco (E4) -
+# Calidad de código y seguridad son ENTRADAS de evaluación aquí, no pasos nuevos.
+verificar:
+  spec_verifier:   { status: pending }
+  code_review:     { status: pending, archetype: code-reviewer }      # §5.2
+  security_review: { status: pending, archetype: security-reviewer }  # hermano de §5.2

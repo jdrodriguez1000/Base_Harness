@@ -27,6 +27,9 @@
 | D-015 | Orquestador como escritor único (Single Writer) de `state.yaml` | aceptada | 2026-07-17 |
 | D-016 | Espina única de 11 pasos en `state.yaml`: capas técnicas como tareas etiquetadas, revisiones transversales como entradas de evaluación en Verificar | aceptada | 2026-07-17 |
 | D-017 | `security-reviewer` como arquetipo evaluador transversal hermano del Revisor de código | aceptada | 2026-07-17 |
+| D-018 | Modelo de gate único y reutilizable (`status`/`fecha`/`resoluciones`) aplicable a los pasos 5, 7 y 11 de `state.yaml`, con plantilla física `_templates/state_temp.yaml` | aceptada | 2026-07-17 |
+| D-019 | Referencia a `methodology.md` cableada en `AGENTS.md` (SSOT), no en `CLAUDE.md` | aceptada | 2026-07-17 |
+| D-020 | Taxonomía de actores por defecto (GENERADOR→OPERADOR→ADMINISTRADOR) y arquetipo Descubridor como insumo del Prototipador, orden Descubridor→Prototipador | aceptada | 2026-07-17 |
 
 ## Formato
 
@@ -179,4 +182,28 @@
 - **Decisión:** `security-reviewer` es un arquetipo evaluador transversal **hermano** del Revisor de código (§5.2): mismas reglas (independiente, contexto fresco, hallazgos → tests que fallan), adoptable por E4. Se distingue explícitamente la **seguridad-revisión** (auditoría de vulnerabilidades, rol de `security-reviewer`) de la **seguridad-comportamiento** (autorización, validación de input), que **no** es revisión sino un **criterio de aceptación** en la spec (§3, paso 4).
 - **Alternativas consideradas:** Fusionar seguridad dentro del Revisor de código genérico sin arquetipo propio (descartada: la revisión de seguridad puede requerir un perfil/contexto distinto al de calidad de código general, aunque puede ser el mismo agente con otro perfil). Tratar toda la seguridad como criterio de aceptación sin evaluador transversal (descartada: pierde la capacidad de detectar vulnerabilidades no cubiertas por specs explícitas).
 - **Consecuencias:** El patrón evaluador transversal (§5.2) queda simétrico y extensible: Revisor de código y `security-reviewer` comparten reglas de adopción bajo E4; en `state.yaml` (§7.1) ambos aparecen como entradas de evaluación en Verificar (`code_review`, `security_review`).
+
+### D-018 — Modelo de gate único y reutilizable en `state.yaml`, con plantilla física
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** T-017 dejó pendiente modelar el detalle de los gates (pasos 5, 7 y 11 de la espina D-016) y los casos TDD dentro de Construir. Existía una muestra `state.json` del flujo previo del usuario (`temp.md`, no versionada como fuente) con `gate_paso_5/7/9` como campos separados y redundantes.
+- **Decisión:** Modelar un **único esquema de gate** (`status: PENDIENTE|APROBADO|APROBADO_CON_CAMBIOS|RECHAZADO`, `fecha`, `resoluciones: [{punto, decision, contra}]`) reutilizable en los tres pasos que llevan gate (5, 7 y 11), en vez de un campo distinto por paso. Los casos TDD del paso 8 (Construir) se modelan como lista `cases` con `id`, `ca` (criterios de aceptación), `component`, `owner`, `stage` (`pending|red|green|refactor|done`) y `caracterizacion` (bool, test que nace verde). Se creó la plantilla física `template/_templates/state_temp.yaml` como forma instanciable (no caso real), y se enriqueció `§7.1` de `methodology.md` con el árbol de `_increments/<id>/`.
+- **Alternativas consideradas:** Mantener un campo de gate distinto por cada paso (`gate_paso_5`, `gate_paso_7`, `gate_paso_11`) como en la muestra original (descartada: duplica esquema sin necesidad, ya que la forma es idéntica en los tres casos). Modelar los casos TDD sin `caracterizacion` (descartada: pierde la distinción entre test que dirige código nuevo —RED antes de GREEN— y test que documenta conducta ya existente, relevante para la observabilidad del ciclo TDD ya fijada en D-014/§3.1).
+- **Consecuencias:** El esquema de `state.yaml` queda completo en su forma mínima; cualquier incremento nuevo copia `state_temp.yaml` y lo rellena. Las `resoluciones` de cada gate quedan como la traza más valiosa de qué se decidió y contra qué alternativa.
+
+### D-019 — Referencia a `methodology.md` cableada en `AGENTS.md`, no en `CLAUDE.md`
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** Se detectó que `template/AGENTS.md` solo tenía cableada la referencia a `principles.md` (D-007) pero no a `methodology.md`, dejando la metodología "huérfana": ningún proyecto instanciado desde el molde sabía que ese archivo existía ni que debía consultarlo.
+- **Decisión:** Añadir a `template/AGENTS.md` una sección "Metodología de construcción", hermana de la sección de `principles.md`, que apunta a `_guideline/methodology.md`. La referencia va en `AGENTS.md` porque es la fuente única de verdad (SSOT) que todas las herramientas leen; **no** se duplica en `CLAUDE.md` de la raíz, para no romper la regla de diseño ya fijada en D-013 (marco mínimo + punteros, sin duplicar procedimientos).
+- **Alternativas consideradas:** Añadir también la referencia en `CLAUDE.md` de la raíz igual que se hizo con `principles.md` en D-007 (descartada: `principles.md` es comportamiento vinculante que debe ser visible incluso desde el punto de entrada específico de Claude Code, mientras que `methodology.md` es contenido de proceso que ya vive completo en el SSOT `AGENTS.md`, al que `CLAUDE.md` apunta).
+- **Consecuencias:** Cualquier agente que lea `AGENTS.md` (o se delegue a un agente que lo lea) conoce ahora la existencia de `methodology.md` desde el arranque. `CLAUDE.md` permanece como puntero mínimo sin crecer.
+
+### D-020 — Taxonomía de actores por defecto y arquetipo Descubridor, orden Descubridor→Prototipador
+- **Estado:** aceptada
+- **Fecha:** 2026-07-17
+- **Contexto:** Se inició la Parte 1 (método) de un plan de prototipado acordado en 3 partes. Faltaba una lente agnóstica para elicitar actores durante el descubrimiento, y un arquetipo que condujera esa elicitación con el humano antes de que el Prototipador (D-009, estadio Prototipo) empezara a construir.
+- **Decisión:** `§4.3` de `methodology.md` fija una taxonomía de actores **por defecto** GENERADOR → OPERADOR → ADMINISTRADOR como lente de elicitación (piso, no techo): los roles pueden faltar o colapsar en un mismo actor; la prioridad **no** es lineal (el generador es obligatorio para arrancar cualquier prototipo; operador/administrador se elicitan bajo demanda); el generador solo basta para avanzar un MVP, simulando el resto con mago de Oz (E4). `§5` añade el arquetipo **Descubridor**: conduce la entrevista con el humano con alcance acotado (para evitar parálisis de análisis), produce un entregable de descubrimiento propio con su Gatekeeper, observable y evaluable, que es insumo directo del Prototipador. Orden fijado: Descubridor → Prototipador. `§4.2` se ajustó para aclarar que el descubrimiento lo conduce un agente (el Descubridor), mientras que la materialización de mockups sigue siendo actividad humana.
+- **Alternativas consideradas:** Dejar la elicitación de actores implícita, a criterio de cada instanciación (descartada: sin una lente por defecto, cada proyecto reinventa su propia taxonomía, perdiendo portabilidad del método). Fusionar Descubridor y Prototipador en un solo arquetipo (descartada: mezclaría la naturaleza de "conducir entrevista con el humano" con la de "construir el camino feliz", dos actividades de forma distinta, igual que ya se separaron Definidor/Especificador/Planificador en la espina general).
+- **Consecuencias:** El método de prototipado (Parte 1) queda canonizado en `methodology.md`. Queda pendiente la Parte 2 (construir los agentes+skills `descubridor` y `prototipador`, empezando por fijar los campos del entregable de descubrimiento) y la Parte 3 (perfil de conformidad + rúbrica por agente, motor genérico), ver T-021.
 
