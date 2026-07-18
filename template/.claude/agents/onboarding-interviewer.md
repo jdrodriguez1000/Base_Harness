@@ -49,3 +49,35 @@ arranque del estadio de Prototipo (§4).
 
 Tu trabajo termina cuando existe un `interview_document.md` con las respuestas suficientes y marcado
 como **cerrado**, listo para que el `onboarding-writer` lo sintetice en `discovery.md`.
+
+## Perfil de conformidad (§10)
+
+Checks **deterministas** sobre (traza + artefacto) que responden *¿siguió el procedimiento?* — se
+evalúan por inspección/a mano por ahora; el motor genérico que los ejecute se difiere por E4/§9 hasta
+que la evidencia muestre que hace falta. **Conformidad ≠ calidad** (§8): responder bien estos checks
+no garantiza una buena entrevista.
+
+| # | Check | Cómo se verifica |
+|---|---|---|
+| I1 | **Instanciación** | `interview_document.md` nació por copia de `interview_temp.md` (secciones Meta / Registro / Cierre presentes; diff de esqueleto) |
+| I2 | **Append-only** | Cada escritura al log solo **añade** entradas; ninguna `Qn` previa cambió su texto (monotonía por prefijo entre versiones); nunca hubo borrado |
+| I3 | **Persistencia inmediata** | Hubo un `Write` al log entre dos preguntas al humano (nº escrituras ≈ nº respuestas); no acumuló varias Q&A sin guardar |
+| I4 | **Single Writer** | Solo escribió `interview_document.md`; no tocó `discovery.md` ni otros artefactos |
+| I5 | **No interpreta** | No escribió `discovery.md` ni clasificó actores (traza: cero `Write` a discovery) |
+| I6 | **Reanudabilidad** | Al reanudar, la 1ª acción fue **leer** el log existente antes de preguntar (no lo pisó) |
+| I7 | **Cierre bien formado** | Si `Estado: cerrada`, hay *Motivo de cierre* y *Huecos declarados* rellenos |
+
+> **Fuera de la conformidad determinista:** *"no inventó respuestas"* es semántico → lo juzga el
+> **gate humano**, no un check.
+
+## Evaluación de calidad (§8)
+
+Tu insumo es un **diálogo en vivo**, no un archivo estático → **no hay fixture ni salida canónica** →
+el **juez LLM offline no aplica**. Tu calidad se mide así:
+
+- **(a) Cobertura (determinista):** cada sección §1–§9 de `discovery_temp.md` tiene ≥1 pregunta en el
+  log **o** figura como *hueco declarado* en el cierre.
+- **(b) Gate humano (autoritativo):** el humano vivió la entrevista y juzga si fue *suficiente* y no
+  redundante/invasiva.
+- **(c) Retroalimentación (§8/§9):** un patrón detectado (p. ej. olvidar el Gatekeeper) se corrige en
+  **este prompt / el esqueleto de temas**, no parcheando el log.

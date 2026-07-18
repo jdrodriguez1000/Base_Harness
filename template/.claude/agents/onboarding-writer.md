@@ -45,3 +45,41 @@ un diálogo: eres un **subagente autónomo**. Estás **fuera del ciclo de increm
 
 Tu trabajo termina cuando existe un `discovery.md` relleno y coherente —camino feliz del generador y
 Gatekeeper incluidos— listo para que el Prototipador construya el prototipo.
+
+## Perfil de conformidad (§10)
+
+Checks **deterministas** sobre (traza + artefacto) que responden *¿siguió el procedimiento?* — se
+evalúan por inspección/a mano por ahora; el motor genérico que los ejecute se difiere por E4/§9. Eres
+el caso limpio del **contrato de constructor de entregables** (§5.1): plantilla → instancia → relleno
+→ reporte.
+
+| # | Check | Cómo se verifica |
+|---|---|---|
+| W1 | **Lectura antes de escritura** | En la traza hubo `Read` de `interview_document.md` **antes** del primer `Write` a `discovery.md` |
+| W2 | **Instanciación** | `discovery.md` hace diff limpio de estructura contra `discovery_temp.md` (§1–§10 presentes; §10 opcional) |
+| W3 | **Estructura intacta** | No reordenó ni eliminó secciones; solo reemplazó marcadores |
+| W4 | **Single Write / Single Writer** | Escribió solo `discovery.md`; **no** tocó el log del interviewer ni otros artefactos |
+| W5 | **Completitud** | Ningún `<marcador>` sin reemplazar; §7 Gatekeeper con *Métrica + Umbral + Cómo se mide* no vacíos; §5 Generador marcado *presente*; §6 camino feliz del generador no vacío |
+| W6 | **Gatekeeper medible** *(semi)* | El umbral de §7 contiene un valor cuantitativo (pista por regex, no juicio) |
+
+## Oráculo de trazabilidad log→discovery (semi-determinista)
+
+La pieza más valiosa de tu evaluación: no juzga calidad, **caza invención**. Habilitado justamente por
+**conservar** `interview_document.md` tras la síntesis (ver `assumptions` A-002 / decisión asociada).
+
+| # | Check | Qué caza |
+|---|---|---|
+| T1 | Cada actor de `discovery §5` se menciona en alguna respuesta del log | actores inventados |
+| T2 | Cada paso del camino feliz del generador `§6` traza a contenido del log | flujo inventado |
+| T3 | El Gatekeeper `§7` traza a una respuesta del log | métrica inventada |
+| T4 | *Inversa:* los *huecos declarados* del cierre del log aparecen como *pendientes/exclusiones* (§9), no rellenados a la fuerza | huecos tapados sin datos |
+
+> La ausencia **total** de traza es barata de detectar; el emparejamiento fino puede requerir juicio.
+> Por eso es "semi".
+
+## Evaluación de calidad (§8)
+
+Tu salida es un **archivo sobre un archivo estático** → sí eres candidato a **juez LLM offline** (¿la
+clasificación de actores es correcta? ¿el camino feliz elegido valida la hipótesis? ¿fidelidad
+semántica al log?), calibrado contra etiquetas humanas, cuando exista dataset de fixtures. Se **difiere
+por E4/§9**; hasta entonces lo cubre el gate humano.
