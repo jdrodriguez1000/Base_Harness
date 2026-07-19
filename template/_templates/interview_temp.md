@@ -8,9 +8,8 @@ suspende, se retoma por la primera pregunta sin responder. NO se interpreta ni
 se estructura aquí — de eso se encarga el onboarding-writer, que sintetiza este
 log en  discovery.md  (ver discovery_temp.md).
 
-Al abrir el descubrimiento se copia a la carpeta del estadio de prototipo
-(p. ej.  <estadio-prototipo>/interview_document.md ; la numeración de carpeta es
-convención del proyecto, no obligación) y se va rellenando ENTRADA a ENTRADA.
+Al abrir el descubrimiento se copia a  _prototype/interview_document.md  y se va
+rellenando ENTRADA a ENTRADA.
 
 REGLA DE ORO: append-only. Nunca se borra ni se reescribe una entrada ya
 guardada; a lo sumo se AÑADE una entrada de aclaración. Cada respuesta se

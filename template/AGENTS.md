@@ -46,6 +46,11 @@ El contexto declarativo del proyecto vive en `_context/`:
   (`repository.url`, `default_branch`, `auto_push`) y directorio de memoria (`persistence.dir`).
   Gobierna el comportamiento de git en el cierre.
 - **`business.md`** — contexto de la organización dueña del proyecto.
+- **`client_brief.*`** *(opcional)* — el documento con que el cliente describe **qué quiere
+  construir**, en cualquier formato (`.md`, `.pdf`, `.docx`…). Lo aporta el **humano**; ningún agente
+  lo escribe ni lo modifica. Su presencia es lo que dispara la **ruta documental** del arranque (abajo).
+  Si el cliente parte de cero, la plantilla **`_templates/client_brief_temp.md`** le da la guía de
+  temas; se rellena **parcialmente** (lo que falte se cubre en la entrevista).
 
 Al iniciar, leer `project.yaml` para conocer el repositorio y el directorio de memoria activo.
 
@@ -96,6 +101,35 @@ El **procedimiento canónico y detallado** de cada protocolo vive en su `SKILL.m
 
 > **Nunca empujar a GitHub sin confirmación si `auto_push` es `false`.** La URL del remoto sale de
 > `project.yaml`; no se hardcodea.
+
+---
+
+## Arranque de proyecto (estadio de Prototipo)
+
+Un proyecto nuevo **no empieza por código**: empieza por el **estadio de Prototipo de alto nivel**
+(`methodology.md` §4), que valida *qué vale la pena construir* antes de invertir en ingeniería. Ese
+estadio está **fuera del ciclo de incremento** (§3) y lo cubren dos arquetipos en orden fijo:
+**Descubridor → Prototipador** (§5).
+
+Sus artefactos viven en **`_prototype/`**, y cada uno tiene **un solo autor**:
+
+| Orden | Agente | Skill | Produce | Cuándo |
+|---|---|---|---|---|
+| 1 | `onboarding-reader` | `ingest-protocol` | `_prototype/document_extract.md` | **Solo si** existe `_context/client_brief.*` |
+| 2 | `onboarding-interviewer` | `interview-protocol` | `_prototype/interview_document.md` | Siempre (con extracto, pregunta **solo los huecos**) |
+| 3 | `onboarding-writer` | `discovery-protocol` | `_prototype/discovery.md` | Con el log cerrado |
+| 4 | `prototype-builder` | `prototype-protocol` | `_prototype/prototype/` | Con el discovery cerrado |
+
+**Condición de entrada — se deduce de los archivos, no de la memoria.** El **protocolo de inicio**
+(`startup-protocol`, Paso 4) comprueba qué artefactos existen, informa el estadio y **propone** el
+siguiente paso. Con `client_brief.*` presente y sin `_prototype/`, el proyecto está en el paso 1.
+
+> **Detectar no es ejecutar (NC-6).** El inicio de sesión **propone**; encadenar los cuatro agentes lo
+> autoriza el humano, paso a paso. Entre el 3 y el 4 hay además un **gate humano**: el `discovery.md`
+> se aprueba antes de materializar nada.
+
+- **Claude Code:** delega en el agente de cada fila (él invoca su skill).
+- **Otras herramientas:** abre y sigue el `SKILL.md` correspondiente en `.claude/skills/`.
 
 ---
 

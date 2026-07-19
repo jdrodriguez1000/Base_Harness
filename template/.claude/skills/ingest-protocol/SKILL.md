@@ -37,7 +37,9 @@ Prototipo (§4), **antes** de la entrevista. Este skill es **agnóstico al proye
 1. Buscar en `_context/` un archivo `client_brief.*` (cualquier extensión: `.md`, `.pdf`, `.docx`,
    `.txt`…). El nombre es **convención fija**; la extensión es libre para no imponerle formato al cliente.
 2. **Si no existe:** informar *"no hay documento del cliente; se conducirá la entrevista completa"* y
-   **terminar** sin escribir nada. No inventes un extracto vacío.
+   **terminar** sin escribir nada. No inventes un extracto vacío. Si el humano prefiere escribir un
+   brief antes de entrevistarse, la plantilla es `_templates/client_brief_temp.md` → se copia a
+   `_context/client_brief.md`; ofrécesela, pero **no la rellenes tú** (el brief es del cliente).
 3. **Si existe:** informar al humano **qué archivo encontraste** (ruta, formato, tamaño/extensión) y
    **pedir confirmación** de que es el documento a ingerir antes de leerlo (NC-6: nada de ingerir en
    silencio un archivo equivocado).
@@ -56,8 +58,9 @@ Prototipo (§4), **antes** de la entrevista. Este skill es **agnóstico al proye
 2. Tomar de `_templates/discovery_temp.md` el **esqueleto de áreas** §1–§10 — son los casilleros a los
    que mapear lo que diga el documento.
 3. Tomar el **formato de salida** de `_templates/document_extract_temp.md`.
-4. Determinar el destino `<EXTRACT>` = `document_extract.md` en la carpeta del estadio de prototipo
-   (junto a `interview_document.md` y `discovery.md`).
+4. Determinar el destino `<EXTRACT>` = `_prototype/document_extract.md` (junto a
+   `interview_document.md` y `discovery.md`). Crear `_prototype/` si no existe: eres el primer agente
+   del estadio y por tanto quien la inaugura.
 
 ---
 
@@ -76,6 +79,16 @@ Leer el documento **completo** una vez antes de escribir nada. Después, para **
 > **Sesgo deliberado hacia el hueco.** Ante la duda, marca **parcial** o **ausente**. Repreguntar de más
 > cuesta una pregunta; dar por cubierta un área que no lo está mete un **hueco silencioso** en el
 > `discovery.md` que nadie detectará hasta el prototipo (NC-1).
+
+> **Plantilla sin rellenar ≠ contenido.** Si el brief se escribió sobre
+> `_templates/client_brief_temp.md`, puede llegar con `<marcadores>` intactos, títulos vacíos o
+> comentarios `<!-- -->` de la plantilla. Nada de eso es material del cliente: el área va **ausente**.
+> Citar un marcador como si fuera una respuesta es fabricar evidencia.
+
+> **El brief no sigue el orden del discovery.** Sus secciones 1–10 mapean a las áreas §1–§10 pero
+> **no una a una** (p. ej. su sección 4 alimenta §5, y §3 —tipo de prototipo— no se pide al cliente:
+> lo deduce el Descubridor). Mapea por **contenido**, no por número. Y si el documento no usó la
+> plantilla, mapea igual: el cliente escribe como quiere.
 
 Guías por área (para localizar, no para interpretar):
 - **Actores (§5):** los documentos de cliente rara vez usan la taxonomía Generador/Operador/

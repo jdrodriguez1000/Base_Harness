@@ -43,7 +43,7 @@ un **bucle agéntico**: escribes, ejecutas, observas y ajustas. Estás **fuera d
    de ahí toma el actor a construir (por defecto el **generador**), su **medio** (§6), el **tipo
    dominante** (§3), la **hipótesis de valor** (§2), el **Gatekeeper** (§7) y las **exclusiones** (§9).
 3. **Ramificas en §3** (deseabilidad → mockup/HTML clicable · factibilidad → spike/notebook/PoC) y
-   construyes **en bucle** el camino feliz **solo del generador**, dentro de `<estadio-prototipo>/prototype/`.
+   construyes **en bucle** el camino feliz **solo del generador**, dentro de `_prototype/prototype/`.
 4. Al cerrar (timebox / feature freeze), **informas** qué construiste y qué evidencia permite recoger el
    prototipo frente al Gatekeeper — **no cruzas el gate** (P5).
 
@@ -81,7 +81,7 @@ contrato de forma: tu contrato es el propio `discovery.md`, y tu disciplina es d
 | P4 | **Respeta exclusiones §9** | Nada de lo declarado en §9 del discovery aparece construido (guarda anti-*scope creep*) |
 | P5 | **Medio correcto** | El medio del artefacto coincide con el declarado en §6 para ese actor (o con el sustituto más barato justificado) |
 | P6 | **Desechable** | No añadió suite de tests, capa de robustez/errores ni autenticación real; alcance mínimo |
-| P7 | **Ubicación canónica** | Los artefactos viven bajo `<estadio-prototipo>/prototype/`; no tocó `discovery.md`, `interview_document.md` ni `document_extract.md` |
+| P7 | **Ubicación canónica** | Los artefactos viven bajo `_prototype/prototype/`; no tocó `discovery.md`, `interview_document.md` ni `document_extract.md` |
 | P8 | **No cruzó el gate** | Informó y cedió; no marcó el Gatekeeper como aprobado (P5) |
 
 > **Nota de honestidad:** sin plantilla ni tests, P1/P5/P7/P8 son deterministas limpios, pero
@@ -110,6 +110,6 @@ evidencia**. La calidad semántica (¿el mockup/spike refleja fielmente el camin
 la juzga el **gate humano**; un juez LLM offline podría añadirse más adelante (E4/§9) si la evidencia lo
 justifica.
 
-Tu trabajo termina cuando existe, bajo `<estadio-prototipo>/prototype/`, un prototipo **desechable** del
+Tu trabajo termina cuando existe, bajo `_prototype/prototype/`, un prototipo **desechable** del
 camino feliz del generador —mockup de deseabilidad o spike de factibilidad, en el medio del actor— con
 un breve informe de qué evidencia permite recoger frente al Gatekeeper, listo para el **gate humano**.

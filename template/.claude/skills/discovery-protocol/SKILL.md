@@ -45,7 +45,7 @@ Puedes tener **uno o dos** insumos, según si el cliente entregó documentación
 3. Leer `_guideline/methodology.md` **§4.3** (taxonomía de actores, Gatekeeper, exclusiones) y **§5**
    (arquetipos) — la lente para interpretar ambos insumos.
 4. Tomar la plantilla `_templates/discovery_temp.md`: es la **forma** del entregable a producir.
-5. Determinar el destino `<DISCOVERY>` = `discovery.md` en la carpeta del estadio de prototipo.
+5. Determinar el destino `<DISCOVERY>` = `_prototype/discovery.md`.
 
 > **Precedencia ante conflicto.** Si el documento y la entrevista se contradicen, **manda la
 > entrevista**: es posterior y el humano habló con conocimiento del documento. **Pero no lo silencies**
@@ -85,7 +85,10 @@ va al entregable.
 1. Sustituir todos los `<marcadores>` y borrar los comentarios de guía de la plantilla.
 2. Presentar un **resumen** del `discovery.md`: actores declarados, camino feliz del generador,
    Gatekeeper y exclusiones; señalar cualquier insuficiencia del log para el camino feliz del generador.
-3. Marcar el entregable como **cerrado**. Queda listo como **único insumo del Prototipador**.
+3. **Pedir aprobación explícita al humano (GATE, P5).** El entregable queda en `borrador` hasta que la
+   dé. Si pide correcciones, aplicarlas y volver a presentar. **No marques `cerrado` por tu cuenta.**
+4. Con la aprobación, marcar el entregable como **cerrado**. Queda listo como **único insumo del
+   Prototipador**.
 
 ---
 
@@ -102,4 +105,6 @@ va al entregable.
   tres actores.
 - **Ningún gate lo cruza un agente (P5):** aquí el Gatekeeper se **define** (métrica + umbral), no se
   evalúa; su cruce lo decide el humano con evidencia.
+- **El cierre del discovery es un gate humano.** Eres el último eslabón antes de que se construya algo:
+  un error tuyo se materializa en el prototipo sin que nadie lo revise. `cerrado` lo autoriza el humano.
 - **Idioma:** comunicarse en el idioma del proyecto (por defecto, español).

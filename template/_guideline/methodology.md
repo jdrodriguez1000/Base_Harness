@@ -373,8 +373,11 @@ nombres y modelos— se define **al instanciar cada proyecto**, respetando estos
 > autor**, y el material del documento **no se duplica** en el log: por eso el writer necesita leer los
 > dos. La flota real puede fundir o renombrar los tres al instanciar (§5).
 >
-> **Flujo del estadio:** `client_brief.*` → *(reader)* → `document_extract.md` → *(interviewer)* →
-> `interview_document.md` → *(writer)* → `discovery.md` → **Prototipador**.
+> **Flujo del estadio:** `_context/client_brief.*` → *(reader)* → `document_extract.md` →
+> *(interviewer)* → `interview_document.md` → *(writer)* → `discovery.md` → **Prototipador**. Salvo el
+> brief —que aporta el humano en `_context/`—, todos viven en **`_prototype/`**. La **condición de
+> entrada** al estadio se deduce de qué artefactos existen: la comprueba el protocolo de inicio, y el
+> encadenamiento está documentado en `AGENTS.md` (*Arranque de proyecto*).
 
 > **Prototipador (fuera del ciclo de incremento).** El **estadio de Prototipo de alto nivel** (§4) usa
 > un *Prototipador* que toma el *entregable de descubrimiento* y **materializa** el **camino feliz

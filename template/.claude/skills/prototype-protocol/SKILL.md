@@ -40,8 +40,9 @@ Este skill es **agnóstico al proyecto** y **autónomo**: su insumo es un archiv
    - **Medio del actor (§6):** app, web, notebook, CLI… → decide *en qué* se materializa.
    - **Hipótesis de valor (§2)** y **Gatekeeper (§7):** qué debe poder validar el prototipo.
    - **Exclusiones (§9):** qué queda **fuera**, sin excepción.
-3. Determinar el destino `<PROTOTYPE>` = carpeta `prototype/` en el estadio de prototipo (hermana de
-   `discovery.md`; la numeración de carpeta es convención del proyecto, no obligación).
+3. Determinar el destino `<PROTOTYPE>` = `_prototype/prototype/` (hermana de `discovery.md`). Todo lo
+   que construyas vive ahí dentro: el prototipo es **desechable** y no debe mezclarse con el código
+   del producto.
 
 > Si falta la **dirección de UX** o el **medio** de un actor, es un hueco de juicio humano (§4.2):
 > **pregúntalo** (NC-1/NC-6); no lo inventes.

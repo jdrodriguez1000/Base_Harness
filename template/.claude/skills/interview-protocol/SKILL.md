@@ -34,7 +34,7 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
    hipótesis de valor, §3 tipo de prototipo, §4 stakeholders, §5 actores, §6 camino feliz **+ medio por
    actor**, §7 Gatekeeper, §8 timebox, §9 exclusiones, §10 split) son las **áreas** que la entrevista
    debe cubrir.
-3. **Buscar `document_extract.md`** en la carpeta del estadio de prototipo (lo produce el
+3. **Buscar `_prototype/document_extract.md`** (lo produce el
    `onboarding-reader` a partir de `_context/client_brief.*`):
    - **Si existe:** leer su **tabla de cobertura**. Es la que fija tu agenda:
      - área **cubierta** → **NO preguntes**. El cliente ya lo escribió; repreguntarlo le hace sentir que
@@ -45,7 +45,8 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
      (el reader las dejó sin resolver a propósito, para que las resuelva el humano).
    - **Si no existe:** flujo por defecto — la entrevista cubre **todas** las áreas §1–§9.
 4. Tomar el **formato de registro** de `_templates/interview_temp.md`.
-5. Determinar el destino `<INTERVIEW>` = `interview_document.md` en la carpeta del estadio de prototipo.
+5. Determinar el destino `<INTERVIEW>` = `_prototype/interview_document.md` (crear `_prototype/` si no
+   existe: sin documento del cliente, eres el primer agente del estadio).
    - **Si ya existe** un `<INTERVIEW>` en estado `en curso`: leerlo, ver qué áreas quedaron cubiertas
      y **reanudar por la primera pregunta pendiente**. No repreguntar lo ya respondido.
    - **Si no existe:** copiar `interview_temp.md` a `<INTERVIEW>` y rellenar la cabecera (Meta),
@@ -88,8 +89,9 @@ Guías de contenido (para elegir qué preguntar, no para interpretar):
 
 ## Paso 2 — Cerrar la entrevista
 
-1. Cerrar cuando el entendimiento sea **suficiente para arrancar** (camino feliz del generador cubierto)
-   o se agote el **timebox** — lo que ocurra primero.
+1. **Proponer** el cierre cuando el entendimiento sea **suficiente para arrancar** (camino feliz del
+   generador cubierto) o se agote el **timebox** — lo que ocurra primero. El humano está en la
+   conversación: dile qué áreas quedarían sin cubrir y **espera su OK**. Si quiere seguir, sigue.
 2. Rellenar la sección **Cierre** de `<INTERVIEW>`: motivo de cierre y **huecos declarados** (áreas no
    cubiertas, para que el writer las marque como pendientes/exclusiones).
    > **Con extracto:** un hueco es un área que **ni el documento ni la entrevista** cubren. Las áreas

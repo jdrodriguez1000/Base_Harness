@@ -22,9 +22,7 @@ redactar el camino feliz o formalizar el Gatekeeper es trabajo del
 onboarding-writer, NO de este artefacto. La única inferencia permitida aquí es
 binaria: "¿esta área tiene material en el documento, sí o no?".
 
-Se instancia en la carpeta del estadio de prototipo (p. ej.
-<estadio-prototipo>/document_extract.md ; la numeración de carpeta es
-convención del proyecto, no obligación).
+Se instancia en  _prototype/document_extract.md .
 
 Esta plantilla modela la FORMA: sustituye los <marcadores> y borra estos
 comentarios al instanciar.

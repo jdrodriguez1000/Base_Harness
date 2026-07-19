@@ -5,9 +5,7 @@ Insumo del estadio de Prototipo (§4), FUERA del ciclo de incremento (§3).
 Lo PRODUCE el Descubridor entrevistando al humano/cliente (§5); es el ÚNICO
 insumo del Prototipador. Orden del estadio: Descubridor → Prototipador.
 
-Al abrir el estadio de Prototipo se copia a la carpeta del prototipo
-(p. ej.  <estadio-prototipo>/discovery.md ; la numeración de carpeta es
-convención del proyecto, no obligación — igual que _increments/, §7) y se
+Al abrir el estadio de Prototipo se copia a  _prototype/discovery.md  y se
 rellena reemplazando cada <marcador>.
 
 ALCANCE ACOTADO (crítico, §4.3/§5): entendimiento RÁPIDO y SUFICIENTE para

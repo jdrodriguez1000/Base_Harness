@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-19 | Condición de entrada al estadio de Prototipo: ruta canónica `_prototype/` (D-028), detección de estadio en `startup-protocol` (Paso 4, propone-no-ejecuta), sección "Arranque de proyecto" en `AGENTS.md`, plantilla `client_brief_temp.md`, y corrección de dos gates documentados-pero-no-implementados (L-004) | completado | `#2026-07-19--condición-de-entrada-al-estadio-de-prototipo-ruta-canónica-prototype-d-028-detección-de-estadio-en-startup-protocol-paso-4-propone-no-ejecuta-sección-arranque-de-proyecto-en-agentsmd-plantilla-client_brief_tempmd-y-corrección-de-dos-gates-documentados-pero-no-implementados-l-004` |
 | 2026-07-19 | Ruta documental del Descubridor: tercer agente `onboarding-reader` + skill `ingest-protocol`, entrevista solo-huecos y writer con dos insumos (D-027) — T-025 completada | completado | `#2026-07-19--ruta-documental-del-descubridor-tercer-agente-onboarding-reader--skill-ingest-protocol-entrevista-solo-huecos-y-writer-con-dos-insumos-d-027--t-025-completada` |
 | 2026-07-18 | Prototipado Parte 2 (Prototipador): reubicación de la frontera humano↔agente (D-025) y materialización de `prototype-builder` + `prototype-protocol` con observabilidad §10 (D-026) — T-022 completada | completado | `#2026-07-18--prototipado-parte-2-prototipador-reubicación-de-la-frontera-humanoagente-d-025-y-materialización-de-prototype-builder--prototype-protocol-con-observabilidad-10-d-026--t-022-completada` |
 | 2026-07-17 | Diseño de observabilidad/evaluación del Descubridor (perfiles de conformidad §10, D-023) y promoción de A-002 → D-024 (conservar `interview_document.md` como traza) | completado | `#2026-07-17--diseño-de-observabilidadevaluación-del-descubridor-perfiles-de-conformidad-10-d-023-y-promoción-de-a-002--d-024-conservar-interview_documentmd-como-traza` |
@@ -41,6 +42,30 @@
 ---
 
 ## Historial
+
+### [2026-07-19] — Condición de entrada al estadio de Prototipo: ruta canónica `_prototype/` (D-028), detección de estadio en `startup-protocol` (Paso 4, propone-no-ejecuta), sección "Arranque de proyecto" en `AGENTS.md`, plantilla `client_brief_temp.md`, y corrección de dos gates documentados-pero-no-implementados (L-004)
+
+**Contexto.** Se arrancó con la intención de ejecutar T-023 (ampliar el inventario de `register-harness`), pero el usuario planteó una duda que destapó un hueco mayor: *"si completo `_context/` incluyendo `client_brief.md`, ¿qué le digo a Claude Code? ¿cómo sabe que estamos iniciando esta fase?"*. Se decidió con el usuario atender ese hueco primero. **T-023 no se tocó y sigue pendiente.**
+
+**Hueco detectado.** No existía condición de entrada al estadio de Prototipo. `AGENTS.md` no mencionaba `client_brief.*`; el encadenamiento reader→interviewer→writer→builder solo vivía como prosa en `methodology.md` §5; nada le decía a la sesión principal cómo detectar que un proyecto está arrancando ese estadio.
+
+**Ruta canónica `_prototype/` (D-028).** Los 4 skills del estadio y 3 plantillas referenciaban "la carpeta del estadio de prototipo" / `<estadio-prototipo>` **sin definirla nunca**; `prototype-protocol` incluso decía "la numeración de carpeta es convención del proyecto, no obligación". Sin ruta fija, la autodetección era imposible. El usuario eligió `_prototype/` (hermana de `_context/`, `_guideline/`, `_persistence/`, `_templates/`), conteniendo `document_extract.md`, `interview_document.md`, `discovery.md` y `prototype/`. Se alineó en 12 archivos.
+
+**Detección de estadio en `startup-protocol`.** Nuevo "Paso 4 — Detectar el estadio del proyecto": tabla de 6 filas por presencia de artefactos, se aplica la primera fila que matchea (con nota de que si existe `_increments/` manda `state.yaml` §7.1, no esta tabla). El antiguo Paso 4 pasó a ser Paso 5 e informa el estadio detectado, proponiendo el siguiente paso nombrando el agente a invocar. Regla añadida: **detectar y proponer, NUNCA ejecutar** (NC-6). Se actualizó su `description` de frontmatter, las reglas invariantes, y el agente `sesion-starter.md` (cuerpo, principios y `description`).
+
+**Sección "Arranque de proyecto (estadio de Prototipo)" en `AGENTS.md`.** Hermana de "Protocolos de sesión": tabla de los 4 agentes (orden, skill, artefacto, cuándo), condición de entrada y delegación por herramienta. Se documentó también `client_brief.*` en la sección `_context/`.
+
+**Plantilla nueva `_templates/client_brief_temp.md`.** Documento del cliente, escrito en lenguaje de cliente (no jerga de la metodología), **parcial por diseño**: dejar una sección vacía es respuesta válida, lo que falte se cubre en la entrevista (para no reintroducir parálisis por diseño). 10 secciones con mapeo en comentario a las áreas §1–§10 del discovery, para uso del `onboarding-reader`. Referenciada desde `AGENTS.md` e `ingest-protocol`.
+
+**Lección importante (L-004).** Se detectó una inconsistencia introducida en esta misma sesión: se escribió en `AGENTS.md` que "entre el paso 3 y el 4 hay un gate humano", y al verificar el skill correspondiente resultó **falso** — `discovery-protocol` decía "marcar el entregable como cerrado" sin pedir aprobación explícita. Documentar un gate en `AGENTS.md` no lo implementa; hay que verificar el `SKILL.md` que lo ejecuta. Se corrigió `discovery-protocol` (su Paso 2.3 ahora pide aprobación explícita, queda en borrador hasta obtenerla, + regla invariante nueva). Se encontró y corrigió el mismo defecto en `interview-protocol`: cerraba la entrevista por su cuenta; ahora la propone y espera el OK del humano.
+
+**Otro ajuste.** Se añadió a `ingest-protocol`: un `<marcador>` de plantilla sin rellenar es área **AUSENTE**, no contenido (citarlo sería fabricar evidencia); y el brief se mapea por contenido, no por número de sección.
+
+**Gates del estadio (quedan 4 explícitos):** ① qué archivo ingerir + cierre del extracto (reader), ② cierre de entrevista (interviewer), ③ cierre del discovery (writer) — el más importante, único insumo del prototipo, ④ gate de madurez Prototipo→MVP que el builder no cruza.
+
+**Estado y siguiente paso.** Todo el trabajo se hizo dentro de `template/` (deliverable-only, D-022); no se tocó la raíz `.claude/`. **Próxima sesión (decidido por el usuario): prueba end-to-end del flujo completo de prototipado**, encadenando T-024 (probar `prototype-builder` con discovery real) y T-026 (probar la ruta documental con `client_brief` real) — evaluar si conviene fusionarlas, referenciarlas juntas, o abrir una tarea nueva que las englobe. T-023 sigue pendiente y sigue creciendo (el re-sync a opencode/Gemini debe cubrir también estos cambios de detección de estadio).
+
+Ref: [[tasks]] T-024, T-026, T-023 · [[decisions]] D-028 · [[lessons]] L-004
 
 ### [2026-07-19] — Ruta documental del Descubridor: tercer agente `onboarding-reader` + skill `ingest-protocol`, entrevista solo-huecos y writer con dos insumos (D-027) — T-025 completada
 
