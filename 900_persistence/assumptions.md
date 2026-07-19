@@ -13,6 +13,7 @@
 |---|---|---|---|
 | A-001 | Si el bloque de agentes/evaluación/observabilidad de `methodology.md` supera ~250 líneas, se divide en `methodology.md` (proceso) + `agents-and-evaluation.md` | sin validar | 2026-07-17 |
 | A-002 | `interview_document.md` se conserva como traza junto a `discovery.md` tras la síntesis del writer (no se descarta) | confirmado → promovido a [[decisions]] D-024 | 2026-07-17 |
+| A-003 | Los checkpoints intra-etapa (T-045) empujan al remoto respetando `auto_push`, o se quedan locales y solo el cierre empuja | sin validar | 2026-07-19 |
 
 ## Formato
 
@@ -40,3 +41,9 @@
 - **Cómo validarlo:** Confirmar con el usuario, al construir o probar el flujo del Prototipador (T-022) o en una sesión posterior, si el log crudo debe persistir como traza auditable o descartarse tras la síntesis.
 - **Fecha:** 2026-07-17
 - **Resolución:** El usuario confirmó explícitamente CONSERVAR el log crudo como traza (no descartarlo), reforzado por el oráculo de trazabilidad log→discovery (T1–T4) de `onboarding-writer` definido en `D-023`, que depende de que el log persista. Ver `D-024`.
+
+### A-003 — Los checkpoints intra-etapa (T-045) ¿empujan al remoto o quedan locales hasta el cierre?
+- **Estado:** sin validar
+- **Impacto si es falso:** Si se implementa "solo local" pero el humano en realidad quería push respetando `auto_push`, se pierde la protección real ante una caída de sesión: todo el trabajo intermedio queda solo en el disco local hasta el cierre de sesión. Si se implementa "push siempre" sin que el humano lo quisiera, se generan pushes intermedios ruidosos en el remoto.
+- **Cómo validarlo:** Preguntar explícitamente al humano al implementar T-045 (checkpoints intra-etapa con commit), antes de decidir el comportamiento por defecto.
+- **Fecha:** 2026-07-19

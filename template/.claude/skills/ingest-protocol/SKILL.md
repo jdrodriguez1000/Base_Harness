@@ -189,9 +189,24 @@ ambigüedad es **obligatorio** en todo caso.
 
 ---
 
+## Paso 5 — Commit de etapa
+
+Con el extracto ya **cerrado** (Paso 4.5), aplicar `_guideline/git-protocol.md` §2 (bootstrap) y §3
+(commit de etapa):
+
+- Etapa: **ingest** → mensaje `docs(prototipo): extracto del documento del cliente`.
+- Artefacto confirmado: `<EXTRACT>`.
+
+El commit va **después** de la confirmación humana, no antes: lo que se confirma es el artefacto
+validado, no un borrador. Reportar hash y rama junto al resumen de cobertura. **No hacer `push`.**
+
+---
+
 ## Reglas invariantes
 
 - **Condicional:** sin `client_brief.*` no hay artefacto ni error; se cae al flujo por defecto.
+- **La etapa cierra con commit:** el extracto confirmado se persiste en git (`_guideline/git-protocol.md`);
+  una cadena de descubrimiento sin puntos de retorno no es reanudable (L-009).
 - **Citar, no interpretar:** extractos textuales con localización; la síntesis es del writer.
 - **Inferencia mínima:** *¿hay material para esta área?* y, solo para el caso de diseño, *¿esta área le
   corresponde al cliente?* — nada más.

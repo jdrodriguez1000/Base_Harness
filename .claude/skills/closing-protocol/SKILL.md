@@ -112,8 +112,23 @@ Este paso sincroniza el trabajo de la sesión con el repositorio remoto. Usa la 
    en `project.yaml`, configurarlo con `git remote add origin <repository.url>`. `project.yaml` es
    la fuente de verdad de la URL; no hardcodear ninguna URL en este skill.
 
-3. **Commit:** `git add -A` y `git commit` con un mensaje que **resuma la sesión** (reutilizar el
-   título de la entrada nueva de `progress.md`).
+3. **Commit:** `git add -A` y `git commit` con un mensaje que **resuma la sesión**, siguiendo la
+   convención de `_guideline/git-protocol.md` §4 (Apéndice de `methodology.md`):
+
+   ```
+   tipo(<alcance>): descripción
+   ```
+
+   - **`tipo`** ∈ `feat` · `spec` · `plan` · `test` · `refactor` · `verify` · `chore` · `docs`.
+     Elegir el que domine el trabajo de la sesión; si la sesión fue mayormente de memoria y
+     documentación, es `docs`.
+   - **`<alcance>`** es el incremento en curso; en el estadio de Prototipo, `prototipo`. Si la sesión
+     no pertenece a ningún incremento (trabajo transversal del proyecto), omitir el paréntesis.
+   - **descripción:** reutilizar el título de la entrada nueva de `progress.md`, recortado a una línea.
+
+   > **Una convención sirve si se puede consultar por ella.** El historial es la traza de §10; con
+   > mensajes libres, «¿qué se hizo en el incremento X?» deja de ser una consulta y pasa a ser una
+   > lectura completa del log.
 
 4. **Push (según `repository.auto_push`):**
    - Si `auto_push: true` → `git push` a la rama actual.
@@ -132,5 +147,7 @@ Este paso sincroniza el trabajo de la sesión con el repositorio remoto. Usa la 
 - **Nunca** escribir fuera del directorio de memoria activo (`<MEM>`) detectado en el Paso 0. Si
   existen otras carpetas `*_persistence` (p. ej. un molde dentro de un entregable), no tocarlas.
 - `progress.md` y `tasks.md` son **siempre obligatorios**; los otros cuatro, solo a demanda.
+- **El mensaje de commit sigue la convención** de `_guideline/git-protocol.md` §4; el `push` es lo
+  único que depende de `repository.auto_push`, el commit no.
 - Idioma de la memoria: el del proyecto (por defecto, español).
 - No inventar trabajo: registrar únicamente lo que realmente ocurrió en la sesión.

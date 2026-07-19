@@ -97,10 +97,25 @@ entregable sí debe resolver.
 
 ---
 
+## Paso 3 — Commit de etapa
+
+Con el entregable ya **cerrado** por aprobación humana (Paso 2.4), aplicar
+`_guideline/git-protocol.md` §2 (bootstrap) y §3 (commit de etapa):
+
+- Etapa: **discovery** → mensaje `docs(prototipo): entregable de descubrimiento`.
+- Artefacto confirmado: `<DISCOVERY>`.
+
+El commit va **después** del gate, nunca antes: confirmar un `discovery.md` en `borrador` lo haría
+indistinguible en el historial de uno aprobado. Reportar hash y rama. **No hacer `push`.**
+
+---
+
 ## Reglas invariantes
 
 - **Autónomo:** insumos = `interview_document.md` (+ `document_extract.md` si existe), **archivos**, no
   diálogo. No entrevistes tú.
+- **La etapa cierra con commit, después del gate:** el entregable aprobado se persiste en git
+  (`_guideline/git-protocol.md`); es el único insumo del Prototipador y debe tener punto de retorno.
 - **Ambos insumos o entregable mutilado:** si existe el extracto, leerlo es **obligatorio**: el log solo
   contiene los huecos.
 - **La entrevista manda ante conflicto**, pero la discrepancia se **deja constancia**, no se silencia.

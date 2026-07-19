@@ -120,9 +120,25 @@ Guías de contenido (para elegir qué preguntar, no para interpretar):
 
 ---
 
+## Paso 3 — Commit de etapa
+
+Aplicar `_guideline/git-protocol.md` §2 (bootstrap) y §3 (commit de etapa):
+
+- Etapa: **interview** → mensaje `docs(prototipo): log de entrevista de descubrimiento`.
+- Artefacto confirmado: `<INTERVIEW>`.
+
+La entrevista es **reanudable**: si se cierra en varias sesiones, **cada tramo confirma** al
+interrumpirse, con el mismo mensaje. Un log que solo se confirma al final pierde en un fallo todo lo
+elicitado, que es justo lo que el append-only quiere evitar. **No hacer `push`.**
+
+---
+
 ## Reglas invariantes
 
 - **Append-only:** nunca borrar ni reescribir una entrada guardada; a lo sumo **añadir** una aclaración.
+- **Cada tramo confirma:** al cerrar o interrumpir la entrevista se hace commit del log
+  (`_guideline/git-protocol.md`); la persistencia inmediata en disco no basta si el trabajo nunca entra
+  a git (L-009).
 - **Persistencia inmediata:** guardar cada Q&A **antes** de la siguiente pregunta (reanudabilidad).
 - **Elicitar, no estructurar:** este skill solo produce el log crudo; `discovery.md` es del writer.
 - **No repreguntar lo documentado:** si hay `document_extract.md`, las áreas *cubiertas* no se preguntan.

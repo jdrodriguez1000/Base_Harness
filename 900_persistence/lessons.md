@@ -22,6 +22,10 @@
 | L-010 | Editar una capa (mover un campo) sin recorrer las demás rompe silenciosamente al consumidor — mismo patrón que audita T-031, autogenerado en la misma sesión | 2026-07-19 |
 | L-011 | "Cubierta" significa cosas distintas en `ingest-protocol` y `discovery-protocol` para §7 (métrica+umbral vs. métrica+umbral+método): el mismo estado enumerado, dos contratos distintos | 2026-07-19 |
 | L-012 | Una regla anti-fabricación correcta al pie de la letra puede fallar su intención: el nombre de la empresa aparece literal en el brief pero no es el nombre del proyecto | 2026-07-19 |
+| L-013 | Condicionar el commit de etapa al gate humano deja sin commit si el humano salta el gate — reaparición de L-009 | 2026-07-19 |
+| L-014 | `interview-protocol` consume un extracto en `borrador` sin detectarlo: no hay contrato de entrada entre etapas | 2026-07-19 |
+| L-015 | El interviewer atribuyó mal la procedencia de un dato: inventó la fuente ("venía del brief"), no el valor | 2026-07-19 |
+| L-016 | El criterio de aceptación de L-007 es ciego a "nunca se confirmó", solo contempla "se confirmó antes de tiempo" | 2026-07-19 |
 
 ## Formato
 
@@ -120,4 +124,32 @@
 - **Problema:** Un `onboarding-reader` que aplique la regla anti-fabricación de L-005/T-028 al pie de la letra ("todo valor debe ser trazable a una cita") podría citar literalmente "Recicladora Oriente Verde" como si fuera el nombre del proyecto, porque la cadena de texto sí existe en el brief — y aun así estaría fallando la intención de la regla (evitar que se invente o confunda el dato pedido).
 - **Solución / aprendizaje:** La trazabilidad textual (¿la cadena aparece en el documento?) no es suficiente por sí sola; hace falta también que la cita responda a la **pregunta correcta** (¿es el nombre del proyecto o el de otra entidad mencionada?). No se generalizó una regla nueva sin evidencia de una corrida real (NC-1); se documentó como caso de "aprobado con reparo" en `T-027_procedimiento.md`, a vigilar en la próxima repetición.
 - **Cómo aplicarlo:** Al revisar la salida de un reader/extractor, no basta con verificar que cada valor tenga una cita de respaldo: verificar también que la cita responda al campo que se le pidió, especialmente cuando el documento nombra varias entidades similares (empresa vs. proyecto vs. producto).
+- **Fecha:** 2026-07-19
+
+### L-013 — Condicionar el commit de etapa al gate humano deja sin commit si el humano salta el gate
+- **Contexto:** Corrida 2 de T-027, tras implementar T-030 (commit por etapa) en `ingest-protocol`/`discovery-protocol`, condicionado a la confirmación/gate humano.
+- **Problema:** Cuando el humano decide saltarse el gate (instrucción legítima y razonable, coherente con D-029), el commit no ocurre nunca y nada lo recupera. La etapa de ingesta se cerró y avanzó a la entrevista sin commit ni repo git: exactamente el defecto que T-030 debía cerrar (L-009), reaparecido por el propio diseño de la corrección.
+- **Solución / aprendizaje:** Un protocolo que solo funciona si el humano no toma atajos no es un protocolo. El disparador correcto es la **salida de la etapa**, no la aprobación del contenido.
+- **Cómo aplicarlo:** Desacoplar el commit del gate: commitear siempre al salir de la etapa, marcando `[sin confirmar]` en el mensaje si el artefacto quedó en borrador. Ver T-042.
+- **Fecha:** 2026-07-19
+
+### L-014 — `interview-protocol` consume un extracto en borrador sin detectarlo
+- **Contexto:** Corrida 2 de T-027. El Paso 0 de `interview-protocol` lee la tabla de cobertura de `document_extract.md` para fijar la agenda de la entrevista.
+- **Problema:** Nunca comprueba el campo `Estado`/`Confirmado por el humano` del extracto (verificado por grep: no existe tal comprobación). Consumió un extracto permanentemente en `borrador` sin avisar a nadie.
+- **Solución / aprendizaje:** No existe un contrato de entrada entre etapas: cada skill asume que su insumo ya está validado, en vez de verificarlo. Misma clase que L-008 (información que gobierna la conducta del consumidor no vive en el campo que el consumidor lee), ahora aplicada al estado de confirmación.
+- **Cómo aplicarlo:** Cada skill de etapa debe verificar el `Estado`/`Confirmado` del artefacto que consume y **avisar** (no bloquear — la autoridad es del humano, NC-6) si viene en borrador. Ver T-043.
+- **Fecha:** 2026-07-19
+
+### L-015 — El interviewer atribuyó mal la procedencia de un dato: inventó la fuente, no el valor
+- **Contexto:** Corrida 2 de T-027. Al preguntar por el nombre del proyecto, el interviewer afirmó que "ReciclApp" venía de una lectura del brief.
+- **Problema:** La palabra "ReciclApp" no aparece ni una vez en `client_brief.md`; está en `_context/project.yaml`, que no es insumo declarado de ninguna etapa. Es una variante de L-005 (fabricar un valor), pero más difícil de detectar: aquí se fabricó la **fuente** de un valor real, de forma tranquilizadora ("venía del brief" suena respaldado) en vez de fabricar el valor mismo.
+- **Solución / aprendizaje:** La trazabilidad textual de un valor no basta si la atribución de su origen puede mentir; cada dato de salida necesita declarar su procedencia real, verificable, no solo "sonar" verificado.
+- **Cómo aplicarlo:** Hacer `project.yaml` insumo declarado desde el Paso 0 de los skills de etapa, distinguiendo metadatos de proyecto (fuente `project.yaml`) de contenido del cliente (fuente brief), y anotar la fuente junto a cada valor de salida. Ver T-044.
+- **Fecha:** 2026-07-19
+
+### L-016 — El criterio de aceptación de L-007 es ciego a "nunca se confirmó"
+- **Contexto:** `T-027_procedimiento.md` (T-033) escribió el criterio de aceptación de L-007 antes de la corrida 2, contemplando solo el escenario "se confirmó antes de tiempo".
+- **Problema:** En la corrida 2 el extracto nunca se confirmó (quedó permanentemente en `Confirmado: no` / `Estado: borrador`) y el criterio escrito dio el caso por bueno, porque no contempla el escenario opuesto: que el gate simplemente no se ejecute nunca.
+- **Solución / aprendizaje:** Un criterio de aceptación escrito para un solo lado de un fallo binario (confirmar de más / confirmar de menos) deja pasar el lado no contemplado sin ser detectado.
+- **Cómo aplicarlo:** Corregir el criterio de L-007 en `T-027_procedimiento.md` para que "nunca se confirmó" cuente también como fallo. Ver T-046.
 - **Fecha:** 2026-07-19

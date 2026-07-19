@@ -94,9 +94,25 @@ Disciplina durante el bucle:
 
 ---
 
+## Paso 4 — Commit de etapa
+
+Tras el **feature freeze** y **antes** de ceder el gate al humano, aplicar
+`_guideline/git-protocol.md` §2 (bootstrap) y §3 (commit de etapa):
+
+- Etapa: **prototype** → mensaje `feat(prototipo): camino feliz del generador`.
+- Artefacto confirmado: `_prototype/prototype/`.
+
+El commit precede al gate porque el humano evalúa **sobre un estado congelado e identificable**: sin
+hash, «el prototipo que vi» no es un objeto al que se pueda volver. Reportar hash y rama junto al
+informe. **No hacer `push`** y **no** cruzar el gate (P5).
+
+---
+
 ## Reglas invariantes
 
 - **Desechable y mínimo:** sin tests, sin robustez, sin capas; lo justo para validar la hipótesis (§4.4).
+- **Congelar es confirmar:** el feature freeze cierra con commit (`_guideline/git-protocol.md`) antes de
+  ceder el gate; desechable no significa no versionado (L-009).
 - **Solo el generador:** operador/administrador son bajo demanda (§4.3); no en secuencia inmediata.
 - **Respeta las exclusiones §9:** guarda anti-*scope creep*; nada de lo excluido se construye.
 - **El timebox se carga, no se supone:** sale de §8 del `discovery.md` en el Paso 0; si viene

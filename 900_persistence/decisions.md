@@ -40,6 +40,8 @@
 | D-028 | Ruta canónica `_prototype/` para los artefactos del estadio de Prototipo; detección de estadio como Paso 4 (propone, nunca ejecuta) de `startup-protocol`; sección "Arranque de proyecto" en `AGENTS.md`; plantilla `client_brief_temp.md` | aceptada | 2026-07-19 |
 | D-029 | T-027 se ejecuta en modalidad observador (proyecto de prueba en terminal aparte, la sesión del harness valida contra el contrato de los skills); defectos del fixture (§3/§10, nombre fabricado) se dejan correr sin corregir a propósito, para producir evidencia observable de los hallazgos | aceptada | 2026-07-19 |
 | D-030 | Los criterios de aceptación de una repetición/prueba end-to-end (T-033 y futuras) se escriben ANTES de correrla, no se juzgan a ojo después (conforme a §3/P5) | aceptada | 2026-07-19 |
+| D-031 | En el estadio de Prototipo el `<alcance>` del commit es literalmente `prototipo` (el Apéndice de `methodology.md` usa `<incremento>`, inexistente en este estadio) | aceptada | 2026-07-19 |
+| D-032 | El procedimiento git se materializa como referencia única (`_guideline/git-protocol.md`) que los skills aplican, en vez de bloque duplicado por skill | aceptada | 2026-07-19 |
 
 ## Formato
 
@@ -297,3 +299,19 @@
 - **Decisión:** Para T-033 y toda repetición/prueba end-to-end futura, los **criterios de aceptación pasa/falla se escriben ANTES de ejecutar la corrida**, uno por cada hallazgo que se busca cerrar (L-005…L-009, G7), más criterios de la corrida completa. Conforme a §3 de `methodology.md` (criterios de aceptación como parte de la especificación) y P5 (evidencia antes que impresión). El procedimiento quedó escrito en `Base_Harness/T-027_procedimiento.md`.
 - **Alternativas consideradas:** (a) Seguir juzgando a ojo, comparando la corrida nueva contra la corrida 1 de memoria — descartada: no es reproducible ni verificable por otro agente distinto al que hizo la corrida 1, y corre el riesgo de mover la meta según lo que se observe. (b) Definir los criterios durante la corrida, a medida que se observa cada etapa — descartada: mezclaría exploración (bueno para hallazgos nuevos) con verificación (necesita criterio fijo previo), la misma distinción de fondo que separa la corrida 1 (exploratoria) de sus repeticiones (verificación).
 - **Consecuencias:** Toda repetición de T-027 se evalúa contra una lista de criterios ya escrita, no contra la memoria de la corrida anterior. Si aparece un hallazgo nuevo durante una repetición, se trata como tal (nueva lección/tarea), no se reescribe retroactivamente el criterio que ya se había fijado. Precedente para futuras pruebas end-to-end del harness (p. ej. una eventual repetición tras T-034…T-041).
+
+### D-031 — En el estadio de Prototipo el `<alcance>` del commit es `prototipo`
+- **Estado:** aceptada
+- **Fecha:** 2026-07-19
+- **Contexto:** T-035 aplicó la convención `tipo(<incremento>): descripción` del Apéndice de `methodology.md` a los skills de etapa del estadio de Prototipo (`ingest`/`interview`/`discovery`/`prototype-protocol`). El Apéndice usa `<incremento>`, pero en el estadio de Prototipo todavía no existen incrementos (esos empiezan al cruzar a MVP, dentro de `_increments/`).
+- **Decisión:** Dentro del estadio de Prototipo, el `<alcance>` del commit es literalmente la palabra `prototipo` (p. ej. `feat(prototipo): materializa el camino feliz del generador`).
+- **Alternativas consideradas:** (a) Dejar `<incremento>` vacío o con un placeholder — descartada: un paréntesis vacío o con `<...>` sin resolver es más confuso que informativo. (b) Omitir el paréntesis por completo durante todo el estadio — descartada: perdería la trazabilidad de "en qué estadio ocurrió el commit" en el `git log`, útil precisamente porque el estadio de Prototipo antecede a los incrementos.
+- **Consecuencias:** Los 4 skills de etapa usan `tipo(prototipo): descripción`. Cuando el proyecto cruce a MVP (gate de madurez, T-036), el alcance pasa a ser el `<incremento>` real de cada slice.
+
+### D-032 — El procedimiento git se materializa como referencia única (`git-protocol.md`)
+- **Estado:** aceptada
+- **Fecha:** 2026-07-19
+- **Contexto:** La zona git (T-030/T-034/T-035) tocaba simultáneamente los 4 skills de etapa, `startup-protocol` y `closing-protocol`. Duplicar el procedimiento completo (bootstrap, commit de etapa, convención) en cada `SKILL.md` habría repetido el patrón que causó G10 (deriva entre la copia de raíz y la del molde, ver [[lessons]] L-001).
+- **Decisión:** Crear `template/_guideline/git-protocol.md` como fuente única de verdad del procedimiento git: §1 por qué el commit por etapa, §2 bootstrap del repo (idempotente, sin tocar remoto), §3 commit de etapa, §4 convención de mensaje con tabla etapa→tipo→artefacto, §5 límites (no push, no ramas, no reescribe historia). Cada `SKILL.md` de etapa aplica el protocolo con un paso corto que remite al archivo, en vez de contener el bloque completo.
+- **Alternativas consideradas:** Duplicar el bloque de procedimiento git en cada `SKILL.md` afectado — descartada: mismo riesgo de deriva silenciosa que L-001/G10, multiplicado por 6 archivos en vez de 2.
+- **Consecuencias:** Cambios futuros al procedimiento git (p. ej. una convención nueva) se hacen en un solo archivo y se propagan por referencia; los skills quedan más cortos y menos propensos a divergir entre sí. Puntero añadido en `methodology.md` §7 y Apéndice.

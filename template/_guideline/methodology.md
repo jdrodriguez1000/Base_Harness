@@ -516,6 +516,8 @@ el trabajo entre sesiones y ante fallos (E1, E5).
 - **Git y reanudación:** commit por etapa con prefijo convencional; el **push** se hace en el cierre
   de sesión (agente *closer*, respetando `auto_push`). Para retomar un incremento interrumpido, la
   sesión principal lee su `state.yaml` y reinvoca al arquetipo del paso pendiente con contexto fresco.
+  El **procedimiento operativo** (bootstrap del repo, commit por etapa, convención del mensaje y
+  límites) vive en **`_guideline/git-protocol.md`**; los skills lo aplican, no lo reimplementan.
 
 ### 7.1 Estado por incremento (`state.yaml`)
 
@@ -727,6 +729,7 @@ informe del *Verificador* (§5.1).
 
 - **Convención de commits:** `tipo(<incremento>): descripción`
   (`feat`/`spec`/`plan`/`test`/`refactor`/`verify`/`chore`/`docs`).
+  Procedimiento y mapeo etapa→mensaje en `_guideline/git-protocol.md`.
 - **Estrategia de ramas:** cada incremento se construye en su rama; la integración a la rama principal
   es **solo vía Pull Request** tras el veredicto CONFORME. **El harness nunca integra a la principal
   por su cuenta** (detalle en `AGENTS.md` / `CLAUDE.md`).

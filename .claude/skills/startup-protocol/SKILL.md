@@ -6,7 +6,8 @@ description: >-
   de hacer cualquier cosa. Úsalo al iniciar una sesión, retomar el trabajo o cuando el usuario diga
   "protocolo de inicio", "startup protocol", "ponte al día", "retoma el proyecto" o similar.
   Obligatorio leer progress.md y tasks.md; los otros cuatro archivos (lessons, decisions,
-  assumptions, constrains) se leen solo a demanda. Detecta además el ESTADIO del proyecto por la
+  assumptions, constrains) se leen solo a demanda. Lee además el estado real del repositorio (git
+  log, status y rama) para contrastarlo con lo que declara la memoria. Detecta el ESTADIO del proyecto por la
   presencia de artefactos (_context/client_brief.*, _prototype/…) y propone el siguiente paso con el
   agente que le corresponde. Agnóstico: funciona en cualquier proyecto que use la capa de
   persistencia estándar.
@@ -74,7 +75,29 @@ la entrada relevante sin leer todo el archivo:
 
 ---
 
-## Paso 4 — (OBLIGATORIO) Detectar el estadio del proyecto
+## Paso 4 — (OBLIGATORIO) Leer el estado del repositorio
+
+La memoria dice lo que el agente **escribió**; git dice lo que **quedó**. Cuando divergen, git manda:
+un cierre de sesión puede haberse interrumpido antes de actualizar `progress.md`, o haber dejado
+trabajo sin confirmar. Verificar el ambiente real antes de trabajar es E1/E10.
+
+1. **Comprobar si el proyecto es repo git** (`git rev-parse --git-dir`). Si no lo es, informarlo como
+   **hallazgo** en el resumen —el proyecto está corriendo sin control de versiones (L-009)— y saltar
+   al Paso 5. **No inicializar nada aquí:** este protocolo es de solo lectura; el bootstrap le
+   corresponde a la etapa que vaya a confirmar (`_guideline/git-protocol.md` §2).
+2. **Leer el historial reciente:** `git log --oneline -10`. Contrastar con lo que declara la última
+   entrada de `progress.md`.
+3. **Leer el árbol de trabajo:** `git status --short`. Cambios sin confirmar son trabajo de una sesión
+   previa que no cerró bien: hay que **informarlos**, no confirmarlos por cuenta propia.
+4. **Informar la rama actual.**
+
+> **Divergencia = hallazgo, no corrección silenciosa (NC-6).** Si el historial no respalda lo que la
+> memoria afirma —o al revés—, se **reporta al humano** en el Paso 6. El inicio de sesión no reconcilia
+> memoria y repositorio por su cuenta.
+
+---
+
+## Paso 5 — (OBLIGATORIO) Detectar el estadio del proyecto
 
 La memoria dice qué se hizo; **los artefactos dicen dónde está el proyecto**. Un proyecto recién
 abierto tiene la memoria vacía pero puede tener ya el documento del cliente esperando: sin este paso,
@@ -98,13 +121,15 @@ estadio por la **primera fila que aplique**, de arriba abajo:
 
 ---
 
-## Paso 5 — Sintetizar y confirmar
+## Paso 6 — Sintetizar y confirmar
 
 1. Presentar al usuario un **resumen breve** del estado: último avance, en qué punto quedó el
    proyecto, tareas en curso y próximas tareas sugeridas.
-2. **Informar el estadio detectado** en el Paso 4 y **proponer el siguiente paso** que le corresponde,
+2. **Informar el estado del repositorio** (Paso 4): rama, últimos commits y —si los hay— cambios sin
+   confirmar o divergencias con la memoria.
+3. **Informar el estadio detectado** en el Paso 5 y **proponer el siguiente paso** que le corresponde,
    nombrando el agente/skill concreto.
-3. Proponer (o confirmar con el usuario) **en qué se va a trabajar** en esta sesión.
+4. Proponer (o confirmar con el usuario) **en qué se va a trabajar** en esta sesión.
 
 > **Proponer no es ejecutar (NC-6).** El inicio de sesión detecta y sugiere; **no** encadena agentes
 > por su cuenta. Arrancar el descubrimiento o el prototipado lo autoriza el humano.
@@ -116,8 +141,11 @@ estadio por la **primera fila que aplique**, de arriba abajo:
 - `progress.md` y `tasks.md` son de lectura **siempre obligatoria** al iniciar; los otros cuatro,
   solo a demanda.
 - No modificar la memoria en el inicio: este protocolo es de **lectura**. La escritura ocurre
-  durante el trabajo y en el cierre (`closing-protocol`). La detección del estadio (Paso 4) tampoco
+  durante el trabajo y en el cierre (`closing-protocol`). La detección del estadio (Paso 5) tampoco
   escribe: comprueba **presencia** de archivos, no los altera ni crea carpetas.
+- **La lectura del repositorio (Paso 4) es de solo lectura, sin excepción:** `log`, `status` y rama.
+  Nada de `init`, `add`, `commit`, `checkout` ni `stash`. Los cambios sin confirmar que encuentres se
+  **informan**; confirmarlos o descartarlos lo decide el humano (NC-6).
 - **Detectar y proponer, nunca ejecutar.** El inicio informa en qué estadio está el proyecto y qué
   agente sigue; invocarlo es decisión del humano (NC-6).
 - Idioma: comunicarse en el idioma del proyecto (por defecto, español).
