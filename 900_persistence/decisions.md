@@ -42,6 +42,8 @@
 | D-030 | Los criterios de aceptación de una repetición/prueba end-to-end (T-033 y futuras) se escriben ANTES de correrla, no se juzgan a ojo después (conforme a §3/P5) | aceptada | 2026-07-19 |
 | D-031 | En el estadio de Prototipo el `<alcance>` del commit es literalmente `prototipo` (el Apéndice de `methodology.md` usa `<incremento>`, inexistente en este estadio) | aceptada | 2026-07-19 |
 | D-032 | El procedimiento git se materializa como referencia única (`_guideline/git-protocol.md`) que los skills aplican, en vez de bloque duplicado por skill | aceptada | 2026-07-19 |
+| D-033 | Los checkpoints intra-etapa (T-045) quedan siempre locales; el push se hace solo al cerrar la sesión, respetando `auto_push` (resuelve A-003) | aceptada | 2026-07-19 |
+| D-034 | El contrato de entrada entre etapas (T-043) se integra como paso 0 de §5.1 de `methodology.md`, en vez de crear un archivo `_guideline/` nuevo | aceptada | 2026-07-19 |
 
 ## Formato
 
@@ -315,3 +317,19 @@
 - **Decisión:** Crear `template/_guideline/git-protocol.md` como fuente única de verdad del procedimiento git: §1 por qué el commit por etapa, §2 bootstrap del repo (idempotente, sin tocar remoto), §3 commit de etapa, §4 convención de mensaje con tabla etapa→tipo→artefacto, §5 límites (no push, no ramas, no reescribe historia). Cada `SKILL.md` de etapa aplica el protocolo con un paso corto que remite al archivo, en vez de contener el bloque completo.
 - **Alternativas consideradas:** Duplicar el bloque de procedimiento git en cada `SKILL.md` afectado — descartada: mismo riesgo de deriva silenciosa que L-001/G10, multiplicado por 6 archivos en vez de 2.
 - **Consecuencias:** Cambios futuros al procedimiento git (p. ej. una convención nueva) se hacen en un solo archivo y se propagan por referencia; los skills quedan más cortos y menos propensos a divergir entre sí. Puntero añadido en `methodology.md` §7 y Apéndice.
+
+### D-033 — Los checkpoints intra-etapa (T-045) quedan siempre locales; el push solo ocurre al cerrar la sesión
+- **Estado:** aceptada
+- **Fecha:** 2026-07-19
+- **Contexto:** T-045 (checkpoints intra-etapa con commit, para no perder trabajo si una entrevista larga o un bucle de prototipado se cae a mitad de camino) dejó abierta una pregunta registrada en `assumptions.md` A-003: ¿los checkpoints empujan al remoto respetando `auto_push`, o quedan solo locales hasta el cierre de sesión?
+- **Decisión:** Los checkpoints intra-etapa quedan **siempre locales**. El `push` se hace únicamente en el Paso 6 de `closing-protocol`, contra el repositorio, respetando `repository.auto_push` — igual que ya regía para el commit de etapa (§3 de `git-protocol.md`).
+- **Alternativas consideradas:** Empujar cada checkpoint al remoto (respetando `auto_push`) — descartada por el humano: generaría pushes intermedios ruidosos en el historial remoto por cada bloque de preguntas o iteración del bucle, cuando el propósito del checkpoint es proteger contra una caída de sesión local, no comunicar avance parcial al remoto.
+- **Consecuencias:** Un checkpoint intra-etapa protege el trabajo en el disco local pero **no** en el remoto; si la máquina local se pierde entre checkpoints y cierre de sesión, el checkpoint no ayuda. `git-protocol.md` §5 (límites) queda reforzado: el "no empuja" aplica explícitamente a commits de etapa (§3) y a checkpoints (§3.1). Promueve y cierra `assumptions.md` A-003.
+
+### D-034 — El contrato de entrada entre etapas se integra como paso 0 de §5.1 de `methodology.md`
+- **Estado:** aceptada
+- **Fecha:** 2026-07-19
+- **Contexto:** T-043 (contrato de entrada entre etapas, cierra L-014) necesitaba un lugar canónico donde vivir la regla "todo skill de etapa verifica el `Estado`/`Confirmado por el humano` del artefacto que consume, antes de usarlo". `methodology.md` §5.1 ya definía el "Contrato de trabajo de un constructor de entregables", pero solo cubría la **salida** (qué debe producir un constructor), nunca la entrada.
+- **Decisión:** En vez de crear un archivo `_guideline/` nuevo (p. ej. un hipotético `input-contract.md`), el contrato de entrada se añade como **paso 0** del §5.1 existente de `methodology.md`. Queda una sola definición del contrato de trabajo (entrada + salida) que los cuatro skills de etapa aplican, siguiendo el mismo patrón de referencia única que D-032 fijó para el procedimiento git.
+- **Alternativas consideradas:** Crear un archivo `_guideline/` nuevo dedicado al contrato de entrada — descartada: multiplicaría archivos de referencia por una regla que es, en esencia, la mitad que le faltaba a un contrato que ya existía; peor localidad para quien busca "qué debe cumplir un constructor de entregables" (tendría que mirar dos archivos en vez de uno).
+- **Consecuencias:** `methodology.md` §5.1 pasa a cubrir el contrato completo (entrada y salida) de un constructor de entregables. Los cuatro skills de etapa (`interview-protocol`, `discovery-protocol`, `prototype-protocol`; `ingest-protocol` queda fuera a propósito, su insumo es el brief del cliente sin campo de estado) aplican la regla con un paso corto + invariante que remite a §5.1, en vez de duplicar la lógica de verificación.

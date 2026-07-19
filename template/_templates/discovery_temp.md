@@ -20,11 +20,17 @@ al instanciar. Borra los ejemplos y los comentarios <!-- --> al rellenar.
 
 ## Meta
 
-- **Proyecto:** <nombre-del-proyecto>
-- **Cliente / solicitante:** <quién pide el sistema>
+- **Proyecto:** <nombre-del-proyecto | no declarado> <!-- FUENTE: _context/project.yaml (project.name).
+     Regla de procedencia (§0.2 de methodology.md): metadato, NO se sintetiza del log ni del extracto. -->
+- **Cliente / solicitante:** <quién pide el sistema> <!-- FUENTE: el brief o la entrevista (contenido
+     del cliente), NO project.yaml. Si ninguna de las dos lo trae: "no declarado". -->
 - **Descubridor:** <agente que condujo la entrevista>
 - **Fecha:** <YYYY-MM-DD>
 - **Timebox del descubrimiento:** <p. ej. 1 sesión / 2 h> <!-- disciplina de alcance: acotar la propia elicitación -->
+- **Procedencia de los insumos:** <log: cerrada | en curso · extracto: confirmado | sin confirmar | ninguno>
+     <!-- Contrato de entrada (§5.1 paso 0 de methodology.md). Estado REAL de lo que se sintetizó, no el
+     deseado. El Prototipador construye sobre este entregable: si se apoya en insumos no validados,
+     tiene que poder verlo aquí sin releer la cadena entera. -->
 - **Estado:** borrador <!-- borrador | cerrado (listo para el Prototipador) -->
 
 ## 1. Objetivo y contexto

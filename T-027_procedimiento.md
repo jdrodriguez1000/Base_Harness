@@ -21,11 +21,19 @@ Ningún paso arranca hasta que el anterior esté cerrado.
 | 3 | **G3** — `ingest-protocol` instancia desde plantilla | ✅ hecho |
 | 4 | **G7** — timebox acordado (interviewer + prototipador) | ✅ hecho |
 | 5 | **G10** — deriva raíz↔molde de `startup-protocol` | ✅ hecho |
-| 6 | **T-030 + G1 + G5** — commit por etapa, bootstrap git, `git log` al inicio, convención de commits | ⛔ **bloqueante** |
-| 7 | Sincronizar el proyecto de prueba desde `template/` | pendiente del paso 6 |
+| 6 | **T-030 + G1 + G5** — commit por etapa, bootstrap git, `git log` al inicio, convención de commits | ✅ hecho (corrida 2) |
+| 7 | **T-042** — commit desacoplado del gate; marcador `[sin confirmar]` | ✅ hecho |
+| 8 | **T-043** — contrato de entrada: verificar `Estado`/`Confirmado` del insumo y avisar | ✅ hecho |
+| 9 | **T-044** — `project.yaml` insumo declarado; regla de procedencia (dos clases, dos fuentes) | ✅ hecho |
+| 10 | **T-041** — §7 "cubierta" = métrica + umbral + método, alineado en los tres skills | ✅ hecho |
+| 11 | Sincronizar el proyecto de prueba desde `template/` | ⛔ **bloqueante de la corrida 3** |
 
-**El paso 6 es bloqueante de verdad:** sin él, L-009 no puede evaluarse en la corrida 2 y la prueba
-volvería a terminar sin un solo commit.
+**Por qué la corrida 2 fracasó pese a tener el paso 6 hecho:** T-030 implementó el commit por etapa pero
+lo dejó **colgando del gate humano**; al saltarse el gate, no hubo commit y L-009 reapareció (L-013). Eso
+es lo que corrige T-042, y por eso los pasos 7–10 son ahora precondición de la corrida 3.
+
+**El paso 11 sigue siendo bloqueante de verdad:** el `.claude/` del proyecto de prueba es anterior a
+todos estos cambios; correr sin recopiarlo mediría los skills viejos (ver §2).
 
 ---
 
@@ -51,6 +59,13 @@ cambios de esta sesión. Correr sin recopiarlo mediría los skills viejos y la p
 
 Cada fila se evalúa sobre **el artefacto + la traza**, no sobre lo que el agente diga que hizo.
 
+> **Regla general — camino no ejercitado ≠ camino correcto (L-016).** Cuando un criterio se apoya en un
+> evento que *puede no ocurrir* (una confirmación, un gate, un commit), **la ausencia del evento es
+> fallo, no aprobado**. Un hallazgo solo se declara cerrado si su mecanismo **se ejecutó y se observó**;
+> si la corrida no lo ejercitó, se registra como **no evaluado** y el hallazgo **sigue abierto**. El
+> error a evitar es leer "no vi nada mal" como "está bien": son cosas distintas cuando el camino nunca
+> se recorrió.
+
 ### L-005 — fabricación de un nombre inexistente
 
 | | |
@@ -72,7 +87,8 @@ Cada fila se evalúa sobre **el artefacto + la traza**, no sobre lo que el agent
 | | |
 |---|---|
 | **Pasa si** | En la traza hay **dos escrituras**: la que crea el extracto lo deja en `Confirmado: no` / `Estado: borrador`, y la que pone `sí`/`cerrado` es **posterior al turno** en que el humano confirmó |
-| **Falla si** | Una sola escritura deja `sí`, o el `sí` se escribe antes de la respuesta humana |
+| **Falla si** | Una sola escritura deja `sí`; **o** el `sí` se escribe antes de la respuesta humana; **o** la confirmación **nunca ocurre** y el extracto termina la corrida en `no`/`borrador` |
+| **Ojo** | El tercer caso de fallo es el que se pasó por alto en la corrida 2: se dio L-007 por cerrado porque nadie confirmó **antes de tiempo**, cuando en realidad **nadie confirmó nunca**. Un campo que jamás cambia de valor no es evidencia de que el mecanismo de confirmación funcione — es evidencia de que no se ejecutó. **Camino no ejercitado ≠ camino correcto** (L-016) |
 
 ### L-008 — áreas sin estado `n/a`
 
@@ -88,6 +104,7 @@ Cada fila se evalúa sobre **el artefacto + la traza**, no sobre lo que el agent
 |---|---|
 | **Pasa si** | `git log` muestra **≥1 commit por etapa** (ingesta, entrevista, discovery, prototipo) con la convención `tipo(<incremento>): descripción`, y el inicio de sesión **leyó** `git log` (G1) |
 | **Falla si** | La corrida termina con cero commits, o con un único commit al cierre, o con mensajes fuera de convención (G5) |
+| **Ojo (T-042)** | El commit ya **no depende del gate**: una etapa cuyo gate se saltó debe confirmar igual, con `[sin confirmar]` al final del mensaje. Ese sufijo **es** la convención, no una violación. **Falla igual** si el gate se salta y la etapa queda sin commit — que es como reapareció L-009 en la corrida 2 (L-013) |
 
 ### G7 — timebox (nuevo, primera ejecución)
 

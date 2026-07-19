@@ -34,6 +34,12 @@ Prototipo (§4), **antes** de la entrevista. Este skill es **agnóstico al proye
 
 ## Paso 0 — Localizar el documento
 
+0. **Leer `_context/project.yaml`** — es insumo declarado, no un archivo opcional. De ahí salen los
+   **metadatos del proyecto** (`project.name`, `project.description`) que van a la Meta del extracto.
+   Rige la **regla de procedencia** (§0.2 de `methodology.md`): el nombre del proyecto **nunca** se
+   deduce del brief, aunque el brief nombre una empresa o un producto parecido; si `project.yaml` no
+   existe o no lo trae, se escribe `<no declarado>` — **no se inventa ni se toma de la otra fuente**
+   (L-015).
 1. Buscar en `_context/` un archivo `client_brief.*` (cualquier extensión: `.md`, `.pdf`, `.docx`,
    `.txt`…). El nombre es **convención fija**; la extensión es libre para no imponerle formato al cliente.
 2. **Si no existe:** informar *"no hay documento del cliente; se conducirá la entrevista completa"* y
@@ -122,7 +128,13 @@ Guías por área (para localizar, no para interpretar):
 - **Camino feliz y medio (§6):** el medio (app, web, notebook, CLI…) es **por actor**. Si el documento
   fija el medio de unos actores y no de otros, es **parcial**.
 - **Gatekeeper (§7):** un objetivo comercial vago ("mejorar la productividad") **no** es un Gatekeeper.
-  Solo cuenta como cubierta si hay **métrica + umbral**; si no, **parcial** o **ausente**.
+  Solo cuenta como **cubierta** si hay los **tres** componentes: **métrica + umbral + método de
+  medición** (cómo se mide y con quién/sobre qué). Faltando cualquiera → **parcial**, nombrando en
+  *Qué falta* exactamente cuál.
+  > Los tres son el criterio del `discovery-protocol` (Paso 1.6), que es quien formaliza §7. Si marcaras
+  > `cubierta` con solo métrica+umbral, el interviewer no preguntaría el método y el writer se quedaría
+  > sin él: un área dada por completa llegaría corta al final de la cadena (L-011). Una métrica sin
+  > método no es medible, y §4.3 exige que lo sea.
 - **Exclusiones (§9):** cuenta lo que el documento declara fuera de alcance explícitamente.
 
 **Ambigüedades:** cuando el documento diga algo contradictorio, vago o de doble lectura, **no lo
@@ -169,6 +181,8 @@ ambigüedad es **obligatorio** en todo caso.
    su forma es verificable por **diff** contra el esqueleto.
    > En esta escritura los campos de estado **nacen en su valor no confirmado**:
    > `Confirmado por el humano: no` y `Estado: borrador`. No los adelantes: todavía no has preguntado.
+   > **Con el archivo escrito, ejecutar ya el commit del Paso 5** (con `[sin confirmar]`): pides la
+   > confirmación sobre un estado con hash, y si el humano no llega a confirmar, el trabajo no se pierde.
 2. Presentar al humano un **resumen de cobertura en un solo turno**: qué áreas quedaron cubiertas, qué
    áreas preguntará el interviewer y qué ambigüedades se detectaron.
 3. Pedir **una** confirmación de bloque. **No** confirmes área por área: eso reintroduce el cuestionario
@@ -191,22 +205,30 @@ ambigüedad es **obligatorio** en todo caso.
 
 ## Paso 5 — Commit de etapa
 
-Con el extracto ya **cerrado** (Paso 4.5), aplicar `_guideline/git-protocol.md` §2 (bootstrap) y §3
+Con el extracto ya **escrito** (Paso 4.5), aplicar `_guideline/git-protocol.md` §2 (bootstrap) y §3
 (commit de etapa):
 
 - Etapa: **ingest** → mensaje `docs(prototipo): extracto del documento del cliente`.
 - Artefacto confirmado: `<EXTRACT>`.
 
-El commit va **después** de la confirmación humana, no antes: lo que se confirma es el artefacto
-validado, no un borrador. Reportar hash y rama junto al resumen de cobertura. **No hacer `push`.**
+**El disparador es la salida de etapa, no la confirmación humana.** Confirma en cuanto el extracto
+está escrito: si `Confirmado por el humano` sigue en `no`, confirma igual añadiendo `[sin confirmar]`
+al final del mensaje (§4 de `git-protocol.md`). Si el humano confirma después, esa confirmación
+produce su propio commit, ya sin el marcador.
+
+Reportar hash y rama junto al resumen de cobertura. **No hacer `push`.**
 
 ---
 
 ## Reglas invariantes
 
 - **Condicional:** sin `client_brief.*` no hay artefacto ni error; se cae al flujo por defecto.
-- **La etapa cierra con commit:** el extracto confirmado se persiste en git (`_guideline/git-protocol.md`);
-  una cadena de descubrimiento sin puntos de retorno no es reanudable (L-009).
+- **Cada fuente en su carril (§0.2):** metadatos del proyecto ← `project.yaml`; contenido ← el brief.
+  No se cruzan, no se deducen, y lo que falta se escribe `<no declarado>` (L-015).
+- **La etapa cierra con commit, confirmado o no:** el extracto se persiste en git en cuanto está escrito
+  (`_guideline/git-protocol.md`), rotulado `[sin confirmar]` si el humano aún no lo validó. Una cadena de
+  descubrimiento sin puntos de retorno no es reanudable (L-009), y el commit no puede depender de un gate
+  que puede saltarse (L-013).
 - **Citar, no interpretar:** extractos textuales con localización; la síntesis es del writer.
 - **Inferencia mínima:** *¿hay material para esta área?* y, solo para el caso de diseño, *¿esta área le
   corresponde al cliente?* — nada más.

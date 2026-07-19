@@ -40,15 +40,58 @@ Se ejecuta **antes del commit de etapa** (§3), en cualquier skill que vaya a co
 
 ## 3. Commit de etapa
 
-Al **cerrar** una etapa —después de que su artefacto quede escrito y, si la etapa tiene gate humano,
-después de la aprobación—:
+**El disparador es la salida de etapa, no la aprobación.** En cuanto el artefacto de la etapa queda
+escrito, la etapa confirma —haya gate humano o no, se haya cruzado o no:
 
 1. `git add -A`
-2. `git commit` con el mensaje del §4.
+2. `git commit` con el mensaje del §4, **marcado `[sin confirmar]`** si el artefacto sigue en borrador
+   (gate pendiente, saltado o rechazado).
 3. **Reportar** hash corto y rama en el resumen de la etapa.
 4. **No hacer `push`.** El push es del cierre de sesión y respeta `repository.auto_push`.
 
+Si el gate se cruza **después** (el humano aprueba en la misma sesión o en otra), la aprobación
+produce **su propio commit** —el que marca el artefacto como cerrado—, esta vez sin el marcador. El
+historial queda con los dos estados y se puede volver a cualquiera.
+
 Si no hay nada que confirmar (`git status` limpio), no es un error: informar y seguir.
+
+> **Motivo (L-013).** Condicionar el commit a la aprobación hace que **saltarse el gate se lleve por
+> delante el control de versiones**: sin aprobación no hay commit, y la etapa entera queda sin punto
+> de retorno. Son dos preocupaciones distintas y no deben compartir disparador — el gate gobierna
+> **si el artefacto es válido**; el commit gobierna **si el trabajo es recuperable**. Un borrador
+> confirmado y rotulado es siempre preferible a un borrador perdido.
+
+### 3.1 Checkpoints intra-etapa
+
+Una etapa puede ser larga (una entrevista de veinte preguntas, un bucle de construcción de varias
+iteraciones). Esperar a su cierre para confirmar deja horas de trabajo sin punto de retorno: si la
+sesión se corta a mitad, se pierde todo lo elicitado o construido. Por eso se confirma **también dentro**
+de la etapa.
+
+**Unidad de checkpoint: el bloque natural, no el paso atómico.**
+
+| Etapa | Confirma cada… | **No** cada… |
+|---|---|---|
+| `interview` | bloque de preguntas respondidas, o al interrumpirse | Q&A suelto |
+| `prototype` | iteración del bucle que deja algo ejecutable | edición de archivo |
+
+`ingest` y `discovery` **no llevan checkpoints intra-etapa**: su artefacto se escribe en una sola pasada
+(el análisis previo ocurre en contexto, sin tocar disco), así que no hay estado intermedio que salvar.
+Su primer commit —el del borrador recién escrito, §3— ya cumple esa función.
+
+Confirmar por cada paso atómico produce un historial ilegible —cien commits de una línea— y no aporta
+reanudabilidad real: se reanuda desde el último bloque coherente, no desde media pregunta. Confirmar
+solo al cerrar la etapa es el extremo opuesto y el que de verdad duele.
+
+- **Mensaje:** el mismo de la etapa (§4), con `[sin confirmar]`, porque un checkpoint es por definición
+  trabajo en curso. Que se repita entre checkpoints es correcto: el historial refleja el bucle real.
+- **Los checkpoints son siempre locales.** No se empuja ninguno. El `push` ocurre **una vez**, en el
+  cierre de sesión (`closing-protocol`), respetando `repository.auto_push` (D-033).
+
+> **Por qué locales.** El remoto es el registro que otros ven; un bucle de trabajo a medias no es algo
+> que publicar a cada paso. El checkpoint resuelve **reanudabilidad** (local basta), no **compartir**
+> (eso lo decide el cierre de sesión). Mezclar ambas cosas convertiría cada bloque de preguntas en un
+> push, y `auto_push` dejaría de significar nada.
 
 ---
 
@@ -64,6 +107,22 @@ tipo(<alcance>): descripción
 - **`<alcance>`** es el **incremento** en curso. En el estadio de **Prototipo** todavía no hay
   incrementos: el alcance es `prototipo`.
 - **descripción** en minúscula, imperativa y concreta: nombra el artefacto producido, no la actividad.
+
+### Marcador de borrador
+
+Si el artefacto se confirma **sin haber cruzado su gate**, la descripción **termina** en
+`[sin confirmar]`:
+
+```
+docs(prototipo): entregable de descubrimiento [sin confirmar]
+```
+
+Va al final y literal —no `(borrador)`, no `WIP`— para que un `git log --grep` lo encuentre. Sin él,
+un borrador confirmado sería indistinguible en el historial de uno aprobado, que es justamente lo que
+el gate quiere evitar; **con** él, la distinción se conserva sin sacrificar el punto de retorno.
+
+Las etapas **sin gate** (`interview`) nunca lo llevan. Cuando el gate se cruza después, el commit de
+aprobación lleva el mismo mensaje **sin** el marcador.
 
 ### Etapa → tipo y artefacto
 
@@ -81,7 +140,9 @@ con el mismo mensaje. El historial refleja el bucle real, no un cierre ficticio.
 
 ## 5. Lo que este protocolo **no** hace
 
-- **No empuja.** `push` solo en `closing-protocol`, según `repository.auto_push`.
+- **No empuja.** `push` solo en `closing-protocol`, según `repository.auto_push`. Vale para **todos** los
+  commits que produce este protocolo: los de etapa (§3) y los checkpoints intra-etapa (§3.1). Todo queda
+  **local** hasta el cierre de sesión (D-033).
 - **No crea ramas.** La estrategia de ramas (una por incremento) aplica desde el estadio de MVP; el
   Prototipo trabaja en la rama actual.
 - **No integra a la principal.** La integración es **solo vía Pull Request** tras veredicto CONFORME.

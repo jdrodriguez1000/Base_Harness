@@ -77,6 +77,31 @@ Este documento no repite lo que ya tiene dueño canónico:
 > **Comportamiento vinculante.** Todo agente que participe en la construcción cumple los P/E/NC de
 > `principles.md` como restricciones inmutables.
 
+#### Dos clases de dato, dos fuentes (regla de procedencia)
+
+Lo que un agente escribe en un artefacto sale **siempre** de una de estas dos clases, y **cada clase
+tiene una sola fuente legítima**:
+
+| Clase | Qué incluye | Fuente única | Si falta |
+|---|---|---|---|
+| **Metadatos del proyecto** | nombre, descripción, repositorio, rama, memoria activa | **`_context/project.yaml`** | `<no declarado>` |
+| **Contenido del cliente** | objetivo, hipótesis de valor, actores, flujos, métricas, exclusiones | **`client_brief.*` / la entrevista** | se **pregunta**, no se deduce |
+
+**Las fuentes no se cruzan.** El nombre del proyecto no se "deduce" del brief aunque aparezca algo
+parecido; una métrica de éxito no sale de `project.yaml` aunque estuviera ahí. **Y ningún valor se
+rellena con la otra clase ni con una suposición:** si la fuente que le corresponde no lo trae, se
+escribe `<no declarado>` o se pregunta al humano (NC-1/NC-6).
+
+**Todo valor viaja con su procedencia declarada** —qué archivo y dónde—, y la procedencia se **verifica
+antes de afirmarla**: decir "esto viene del brief" sin haberlo comprobado es fabricar, aunque el valor
+resulte ser correcto.
+
+> **Motivo (L-015).** Un agente afirmó que el nombre del proyecto "venía del brief"; la palabra no
+> aparecía ni una vez en el brief — estaba en `project.yaml`, que no era insumo declarado de ninguna
+> etapa. El valor era correcto y la atribución falsa, que es el caso **más difícil de detectar**: una
+> fuente inventada *suena* respaldada y nadie la audita. Fabricar la **fuente** de un dato es tan grave
+> como fabricar el dato.
+
 ---
 
 ## 1. Los dos ejes del trabajo
@@ -407,10 +432,21 @@ integración corren en **contexto fresco**.
 ### 5.1 Contrato de trabajo de un constructor de entregables
 
 Todo arquetipo que produce un **entregable documental** (definición, spec, plan, informe) opera bajo el
-mismo **contrato de trabajo** de cuatro pasos. Es agnóstico al proyecto: las rutas físicas concretas se
+mismo **contrato de trabajo**: un paso de **entrada** (verificar el insumo) y cuatro de **producción**. Es agnóstico al proyecto: las rutas físicas concretas se
 fijan al instanciar (ver nota final). Este contrato es lo que hace **observable y verificable** a un
 agente que, por ser probabilístico, no se puede dar por bueno solo con su palabra.
 
+0. **Verificar el insumo antes de consumirlo (contrato de entrada).** Todo artefacto producido por una
+   etapa anterior declara su estado en la cabecera (`Estado: borrador | cerrado`, y donde exista,
+   `Confirmado por el humano: no | sí`). Antes de trabajar sobre él, el agente **lee ese campo** y, si
+   el insumo viene **en borrador o sin confirmar**, lo **avisa explícitamente** en su primera
+   comunicación y lo **hace constar en el artefacto que produzca**. No bloquea ni corrige por su
+   cuenta: la autoridad para decidir si se sigue es del humano (NC-6). Un insumo sin campo de estado
+   legible se trata como **no confirmado**.
+   **`_context/project.yaml` es insumo declarado de todo agente que escriba metadatos de proyecto**
+   (nombre, descripción, repo): se lee en este paso, no se busca a mitad de camino ni se sustituye por
+   una deducción. Rige la **regla de procedencia** (§0.2): cada valor de salida sale de la fuente de su
+   clase y declara cuál es.
 1. **Plantilla = contrato de forma.** Cada tipo de entregable tiene un **esqueleto versionado** en
    `_template/` (una plantilla por artefacto: definición, spec, plan…). El esqueleto fija la
    **estructura obligatoria** —secciones, campos, marcadores de relleno—: es el contrato de *forma*. El

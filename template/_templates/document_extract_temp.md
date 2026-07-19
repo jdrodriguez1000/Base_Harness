@@ -32,7 +32,9 @@ comentarios al instanciar.
 
 ## Meta
 
-- **Proyecto:** <nombre-del-proyecto>
+- **Proyecto:** <nombre-del-proyecto | no declarado> <!-- FUENTE: _context/project.yaml (project.name).
+     Regla de procedencia (§0.2 de methodology.md): NO se deduce del brief aunque este nombre una empresa
+     o producto parecido — son datos distintos. Si project.yaml no existe o no lo trae: "no declarado". -->
 - **Documento origen:** <ruta y nombre exacto, p. ej. _context/client_brief.pdf>
 - **Formato / extensión:** <md | pdf | docx | txt | …>
 - **Extraído por:** onboarding-reader
@@ -70,7 +72,7 @@ comentarios al instanciar.
 | §4 | Stakeholders | <…> | <…> |
 | §5 | Actores | <…> | <…> |
 | §6 | Camino feliz + medio por actor | <…> | <…> |
-| §7 | Gatekeeper | <…> | <…> |
+| §7 | Gatekeeper | <…> | <…> | <!-- "cubierta" SOLO con los tres: métrica + umbral + método de medición. Falta uno → parcial, nombrándolo. -->
 | §8 | Timebox | <…> | <…> |
 | §9 | Exclusiones | <…> | <…> |
 | §10 | Split por audiencia (opcional) | <…> | <…> |

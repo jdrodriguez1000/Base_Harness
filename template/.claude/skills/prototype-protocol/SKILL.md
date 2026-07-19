@@ -30,10 +30,18 @@ Este skill es **agnóstico al proyecto** y **autónomo**: su insumo es un archiv
 
 ## Paso 0 — Cargar contexto e insumos
 
+0. **Leer `_context/project.yaml`** — insumo declarado: nombre del proyecto y repositorio. Rige la
+   **regla de procedencia** (§0.2 de `methodology.md`): los metadatos salen de aquí; **qué** construir
+   sale del `discovery.md`. No tomes decisiones de alcance de `project.yaml` ni metadatos del
+   `discovery.md` (L-015).
 1. Leer `_guideline/methodology.md` **§4.2** (frontera juicio↔materialización, regla de medio), **§4.3**
    (disciplina de alcance, taxonomía de actores) y **§4.4** (frontera Prototipo→MVP, desechable).
-2. Localizar y leer el **`discovery.md`** (debería estar `cerrado`; si sigue `borrador`, avisar que la
-   materialización será parcial). De él se extrae:
+2. Localizar y leer el **`discovery.md`**. **Verificar primero su estado (contrato de entrada, §5.1
+   paso 0 de `methodology.md`):** leer `Estado` y *Procedencia de los insumos* de su Meta. Si el
+   entregable sigue en `borrador`, o si su procedencia declara insumos sin confirmar, **avisarlo antes
+   de construir nada** —el prototipo heredaría material que nadie validó— y dejar constancia en el
+   informe de cierre. **No bloquees ni lo cierres tú:** construir igual o esperar lo decide el humano
+   (NC-6). Si no puedes leer esos campos, trátalo como **no confirmado**. De él se extrae:
    - **Actor a construir:** por defecto el **generador** (§5/§6). Operador/administrador solo si la
      invocación lo pide explícitamente (**bajo demanda**, §4.3).
    - **Tipo dominante (§3):** deseabilidad o factibilidad → decide *qué* se materializa.
@@ -73,6 +81,10 @@ Bucle agéntico dentro de `<PROTOTYPE>`:
 1. **Escribir** el mínimo necesario para el siguiente paso del camino feliz.
 2. **Ejecutar / previsualizar** (correr el spike, abrir el mockup) para observar el comportamiento real.
 3. **Ajustar** según lo observado. Repetir hasta cubrir el camino feliz del generador de punta a punta.
+4. **Checkpoint cuando la iteración deja algo ejecutable** (`_guideline/git-protocol.md` §3.1):
+   confirmar con el mensaje de etapa más `[sin confirmar]`. La unidad es el **estado que corre**, no la
+   edición de archivo: así puedes volver a la última versión que funcionaba cuando un ajuste rompa el
+   prototipo — que en un bucle de escribir→ejecutar→ajustar pasa constantemente. **Sin `push`** (D-033).
 
 Disciplina durante el bucle:
 - **Alcance:** si algo no es el camino feliz del generador ni valida la hipótesis, **no se construye**.
@@ -111,6 +123,14 @@ informe. **No hacer `push`** y **no** cruzar el gate (P5).
 ## Reglas invariantes
 
 - **Desechable y mínimo:** sin tests, sin robustez, sin capas; lo justo para validar la hipótesis (§4.4).
+- **Checkpoint por iteración ejecutable:** el bucle confirma cuando deja algo que corre
+  (`git-protocol.md` §3.1), para poder volver a la última versión que funcionaba. **Siempre local:** el
+  `push` es del cierre de sesión (D-033).
+- **Cada fuente en su carril (§0.2):** metadatos ← `project.yaml`; **qué** construir ← `discovery.md`.
+  Un hueco no se rellena con la otra fuente ni con una suposición: se pregunta (L-015, NC-6).
+- **Verificar el insumo antes de construir:** `Estado` y *Procedencia de los insumos* del `discovery.md`
+  se comprueban y se avisan (§5.1 paso 0 de `methodology.md`). Eres el final de la cadena: lo que aquí
+  no se detecte, se materializa en código (L-014).
 - **Congelar es confirmar:** el feature freeze cierra con commit (`_guideline/git-protocol.md`) antes de
   ceder el gate; desechable no significa no versionado (L-009).
 - **Solo el generador:** operador/administrador son bajo demanda (§4.3); no en secuencia inmediata.

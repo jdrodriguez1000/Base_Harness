@@ -33,6 +33,10 @@ humano. Antes actuaron el `onboarding-reader` (skill `ingest-protocol`, solo si 
 
 Puedes tener **uno o dos** insumos, según si el cliente entregó documentación:
 
+0. **Leer `_context/project.yaml`** — insumo declarado. Es la fuente de los **metadatos** de la Meta del
+   `discovery.md` (`Proyecto`, y `Cliente / solicitante` si lo declara). Rige la **regla de procedencia**
+   (§0.2 de `methodology.md`): los metadatos salen de aquí; el **contenido** (§1–§10) sale del log y del
+   extracto. Las fuentes **no se cruzan**, y lo que ninguna traiga se escribe `<no declarado>` (L-015).
 1. Localizar y leer el log **`interview_document.md`** (debería estar en estado `cerrada`; si sigue
    `en curso`, avisar que la síntesis será parcial).
 2. Localizar y leer **`document_extract.md`** si existe (lo produjo el `onboarding-reader` a partir de
@@ -44,8 +48,15 @@ Puedes tener **uno o dos** insumos, según si el cliente entregó documentación
    - Si el extracto **no** existe, el log es tu insumo único (flujo por defecto).
 3. Leer `_guideline/methodology.md` **§4.3** (taxonomía de actores, Gatekeeper, exclusiones) y **§5**
    (arquetipos) — la lente para interpretar ambos insumos.
-4. Tomar la plantilla `_templates/discovery_temp.md`: es la **forma** del entregable a producir.
-5. Determinar el destino `<DISCOVERY>` = `_prototype/discovery.md`.
+4. **Verificar el estado de ambos insumos (contrato de entrada, §5.1 paso 0 de `methodology.md`).**
+   Leer `Estado` del log (`en curso` \| `cerrada`), y del extracto `Estado` + `Confirmado por el
+   humano`; mirar además si el campo *Extracto documental* del log viene marcado `(sin confirmar)`.
+   Todo insumo en borrador o sin confirmar se **declara en la Meta del `discovery.md`** (campo
+   *Procedencia de los insumos*) y se **avisa** en el resumen del Paso 2. **No bloquees ni confirmes tú
+   nada:** seguir o parar lo decide el humano (NC-6). Un insumo cuyo estado no puedas leer cuenta como
+   **no confirmado**.
+5. Tomar la plantilla `_templates/discovery_temp.md`: es la **forma** del entregable a producir.
+6. Determinar el destino `<DISCOVERY>` = `_prototype/discovery.md`.
 
 > **Precedencia ante conflicto.** Si el documento y la entrevista se contradicen, **manda la
 > entrevista**: es posterior y el humano habló con conocimiento del documento. **Pero no lo silencies**
@@ -70,7 +81,11 @@ del documento + lo elicitado en la entrevista.
    **generador** como el que construirá primero el Prototipador. Operador/administrador: **bajo demanda**.
    Registrar el **medio/canal de cada actor** (app, web, notebook, CLI…) en la cabecera de su flujo,
    tal como se elicitó; el medio es **por actor**, no del proyecto. Si no se elicitó, declararlo hueco.
-6. **Gatekeeper (§7):** formalizar como métrica **medible** + umbral + método.
+6. **Gatekeeper (§7):** formalizar los **tres** componentes — métrica **medible** + umbral + método de
+   medición. **Este trío es la definición canónica de §7 "cubierta"** en toda la cadena: `ingest-protocol`
+   solo marca §7 `cubierta` si están los tres, e `interview-protocol` elicita los tres. Si cambias este
+   criterio, actualiza esos dos en el mismo cambio o volverás a abrir L-011. Si falta alguno, **declara el
+   hueco**; no lo completes tú.
 7. **Timebox (§8):** se acuerda al abrir la entrevista, así que **no está en el registro de Q&A sino en
    el campo *Timebox acordado* de la cabecera Meta** del log; si dice `sin acordar`, declararlo así en
    §8, no inventar una duración. **Exclusiones explícitas (§9)**; **split (§10)** solo si el log lo
@@ -88,8 +103,12 @@ entregable sí debe resolver.
 ## Paso 2 — Cerrar y entregar
 
 1. Sustituir todos los `<marcadores>` y borrar los comentarios de guía de la plantilla.
+   **Con el archivo escrito, ejecutar ya el commit del Paso 3** (con marcador `[sin confirmar]`): el
+   gate se pide sobre un estado confirmado, no sobre un archivo volátil.
 2. Presentar un **resumen** del `discovery.md`: actores declarados, camino feliz del generador,
-   Gatekeeper y exclusiones; señalar cualquier insuficiencia del log para el camino feliz del generador.
+   Gatekeeper y exclusiones; señalar cualquier insuficiencia del log para el camino feliz del generador
+   y, si algún insumo vino en borrador o sin confirmar (Paso 0.4), **decirlo aquí explícitamente**: el
+   humano va a aprobar sobre esa base y tiene derecho a saberlo antes del gate.
 3. **Pedir aprobación explícita al humano (GATE, P5).** El entregable queda en `borrador` hasta que la
    dé. Si pide correcciones, aplicarlas y volver a presentar. **No marques `cerrado` por tu cuenta.**
 4. Con la aprobación, marcar el entregable como **cerrado**. Queda listo como **único insumo del
@@ -99,14 +118,22 @@ entregable sí debe resolver.
 
 ## Paso 3 — Commit de etapa
 
-Con el entregable ya **cerrado** por aprobación humana (Paso 2.4), aplicar
-`_guideline/git-protocol.md` §2 (bootstrap) y §3 (commit de etapa):
+Con el entregable ya **escrito** (Paso 2.1), aplicar `_guideline/git-protocol.md` §2 (bootstrap) y §3
+(commit de etapa):
 
 - Etapa: **discovery** → mensaje `docs(prototipo): entregable de descubrimiento`.
 - Artefacto confirmado: `<DISCOVERY>`.
 
-El commit va **después** del gate, nunca antes: confirmar un `discovery.md` en `borrador` lo haría
-indistinguible en el historial de uno aprobado. Reportar hash y rama. **No hacer `push`.**
+**El disparador es la salida de etapa, no el gate.** Confirma en cuanto el `discovery.md` está escrito,
+**antes** de presentarlo al humano: así el gate se pide sobre un estado identificable por hash. Mientras
+el entregable siga en `borrador`, el mensaje termina en `[sin confirmar]` (§4 de `git-protocol.md`).
+
+Cuando el humano apruebe (Paso 2.4) y marques el entregable como **cerrado**, eso es un cambio de
+archivo: **confirma otra vez**, con el mismo mensaje ya **sin** el marcador. El historial distingue así
+borrador de aprobado sin que un gate saltado deje la etapa sin punto de retorno.
+
+Si pide correcciones, cada vuelta de corrección confirma igual, con marcador. Reportar hash y rama.
+**No hacer `push`.**
 
 ---
 
@@ -114,8 +141,15 @@ indistinguible en el historial de uno aprobado. Reportar hash y rama. **No hacer
 
 - **Autónomo:** insumos = `interview_document.md` (+ `document_extract.md` si existe), **archivos**, no
   diálogo. No entrevistes tú.
-- **La etapa cierra con commit, después del gate:** el entregable aprobado se persiste en git
-  (`_guideline/git-protocol.md`); es el único insumo del Prototipador y debe tener punto de retorno.
+- **Cada fuente en su carril (§0.2):** metadatos ← `project.yaml`; contenido §1–§10 ← log + extracto.
+  Lo que ninguna fuente traiga se declara `<no declarado>` o pendiente, nunca se rellena (L-015).
+- **Verificar los insumos antes de consumirlos:** su estado se comprueba, se declara en *Procedencia de
+  los insumos* y se avisa (§5.1 paso 0 de `methodology.md`). Avisar, **no bloquear**: la autoridad para
+  seguir con material sin validar es del humano (NC-6, L-014).
+- **La etapa cierra con commit, con gate o sin él:** el entregable se persiste en git en cuanto está
+  escrito (`_guideline/git-protocol.md`), rotulado `[sin confirmar]` hasta que el humano lo apruebe; la
+  aprobación produce un segundo commit sin marcador. Es el único insumo del Prototipador y debe tener
+  punto de retorno **aunque el gate se salte** (L-013).
 - **Ambos insumos o entregable mutilado:** si existe el extracto, leerlo es **obligatorio**: el log solo
   contiene los huecos.
 - **La entrevista manda ante conflicto**, pero la discrepancia se **deja constancia**, no se silencia.

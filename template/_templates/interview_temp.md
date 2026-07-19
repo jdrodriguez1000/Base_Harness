@@ -23,7 +23,9 @@ comentarios al instanciar.
 
 ## Meta
 
-- **Proyecto:** <nombre-del-proyecto>
+- **Proyecto:** <nombre-del-proyecto | no declarado> <!-- FUENTE: _context/project.yaml (project.name).
+     Regla de procedencia (§0.2 de methodology.md). Si no está declarado, PREGUNTARLO al humano: no se
+     deduce del brief ni se inventa, y al mencionarlo se dice de dónde sale (L-015). -->
 - **Entrevistado:** <humano/cliente que responde>
 - **Entrevistador:** onboarding-interviewer
 - **Inicio:** <YYYY-MM-DD>
@@ -34,7 +36,10 @@ comentarios al instanciar.
        generador cubierto), nunca por tiempo. -->
 - **Estado:** en curso <!-- en curso | cerrada (suficiente para arrancar) -->
 - **Sección en curso:** <§n de discovery_temp.md> <!-- pista de reanudación: por dónde iba -->
-- **Extracto documental:** <ruta de document_extract.md | ninguno>
+- **Extracto documental:** <ruta de document_extract.md | ninguno> <!-- Añadir "(sin confirmar)" si el
+     extracto venía en borrador o sin confirmar por el humano: aguas abajo, el writer necesita saber que
+     las áreas NO preguntadas se apoyan en material no validado. -->
+
   <!-- Si el cliente entregó un  _context/client_brief.* , el onboarding-reader produjo antes un
        document_extract.md. En ese caso esta entrevista cubre SOLO los huecos (áreas parciales/
        ausentes + ambigüedades); las áreas ya cubiertas por el documento NO se repreguntan y NO

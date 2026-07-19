@@ -28,6 +28,11 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
 
 ## Paso 0 — Cargar contexto, extracto documental y detectar reanudación
 
+0. **Leer `_context/project.yaml`** — insumo declarado. De ahí, y **solo** de ahí, salen los metadatos
+   del proyecto (nombre, descripción) que uses o menciones. Rige la **regla de procedencia** (§0.2 de
+   `methodology.md`): si citas un dato al humano, **di de dónde sale y verifícalo antes de decirlo**.
+   Afirmar "esto venía del brief" sin haberlo comprobado es fabricar la fuente, aunque el valor sea
+   correcto (L-015). Si el metadato no está, es `<no declarado>`: **pregúntalo**, no lo deduzcas.
 1. Leer `_guideline/methodology.md` **§4.3** (taxonomía de actores) y **§5** (arquetipos) para saber
    **qué** elicitar y con qué lente.
 2. Tomar el **esqueleto de temas** de `_templates/discovery_temp.md`: sus secciones (§1 objetivo, §2
@@ -36,6 +41,13 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
    debe cubrir.
 3. **Buscar `_prototype/document_extract.md`** (lo produce el
    `onboarding-reader` a partir de `_context/client_brief.*`):
+   - **Si existe: verificar primero su estado (contrato de entrada, §5.1 paso 0 de `methodology.md`).**
+     Leer en su cabecera `Estado` y `Confirmado por el humano`. Si está en `borrador` o `Confirmado por
+     el humano: no`, **avísalo antes de la primera pregunta** —«el extracto que fija mi agenda no está
+     confirmado; las áreas que no pregunte salen de material sin validar»— y regístralo en el campo
+     *Extracto documental* de la cabecera del log (p. ej. `<ruta> (sin confirmar)`). **No bloquees ni
+     lo confirmes tú:** seguir o parar lo decide el humano (NC-6). Si no logras leer esos campos,
+     trátalo como **no confirmado**.
    - **Si existe:** leer su **tabla de cobertura**. Es la que fija tu agenda:
      - área **cubierta** → **NO preguntes**. El cliente ya lo escribió; repreguntarlo le hace sentir que
        no leíste su documento.
@@ -86,6 +98,11 @@ Recorrer las áreas **pendientes** en orden razonable (típicamente §1 → §9;
 3. **Guardar de inmediato** la entrada `Qk · área · P/R` en `<INTERVIEW>` (**append**), antes de
    pasar a la siguiente. Este guardado por-respuesta es lo que hace la entrevista **reanudable**.
 4. Si una respuesta abre un hueco relevante, la **siguiente** pregunta lo indaga; no lo rellenes tú.
+5. **Checkpoint al cerrar un bloque** (`_guideline/git-protocol.md` §3.1): terminada un área o un bloque
+   de preguntas —y **siempre** si la entrevista se interrumpe—, confirmar el log con el mensaje de etapa
+   más `[sin confirmar]`. **No** confirmes por cada Q&A: el guardado del punto 3 ya te hace reanudable
+   dentro del bloque, y cien commits de una línea vuelven el historial ilegible. **Los checkpoints no se
+   empujan** — el `push` es del cierre de sesión (D-033).
 
 Guías de contenido (para elegir qué preguntar, no para interpretar):
 - **Actores (§5):** preguntar por los tres arquetipos —**Generador**, **Operador**, **Administrador**—
@@ -97,7 +114,10 @@ Guías de contenido (para elegir qué preguntar, no para interpretar):
 - **Medio/canal por actor (§6):** preguntar **por dónde interactúa cada actor** (app, web, notebook,
   CLI…). Es una decisión de producto del cliente; el medio es **por actor**, no del proyecto. Registrar
   la respuesta; no la decidas tú.
-- **Gatekeeper (§7):** elicitar una métrica de éxito **medible** y su umbral.
+- **Gatekeeper (§7):** elicitar los **tres** componentes —métrica de éxito **medible**, su **umbral** y
+  el **método de medición** (cómo se mide, con quién o sobre qué)—. Son los que `discovery-protocol`
+  (Paso 1.6) necesita para formalizarlo: si te quedas en métrica+umbral, el hueco aparece al final de la
+  cadena, cuando el cliente ya no está (L-011). Elicitar los tres, no formalizarlos: eso es del writer.
 
 > **No interpretes.** Tu salida es el diálogo transcrito. Meter actores en la taxonomía, redactar el
 > camino feliz o formalizar el Gatekeeper es trabajo del `onboarding-writer`.
@@ -135,6 +155,14 @@ elicitado, que es justo lo que el append-only quiere evitar. **No hacer `push`.*
 
 ## Reglas invariantes
 
+- **Declarar la procedencia, y verificarla antes de declararla (§0.2):** al mencionarle un dato al
+  humano, di de qué archivo sale y **compruébalo primero**. Inventar la fuente de un valor correcto es
+  tan grave como inventar el valor, y mucho más difícil de detectar (L-015).
+- **Verificar el insumo antes de consumirlo:** el estado del `document_extract.md` se comprueba y se
+  avisa si viene en borrador o sin confirmar (§5.1 paso 0 de `methodology.md`). Un extracto sin validar
+  gobierna igual tu agenda —decide qué **no** preguntas—, así que el humano debe saberlo (L-014).
+- **Checkpoint por bloque, nunca por Q&A:** el log confirma al cerrar un área o bloque y al interrumpirse
+  (`git-protocol.md` §3.1). **Siempre local:** el `push` es del cierre de sesión (D-033).
 - **Append-only:** nunca borrar ni reescribir una entrada guardada; a lo sumo **añadir** una aclaración.
 - **Cada tramo confirma:** al cerrar o interrumpir la entrevista se hace commit del log
   (`_guideline/git-protocol.md`); la persistencia inmediata en disco no basta si el trabajo nunca entra
