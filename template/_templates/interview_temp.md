@@ -27,6 +27,11 @@ comentarios al instanciar.
 - **Entrevistado:** <humano/cliente que responde>
 - **Entrevistador:** onboarding-interviewer
 - **Inicio:** <YYYY-MM-DD>
+- **Timebox acordado:** <p. ej. "30 min" | "12 preguntas" | sin acordar>
+  <!-- Se ACUERDA con el humano al abrir la entrevista (§4.3: duración tope ACORDADA), antes del
+       bucle, y cubre además el área §8 — no se vuelve a preguntar. Al reanudar se LEE de aquí, no se
+       renegocia. Si quedó "sin acordar", el cierre se propone solo por suficiencia (camino feliz del
+       generador cubierto), nunca por tiempo. -->
 - **Estado:** en curso <!-- en curso | cerrada (suficiente para arrancar) -->
 - **Sección en curso:** <§n de discovery_temp.md> <!-- pista de reanudación: por dónde iba -->
 - **Extracto documental:** <ruta de document_extract.md | ninguno>

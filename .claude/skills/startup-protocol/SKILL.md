@@ -6,8 +6,10 @@ description: >-
   de hacer cualquier cosa. Úsalo al iniciar una sesión, retomar el trabajo o cuando el usuario diga
   "protocolo de inicio", "startup protocol", "ponte al día", "retoma el proyecto" o similar.
   Obligatorio leer progress.md y tasks.md; los otros cuatro archivos (lessons, decisions,
-  assumptions, constrains) se leen solo a demanda. Agnóstico: funciona en cualquier proyecto que
-  use la capa de persistencia estándar.
+  assumptions, constrains) se leen solo a demanda. Detecta además el ESTADIO del proyecto por la
+  presencia de artefactos (_context/client_brief.*, _prototype/…) y propone el siguiente paso con el
+  agente que le corresponde. Agnóstico: funciona en cualquier proyecto que use la capa de
+  persistencia estándar.
 ---
 
 # Startup Protocol — Protocolo de inicio de sesión
@@ -72,11 +74,40 @@ la entrada relevante sin leer todo el archivo:
 
 ---
 
-## Paso 4 — Sintetizar y confirmar
+## Paso 4 — (OBLIGATORIO) Detectar el estadio del proyecto
+
+La memoria dice qué se hizo; **los artefactos dicen dónde está el proyecto**. Un proyecto recién
+abierto tiene la memoria vacía pero puede tener ya el documento del cliente esperando: sin este paso,
+nadie se da cuenta y el humano tiene que saber de memoria qué agente invocar.
+
+Comprobar la **presencia de archivos** (no leer su contenido; basta con que existan) y deducir el
+estadio por la **primera fila que aplique**, de arriba abajo:
+
+| Si... | El proyecto está en... | Siguiente paso |
+|---|---|---|
+| existe `_prototype/prototype/` | Prototipo **materializado** | Evaluarlo con el humano (gate de madurez §4.4) |
+| existe `_prototype/discovery.md` | Descubrimiento **cerrado** | Materializar el prototipo (`prototype-builder`) |
+| existe `_prototype/interview_document.md` | Entrevista **en curso o cerrada** | Redactar el discovery (`onboarding-writer`); si el log sigue `en curso`, reanudar la entrevista |
+| existe `_prototype/document_extract.md` | Documento **ingerido** | Entrevistar **solo los huecos** (`onboarding-interviewer`) |
+| existe `_context/client_brief.*` | **Arranque con documento** | Ingerir el documento (`onboarding-reader`) |
+| no existe ninguno de los anteriores | **Arranque sin documento** | Entrevista completa (`onboarding-interviewer`) |
+
+> **Solo aplica al estadio de Prototipo.** Si el proyecto ya superó el gate §4.4 y trabaja por
+> incrementos, el estado real vive en `_increments/<id>/state.yaml` (§7.1) y manda ese, no esta tabla.
+> Compruébalo: si existe `_increments/`, informa el incremento abierto y su `paso_actual`.
+
+---
+
+## Paso 5 — Sintetizar y confirmar
 
 1. Presentar al usuario un **resumen breve** del estado: último avance, en qué punto quedó el
    proyecto, tareas en curso y próximas tareas sugeridas.
-2. Proponer (o confirmar con el usuario) **en qué se va a trabajar** en esta sesión.
+2. **Informar el estadio detectado** en el Paso 4 y **proponer el siguiente paso** que le corresponde,
+   nombrando el agente/skill concreto.
+3. Proponer (o confirmar con el usuario) **en qué se va a trabajar** en esta sesión.
+
+> **Proponer no es ejecutar (NC-6).** El inicio de sesión detecta y sugiere; **no** encadena agentes
+> por su cuenta. Arrancar el descubrimiento o el prototipado lo autoriza el humano.
 
 ---
 
@@ -85,5 +116,8 @@ la entrada relevante sin leer todo el archivo:
 - `progress.md` y `tasks.md` son de lectura **siempre obligatoria** al iniciar; los otros cuatro,
   solo a demanda.
 - No modificar la memoria en el inicio: este protocolo es de **lectura**. La escritura ocurre
-  durante el trabajo y en el cierre (`closing-protocol`).
+  durante el trabajo y en el cierre (`closing-protocol`). La detección del estadio (Paso 4) tampoco
+  escribe: comprueba **presencia** de archivos, no los altera ni crea carpetas.
+- **Detectar y proponer, nunca ejecutar.** El inicio informa en qué estadio está el proyecto y qué
+  agente sigue; invocarlo es decisión del humano (NC-6).
 - Idioma: comunicarse en el idioma del proyecto (por defecto, español).

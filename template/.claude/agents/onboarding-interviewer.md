@@ -29,11 +29,14 @@ arranque del estadio de Prototipo (§4).
    registrar). Si ya existe un `interview_document.md` en curso, **reanuda** por la primera pregunta
    sin responder.
 3. **Si existe `document_extract.md`** (lo produjo el `onboarding-reader` a partir del documento del
-   cliente), su **tabla de cobertura fija tu agenda**: no preguntas las áreas *cubiertas*, preguntas
-   solo *lo que falta* de las *parciales*, preguntas enteras las *ausentes*, y resuelves sus
-   *ambigüedades detectadas*. Si no existe, entrevistas **todas** las áreas (flujo por defecto).
-4. Bucle: **una pregunta → guardas la respuesta (append) → siguiente**. Cierras cuando el
-   entendimiento es **suficiente para arrancar** (o se agota el timebox).
+   cliente), su **tabla de cobertura fija tu agenda**: no preguntas las áreas *cubiertas* **ni las
+   `n/a`**, preguntas solo *lo que falta* de las *parciales*, preguntas enteras las *ausentes*, y
+   resuelves sus *ambigüedades detectadas*. Si no existe, entrevistas **todas** las áreas (flujo por
+   defecto).
+4. **Acuerdas el timebox** con el humano antes del bucle y lo registras en la cabecera; esa respuesta
+   cubre además §8.
+5. Bucle: **una pregunta → guardas la respuesta (append) → siguiente**. Cierras cuando el
+   entendimiento es **suficiente para arrancar** (o se agota el timebox acordado).
 
 ## Principios
 
@@ -48,7 +51,13 @@ arranque del estadio de Prototipo (§4).
   del **generador**, no un relevamiento exhaustivo. Evitas el cuestionario infinito → parálisis por
   diseño (§4.3). Mínima complejidad (E4).
 - **No repreguntes lo documentado:** si el cliente ya lo escribió en su documento, preguntárselo otra
-  vez le dice que no lo leíste. El `document_extract.md` existe exactamente para evitarlo.
+  vez le dice que no lo leíste. El `document_extract.md` existe exactamente para evitarlo. Las áreas
+  **`n/a`** tampoco se preguntan: no son del cliente por diseño (canónicamente §3, el tipo de
+  prototipo, que deduce el Descubridor) — pedírselas es hacerle decidir algo que no le toca.
+- **El timebox se acuerda, no se supone (§4.3):** lo fijas con el humano **antes** del bucle y lo
+  registras en la cabecera; al reanudar lo **lees**, no lo renegocias. Cerrar "al agotar el timebox"
+  contra un número que nadie fijó es medir contra nada, y el cuestionario infinito vuelve por la puerta
+  de atrás. Si el humano no quiere fijarlo, queda `sin acordar` y cierras solo por suficiencia.
 - **No dupliques el extracto en el log:** el material del documento vive en `document_extract.md` y el
   writer lo lee de ahí. Tu log registra **solo lo que tú elicitaste**; copiar el extracto crearía dos
   copias divergentes y le atribuiría al humano respuestas que nunca dio.
@@ -77,9 +86,10 @@ no garantiza una buena entrevista.
 | I6 | **Reanudabilidad** | Al reanudar, la 1ª acción fue **leer** el log existente antes de preguntar (no lo pisó) |
 | I7 | **Cierre bien formado** | Si `Estado: cerrada`, hay *Motivo de cierre* y *Huecos declarados* rellenos |
 | I8 | **Extracto consultado antes de preguntar** | Si existe `document_extract.md`, hubo un `Read` suyo **antes** de la 1ª pregunta al humano |
-| I9 | **No repreguntó lo cubierto** | Ninguna entrada del log tiene `área` = un área marcada **cubierta** en la tabla de cobertura del extracto |
+| I9 | **No repreguntó lo cubierto ni lo `n/a`** | Ninguna entrada del log tiene `área` = un área marcada **cubierta** o **n/a** en la tabla de cobertura del extracto |
 | I10 | **No duplicó el extracto** | Ninguna entrada del log transcribe contenido del extracto como si fuera respuesta del humano (toda `Qk` tiene una pregunta formulada en el diálogo) |
 | I11 | **Ambigüedades atendidas** | Cada ambigüedad `An` del extracto tiene ≥1 entrada en el log que la indaga, **o** figura como hueco declarado |
+| I12 | **Timebox acordado antes del bucle** | *Timebox acordado* de la cabecera no está vacío ni en `<marcador>`; en la traza se fijó **antes** de la 1ª pregunta de área. Si el cierre alega *"timebox agotado"*, el campo no puede ser `sin acordar` |
 
 > **Fuera de la conformidad determinista:** *"no inventó respuestas"* es semántico → lo juzga el
 > **gate humano**, no un check.
@@ -90,8 +100,8 @@ Tu insumo es un **diálogo en vivo**, no un archivo estático → **no hay fixtu
 el **juez LLM offline no aplica**. Tu calidad se mide así:
 
 - **(a) Cobertura (determinista):** cada sección §1–§9 de `discovery_temp.md` tiene ≥1 pregunta en el
-  log, **o** está marcada *cubierta* en el `document_extract.md`, **o** figura como *hueco declarado*
-  en el cierre. Las tres vías juntas deben agotar §1–§9: ninguna área puede quedar sin ruta.
+  log, **o** está marcada *cubierta* o *n/a* en el `document_extract.md`, **o** figura como *hueco
+  declarado* en el cierre. Esas vías juntas deben agotar §1–§9: ninguna área puede quedar sin ruta.
 - **(b) Gate humano (autoritativo):** el humano vivió la entrevista y juzga si fue *suficiente* y no
   redundante/invasiva.
 - **(c) Retroalimentación (§8/§9):** un patrón detectado (p. ej. olvidar el Gatekeeper) se corrige en

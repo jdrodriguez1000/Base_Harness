@@ -41,6 +41,9 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
        no leíste su documento.
      - área **parcial** → pregunta **solo lo indicado en *Qué falta***, no el área entera.
      - área **ausente** → pregunta el área completa, como en el flujo normal.
+     - área **n/a** → **NO preguntes**: no es del cliente por diseño (canónicamente §3, el tipo de
+       prototipo, que deduce el Descubridor). Preguntarla le pide al cliente una decisión que no le
+       toca y quema timebox. Su *"Qué falta"* explica por qué no aplica.
    - Leer también sus **Ambigüedades detectadas**: cada una es una **pregunta obligatoria** de tu agenda
      (el reader las dejó sin resolver a propósito, para que las resuelva el humano).
    - **Si no existe:** flujo por defecto — la entrevista cubre **todas** las áreas §1–§9.
@@ -51,6 +54,20 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
      y **reanudar por la primera pregunta pendiente**. No repreguntar lo ya respondido.
    - **Si no existe:** copiar `interview_temp.md` a `<INTERVIEW>` y rellenar la cabecera (Meta),
      incluyendo el campo *Extracto documental* (ruta del `document_extract.md` o "ninguno").
+6. **Acordar el timebox con el humano** (§4.3) y registrarlo en *Timebox acordado* de la cabecera.
+   Es tu **primera pregunta**, antes del bucle: pregunta cuánto tiempo/cuántas preguntas está
+   dispuesto a dedicar y anota lo que responda. Esa respuesta cubre además el área **§8**, así que
+   **no la vuelvas a preguntar** en el bucle.
+   - **Si reanudas** una entrevista `en curso`, el timebox ya está en la cabecera: **léelo, no lo
+     renegocies**.
+   - Si el humano no quiere fijar uno, registrar `sin acordar` y decirle que entonces el cierre lo
+     propondrás **solo** por suficiencia (camino feliz del generador cubierto), no por tiempo.
+
+> **Un tope que nadie acordó no es un tope.** §4.3 define el timebox como una **duración tope
+> acordada**, y tanto tu cierre (Paso 2) como el del Prototipador dependen de él. Si nadie lo fija, el
+> agente que dice "cerrar al agotar el timebox" está midiendo contra un número inventado o contra
+> ninguno — y el cuestionario infinito que §4.3 quiere evitar vuelve por la puerta de atrás. Fijarlo
+> es barato: una pregunta al principio.
 
 > **No copies el extracto al log.** El material del documento **vive en `document_extract.md`** y el
 > `onboarding-writer` lo lee de ahí. Tu log registra **solo lo que tú elicitaste**. Duplicarlo crearía
@@ -109,8 +126,11 @@ Guías de contenido (para elegir qué preguntar, no para interpretar):
 - **Persistencia inmediata:** guardar cada Q&A **antes** de la siguiente pregunta (reanudabilidad).
 - **Elicitar, no estructurar:** este skill solo produce el log crudo; `discovery.md` es del writer.
 - **No repreguntar lo documentado:** si hay `document_extract.md`, las áreas *cubiertas* no se preguntan.
+- **Las áreas `n/a` tampoco se preguntan:** no son del cliente por diseño (canónicamente §3).
 - **No duplicar el extracto en el log:** el material del documento vive en `document_extract.md`; el log
   registra solo lo elicitado por ti. El writer lee **ambos**.
-- **Alcance acotado:** suficiente para el camino feliz del generador; respetar timebox (§4.3).
+- **Alcance acotado:** suficiente para el camino feliz del generador; respetar el timebox (§4.3).
+- **El timebox se acuerda, no se supone:** se fija con el humano en el Paso 0 y se registra en la
+  cabecera; al reanudar se lee de ahí. Sin acuerdo, el cierre se propone por suficiencia, no por tiempo.
 - **No inventar:** lo no respondido se declara como hueco; no se rellena por cuenta propia (NC-1).
 - **Idioma:** comunicarse en el idioma del proyecto (por defecto, español).

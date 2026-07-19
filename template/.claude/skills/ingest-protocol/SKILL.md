@@ -4,7 +4,7 @@ description: >-
   Protocolo de INGESTA del documento del cliente. Busca _context/client_brief.* (el documento con que
   el cliente describe lo que quiere construir), y si existe extrae CITAS TEXTUALES mapeadas a las áreas
   §1–§10 del descubrimiento, produciendo document_extract.md con una tabla de cobertura (cubierta /
-  parcial / ausente). NO entrevista ni estructura: solo cita y clasifica cobertura, para que el
+  parcial / ausente / n/a). NO entrevista ni estructura: solo cita y clasifica cobertura, para que el
   onboarding-interviewer pregunte SOLO los huecos y el onboarding-writer disponga del material del
   documento al redactar discovery.md. Si no existe client_brief.*, no produce nada y la entrevista se
   conduce completa. Úsalo al arrancar el estadio de Prototipo, antes de la entrevista, o cuando el
@@ -74,7 +74,19 @@ Leer el documento **completo** una vez antes de escribir nada. Después, para **
 3. Marcar el **estado de cobertura** del área:
    - **cubierta** — hay material suficiente; el interviewer **no** preguntará.
    - **parcial** — hay material incompleto; detallar en *"Qué falta"* qué debe preguntar el interviewer.
-   - **ausente** — el documento no dice nada; el interviewer preguntará el área completa.
+   - **ausente** — el documento no dice nada **y debería decirlo**; el interviewer preguntará el área
+     completa.
+   - **n/a** — el área **no se le pide al cliente**: no es suya por diseño. El interviewer **no**
+     preguntará. Anotar en *"Qué falta"* **por qué** no aplica.
+
+> **`n/a` no es un atajo (crítico).** `ausente` y `n/a` suprimen o disparan preguntas en direcciones
+> opuestas, así que confundirlos es caro: marcar `n/a` un área que el cliente sí debía responder mete
+> un **hueco silencioso** en el `discovery.md`, exactamente lo que el sesgo hacia el hueco evita.
+> `n/a` **no es un juicio discrecional tuyo**: se reserva a las áreas que por diseño no provienen del
+> cliente. El caso canónico es **§3 (tipo de prototipo dominante)**, que **deduce el Descubridor**, no
+> el cliente. **§10 (split)** es `n/a` cuando el proyecto no lo justifica. Cualquier otra área marcada
+> `n/a` exige justificación explícita en *"Qué falta"*; ante la duda entre `n/a` y `ausente`, marca
+> **`ausente`** (NC-1).
 
 > **Sesgo deliberado hacia el hueco.** Ante la duda, marca **parcial** o **ausente**. Repreguntar de más
 > cuesta una pregunta; dar por cubierta un área que no lo está mete un **hueco silencioso** en el
@@ -84,6 +96,18 @@ Leer el documento **completo** una vez antes de escribir nada. Después, para **
 > `_templates/client_brief_temp.md`, puede llegar con `<marcadores>` intactos, títulos vacíos o
 > comentarios `<!-- -->` de la plantilla. Nada de eso es material del cliente: el área va **ausente**.
 > Citar un marcador como si fuera una respuesta es fabricar evidencia.
+
+> **Ningún campo de salida se rellena por reconstrucción (crítico).** La regla anterior cubre las
+> **citas**; esta cubre **todo campo de `<EXTRACT>`**, incluidos los de **Meta** —`Proyecto`,
+> `Documento origen`, `Formato`—. Cada campo se rellena **solo** con lo que el documento dice
+> **literalmente**. Si el documento no lo dice, el campo va `<no declarado>`; **nunca** un valor
+> plausible deducido del contenido.
+>
+> El caso que hay que evitar es sutil: el brief llega con su título en `<nombre-del-proyecto>` sin
+> rellenar y el tema deja obvio cómo se "debería" llamar la aplicación. Inventarlo ahí —aunque acierte—
+> es **fabricar un dato**: nadie aguas abajo puede distinguir ese nombre de uno que el cliente escribió,
+> y el `discovery.md` lo hereda como si fuera suyo. Un `<no declarado>` es un hueco **visible**, que el
+> interviewer puede preguntar; un nombre inventado es un hueco **invisible** (NC-1/NC-6).
 
 > **El brief no sigue el orden del discovery.** Sus secciones 1–10 mapean a las áreas §1–§10 pero
 > **no una a una** (p. ej. su sección 4 alimenta §5, y §3 —tipo de prototipo— no se pide al cliente:
@@ -109,17 +133,59 @@ comercial) se lista en su sección, para dejar constancia de que se descartó **
 
 ---
 
-## Paso 3 — Confirmar por bloque y cerrar
+## Paso 3 — Pasada de consistencia **entre** áreas
 
-1. Escribir `<EXTRACT>` a partir de `document_extract_temp.md`.
+El bucle del Paso 2 recorre las áreas **una por una**, y por construcción es **ciego a las
+contradicciones transversales**: cada cita puede ser correcta en su casillero y aun así chocar con la
+de otro. Un documento que promete algo en el camino feliz y lo excluye tres páginas después queda
+perfectamente extraído y perfectamente contradictorio. Esta pasada existe para cazar eso.
+
+Cuando termines de extraer **todas** las áreas —y **antes** de escribir nada—, releer el conjunto de
+extractos como un solo cuerpo y contrastar al menos estos **cruces de alto riesgo**:
+
+| Cruce | Qué buscar |
+|---|---|
+| **§6 camino feliz ↔ §9 exclusiones** | Un paso prometido en el flujo que aparece declarado fuera de alcance (o al revés) |
+| **§5 actores ↔ §6 camino feliz** | Un camino feliz cuyo protagonista no figura entre los actores, o un actor sin flujo alguno |
+| **§7 Gatekeeper ↔ §2 hipótesis de valor** | Una métrica de éxito que no mide la hipótesis que dice validar |
+
+Los cruces de la tabla son el **piso, no el techo**: si detectas cualquier otra contradicción entre
+áreas, va igual.
+
+**Qué hacer con lo que encuentres:** registrarlo en *Ambigüedades detectadas*, nombrando **las dos
+áreas en conflicto** y **citando ambos extremos**. **No lo resuelvas** —ni eligiendo el que parezca
+correcto, ni promediando, ni degradando el área a `parcial` para que "se pregunte igual"—: una
+contradicción del cliente consigo mismo es un dato de primer orden y el humano es quien la deshace
+(NC-1/NC-6). Si además deja el área incompleta, ajusta su estado de cobertura; pero el registro de la
+ambigüedad es **obligatorio** en todo caso.
+
+---
+
+## Paso 4 — Confirmar por bloque y cerrar
+
+1. **Copiar** `_templates/document_extract_temp.md` a `<EXTRACT>` y **rellenar** sus secciones sin
+   alterar la estructura. Se **instancia** desde la plantilla, **nunca se escribe desde cero**
+   (contrato del constructor de entregables, `methodology.md` §5.1): así el artefacto nace conforme y
+   su forma es verificable por **diff** contra el esqueleto.
+   > En esta escritura los campos de estado **nacen en su valor no confirmado**:
+   > `Confirmado por el humano: no` y `Estado: borrador`. No los adelantes: todavía no has preguntado.
 2. Presentar al humano un **resumen de cobertura en un solo turno**: qué áreas quedaron cubiertas, qué
    áreas preguntará el interviewer y qué ambigüedades se detectaron.
 3. Pedir **una** confirmación de bloque. **No** confirmes área por área: eso reintroduce el cuestionario
    largo que §4.3 quiere evitar (parálisis por diseño).
 4. Si el humano corrige algo (p. ej. *"§7 no está cubierta, ese número es de otro proyecto"*), ajustar la
    tabla de cobertura y volver a presentar solo lo corregido.
-5. Marcar `Confirmado por el humano: sí` y `Estado: cerrado`. El `document_extract.md` queda listo como
-   insumo del `onboarding-interviewer` **y** —junto al log— del `onboarding-writer`.
+5. **Solo cuando el humano haya confirmado de verdad** —su respuesta ya está en la conversación—,
+   hacer una **escritura aparte** que cambie `Confirmado por el humano` a `sí` y `Estado` a `cerrado`.
+   Es una edición **separada** de la del punto 1, posterior a la respuesta humana: nunca en la misma
+   pasada. El `document_extract.md` queda listo como insumo del `onboarding-interviewer` **y** —junto
+   al log— del `onboarding-writer`.
+
+> **El campo registra un hecho, no una intención.** `Confirmado por el humano: sí` afirma que una
+> persona lo revisó. Escribirlo cuando aún vas a preguntar convierte el campo en ruido: quien lo lea
+> aguas abajo —el interviewer, el writer, una auditoría— no puede distinguir un extracto validado de
+> uno que nadie miró. Que la escritura sea **posterior y separada** es lo que hace que el campo
+> signifique algo (§10: la evidencia es la traza y el artefacto, no tu narrativa).
 
 ---
 
@@ -127,10 +193,22 @@ comercial) se lista en su sección, para dejar constancia de que se descartó **
 
 - **Condicional:** sin `client_brief.*` no hay artefacto ni error; se cae al flujo por defecto.
 - **Citar, no interpretar:** extractos textuales con localización; la síntesis es del writer.
-- **Inferencia binaria única:** *¿hay material para esta área?* — nada más.
-- **Sesgo hacia el hueco:** ante la duda, `parcial`/`ausente`, nunca `cubierta`.
+- **Inferencia mínima:** *¿hay material para esta área?* y, solo para el caso de diseño, *¿esta área le
+  corresponde al cliente?* — nada más.
+- **Sesgo hacia el hueco:** ante la duda, `parcial`/`ausente`, nunca `cubierta` ni `n/a`.
+- **`n/a` solo por diseño:** áreas que no provienen del cliente (canónicamente §3); nunca como atajo
+  para no preguntar. Ante la duda entre `n/a` y `ausente`, gana `ausente`.
+- **No fabricar campos de salida:** todo campo —incluidos los de Meta— se rellena con lo que el
+  documento dice literalmente; si no lo dice, `<no declarado>`. Un valor plausible deducido es un
+  hueco invisible.
+- **Consistencia entre áreas:** tras el bucle de extracción, cruzar §6↔§9, §5↔§6 y §7↔§2 como piso; el
+  extractor por casilleros no ve las contradicciones transversales.
 - **No resolver ambigüedades:** se registran para que las pregunte el interviewer (NC-1).
+- **La confirmación no se adelanta:** `Confirmado por el humano` nace en `no` y solo pasa a `sí` en una
+  **escritura posterior y separada**, después de que el humano haya respondido.
 - **Confirmación por bloque:** un solo turno de validación, no uno por área.
+- **Instanciar, no escribir desde cero:** `<EXTRACT>` nace **copiando** `document_extract_temp.md` y
+  rellenando sus secciones; no se reordena ni se elimina estructura (§5.1).
 - **Single Writer:** escribes **solo** `document_extract.md`. No tocas `interview_document.md` ni
   `discovery.md` ni el propio `client_brief.*` (el documento del cliente es **de solo lectura**).
 - **Idioma:** comunicarse en el idioma del proyecto (por defecto, español).

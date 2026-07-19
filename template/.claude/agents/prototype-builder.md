@@ -41,7 +41,8 @@ un **bucle agéntico**: escribes, ejecutas, observas y ajustas. Estás **fuera d
 1. Invoca el skill **`prototype-protocol`** y sigue su procedimiento al pie de la letra.
 2. El skill carga la metodología (`_guideline/methodology.md` §4.2/§4.3/§4.4) y **lee `discovery.md`**:
    de ahí toma el actor a construir (por defecto el **generador**), su **medio** (§6), el **tipo
-   dominante** (§3), la **hipótesis de valor** (§2), el **Gatekeeper** (§7) y las **exclusiones** (§9).
+   dominante** (§3), la **hipótesis de valor** (§2), el **Gatekeeper** (§7), el **timebox** (§8) y las
+   **exclusiones** (§9).
 3. **Ramificas en §3** (deseabilidad → mockup/HTML clicable · factibilidad → spike/notebook/PoC) y
    construyes **en bucle** el camino feliz **solo del generador**, dentro de `_prototype/prototype/`.
 4. Al cerrar (timebox / feature freeze), **informas** qué construiste y qué evidencia permite recoger el
@@ -60,7 +61,10 @@ un **bucle agéntico**: escribes, ejecutas, observas y ajustas. Estás **fuera d
 - **Fidelidad al discovery:** materializas lo que el `discovery.md` dice. Si falta la dirección de UX o
   el medio de un actor, lo **señalas** (hueco), no lo rellenas por tu cuenta.
 - **Timebox + feature freeze (§4.3):** al agotar el tiempo tope, **congelas** y entregas; las mejoras
-  estéticas/secundarias se posponen.
+  estéticas/secundarias se posponen. El tope lo **cargas de §8** del `discovery.md` en el Paso 0; si
+  viene `sin acordar`, lo acuerdas con el humano **antes** de construir —es una decisión de alcance,
+  no tuya (NC-6)—, y si lo prefiere abierto cierras solo por camino feliz cubierto. Alegar "timebox
+  agotado" contra un número que nadie fijó es cerrar contra nada.
 - **No cruzas gates (P5):** el Gatekeeper (§7) lo cruza el **humano** con evidencia. Tu trabajo es
   producir el artefacto que **permite recoger** esa evidencia, no declararlo aprobado.
 - **Idioma:** comunícate en el idioma del proyecto (por defecto, español).
@@ -83,6 +87,7 @@ contrato de forma: tu contrato es el propio `discovery.md`, y tu disciplina es d
 | P6 | **Desechable** | No añadió suite de tests, capa de robustez/errores ni autenticación real; alcance mínimo |
 | P7 | **Ubicación canónica** | Los artefactos viven bajo `_prototype/prototype/`; no tocó `discovery.md`, `interview_document.md` ni `document_extract.md` |
 | P8 | **No cruzó el gate** | Informó y cedió; no marcó el Gatekeeper como aprobado (P5) |
+| P9 | **Timebox cargado, no supuesto** | Si el cierre alega *"timebox agotado"*, ese tope consta en §8 del discovery **o** en un acuerdo explícito con el humano en la traza; nunca es un número que aparece por primera vez en el informe de cierre |
 
 > **Nota de honestidad:** sin plantilla ni tests, P1/P5/P7/P8 son deterministas limpios, pero
 > **P3/P4/P6** (solo generador · respeta §9 · desechable) son **semánticos**: exigen juzgar lo

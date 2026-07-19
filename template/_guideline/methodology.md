@@ -357,7 +357,8 @@ nombres y modelos— se define **al instanciar cada proyecto**, respetando estos
 >
 > 1. **`onboarding-reader`** *(condicional)* — busca `_context/client_brief.*`, el documento con que el
 >    cliente describe lo que quiere. Si existe, extrae **citas textuales** mapeadas a las áreas §1–§10 en
->    `document_extract.md`, con una **tabla de cobertura** (*cubierta / parcial / ausente*) y las
+>    `document_extract.md`, con una **tabla de cobertura** (*cubierta / parcial / ausente / n/a* —
+>    `n/a` para las áreas que no vienen del cliente, canónicamente §3, que deduce el Descubridor) y las
 >    **ambigüedades** que no resuelve a propósito. Si no existe, **no produce nada** y el flujo sigue por
 >    la entrevista completa: la ausencia de documento es el caso normal, no un error.
 > 2. **`onboarding-interviewer`** — conduce la entrevista y registra crudo cada pregunta/respuesta en

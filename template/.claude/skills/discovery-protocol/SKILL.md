@@ -71,12 +71,17 @@ del documento + lo elicitado en la entrevista.
    Registrar el **medio/canal de cada actor** (app, web, notebook, CLI…) en la cabecera de su flujo,
    tal como se elicitó; el medio es **por actor**, no del proyecto. Si no se elicitó, declararlo hueco.
 6. **Gatekeeper (§7):** formalizar como métrica **medible** + umbral + método.
-7. **Timebox (§8)** y **exclusiones explícitas (§9)**; **split (§10)** solo si el log lo justifica.
+7. **Timebox (§8):** se acuerda al abrir la entrevista, así que **no está en el registro de Q&A sino en
+   el campo *Timebox acordado* de la cabecera Meta** del log; si dice `sin acordar`, declararlo así en
+   §8, no inventar una duración. **Exclusiones explícitas (§9)**; **split (§10)** solo si el log lo
+   justifica.
 
 Los **huecos declarados** en el cierre del log se trasladan a `discovery.md` como pendientes marcados
 o como exclusiones — según corresponda—, nunca como datos inventados. **Antes de declarar un hueco,
 comprueba el extracto:** si el área está marcada *cubierta* ahí, no es un hueco — el material existe y
-va al entregable.
+va al entregable. Tampoco lo es un área marcada **`n/a`**: no se preguntó porque no le corresponde al
+cliente (canónicamente §3, que **deduces tú**); tratarla como hueco marcaría pendiente algo que el
+entregable sí debe resolver.
 
 ---
 

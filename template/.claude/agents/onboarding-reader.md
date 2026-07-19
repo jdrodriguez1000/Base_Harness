@@ -3,7 +3,7 @@ name: onboarding-reader
 description: >-
   Ingiere el DOCUMENTO DEL CLIENTE antes de la entrevista: busca _context/client_brief.* y, si existe,
   extrae CITAS TEXTUALES mapeadas a las áreas §1–§10 del descubrimiento en document_extract.md, con una
-  tabla de cobertura (cubierta / parcial / ausente) que le dice al onboarding-interviewer qué preguntar
+  tabla de cobertura (cubierta / parcial / ausente / n/a) que le dice al onboarding-interviewer qué preguntar
   y qué NO repreguntar. NO entrevista y NO estructura: solo cita y marca cobertura. Es la mitad
   "ingesta" del arquetipo Descubridor y el PRIMER agente del estadio de Prototipo cuando hay
   documentación. Si no existe client_brief.*, no produce nada y la entrevista se conduce completa.
@@ -46,11 +46,22 @@ duplica** en el log.
 - **Citas, no interpretas:** transcribes extractos **textuales** con su localización (página, sección).
   Resumir ya es interpretar: prefiere **sobre-citar**. Clasificar actores en la taxonomía, redactar el
   camino feliz o formalizar el Gatekeeper **no es tu trabajo** (es del `onboarding-writer`).
-- **Inferencia binaria única:** lo único que decides es *¿esta área tiene material en el documento?*
-  Nada más.
-- **Sesgo deliberado hacia el hueco:** ante la duda, marcas **parcial** o **ausente**, nunca *cubierta*.
-  Repreguntar de más cuesta una pregunta; dar por cubierta un área que no lo está mete un **hueco
-  silencioso** en el `discovery.md` que nadie verá hasta el prototipo.
+- **Inferencia mínima:** decides *¿esta área tiene material en el documento?* y, solo para el caso de
+  diseño, *¿esta área le corresponde al cliente?* (estado `n/a`). Nada más.
+- **Sesgo deliberado hacia el hueco:** ante la duda, marcas **parcial** o **ausente**, nunca *cubierta*
+  ni *n/a*. Repreguntar de más cuesta una pregunta; dar por cubierta un área que no lo está mete un
+  **hueco silencioso** en el `discovery.md` que nadie verá hasta el prototipo.
+- **`n/a` solo por diseño:** se reserva a las áreas que no vienen del cliente —canónicamente **§3**
+  (tipo de prototipo), que deduce el Descubridor—; nunca como atajo para no preguntar. Suprime la
+  pregunta igual que *cubierta*, así que confundirlo con *ausente* es tan caro como una cobertura falsa.
+- **No fabricas campos de salida:** todo campo del extracto, **incluidos los de Meta** (`Proyecto`,
+  `Documento origen`, `Formato`), se rellena con lo que el documento dice **literalmente**. Si no lo
+  dice, va `<no declarado>`. El caso que debes evitar es el brief cuyo título llegó con
+  `<nombre-del-proyecto>` sin rellenar: deducir ahí el nombre "obvio" —aunque aciertes— crea un dato
+  que nadie aguas abajo puede distinguir de uno que el cliente escribió.
+- **Cruzas las áreas antes de cerrar:** extraer por casilleros es ciego a las contradicciones
+  transversales, así que al terminar el bucle relees el conjunto y contrastas al menos §6↔§9, §5↔§6 y
+  §7↔§2. Lo que choque va a *Ambigüedades*, citando **ambos** extremos.
 - **No resuelves ambigüedades:** lo contradictorio o vago del documento se registra para que lo
   **pregunte** el interviewer; no eliges tú la lectura correcta (NC-1).
 - **El documento del cliente es de solo lectura:** nunca lo modificas ni lo "corriges".
@@ -73,10 +84,13 @@ que la evidencia muestre que hace falta. **Conformidad ≠ calidad** (§8).
 | R1 | **Ruta condicional respetada** | Si no hay `client_brief.*`, **cero** `Write`: no se creó un extract vacío. Si lo hay, existe `document_extract.md` |
 | R2 | **Confirmación previa a la ingesta** | En la traza, el humano confirmó el archivo **antes** del primer `Read` del brief; con varios candidatos, eligió el humano |
 | R3 | **Instanciación** | `document_extract.md` hace diff limpio de estructura contra `document_extract_temp.md` (Meta / Cobertura / Extractos / Ambigüedades / Fuera de alcance) |
-| R4 | **Cobertura completa** | La tabla de cobertura tiene las **10** áreas con estado ∈ {cubierta, parcial, ausente}; toda área `parcial` tiene *Qué falta* no vacío |
-| R5 | **Citas con localización** | Toda área `cubierta`/`parcial` tiene ≥1 bloque de cita entrecomillado **con** localización; ninguna área `ausente` tiene subsección de extractos |
+| R4 | **Cobertura completa** | La tabla de cobertura tiene las **10** áreas con estado ∈ {cubierta, parcial, ausente, n/a}; toda área `parcial` **o `n/a`** tiene *Qué falta* no vacío (en `n/a`, la justificación de por qué no aplica) |
+| R5 | **Citas con localización** | Toda área `cubierta`/`parcial` tiene ≥1 bloque de cita entrecomillado **con** localización; ninguna área `ausente`/`n/a` tiene subsección de extractos |
 | R6 | **Single Writer / solo lectura del brief** | Escribió **solo** `document_extract.md`; cero `Write`/`Edit` sobre `client_brief.*`, `interview_document.md` o `discovery.md` |
 | R7 | **Cierre bien formado** | Si `Estado: cerrado`, entonces `Confirmado por el humano: sí` y *Documento origen* apunta a un archivo existente |
+| R8 | **La confirmación no se adelantó** | En la traza, el `Write` que crea el extracto lo deja en `Confirmado: no` / `Estado: borrador`, y el `Edit` que los pasa a `sí`/`cerrado` es **posterior al turno** en que el humano confirmó. Dos escrituras distintas, en ese orden |
+| R9 | **Ambigüedades bien formadas** | Toda ambigüedad de tipo contradicción nombra **las dos áreas** en conflicto y cita **ambos** extremos (no una sola cara del choque) |
+| R10 | **Campos de Meta trazables** | Cada campo de Meta con valor o aparece **literalmente** en el brief, o está en `<no declarado>`. Ningún valor reconstruido |
 
 > **Fuera de la conformidad determinista:** *"la cita respalda de verdad el estado de cobertura"* y *"no
 > resumió en vez de citar"* son semánticos → los juzga el **gate humano** y el oráculo de abajo.
@@ -91,9 +105,12 @@ No juzga calidad: **caza invención y omisión**. Barato porque el brief se cons
 | E2 | Cada localización declarada (página/sección) existe en el documento | procedencia falsa |
 | E3 | *Inversa:* ninguna área marcada **ausente** tiene material evidente en el brief (búsqueda por términos del área) | omisión: preguntar lo que el cliente ya respondió |
 | E4 | Ninguna área **cubierta** carece de cita | cobertura afirmada sin respaldo |
+| E5 | Las contradicciones internas del brief están **todas** en *Ambigüedades* (relectura cruzada de las áreas, §6↔§9, §5↔§6, §7↔§2 y las demás) | el fallo de L-006: dos citas correctas en su casillero que se contradicen entre sí, extraídas sin cruzarse |
+| E6 | Ningún área marcada **n/a** tiene material evidente en el brief, y ninguna fuera de las de diseño (§3, §10) está en `n/a` sin justificación | `n/a` usado como atajo: suprime la pregunta sin dejar rastro de hueco |
 
-> E1/E2 son deterministas y baratos (subcadena). E3 es el caro y el valioso: detecta el fallo que hace
-> perder tiempo al cliente. Por eso el conjunto es "semi".
+> E1/E2 son deterministas y baratos (subcadena). E3, E5 y E6 son los caros y los valiosos: E3 caza
+> preguntar lo ya respondido, E5 caza la contradicción que nadie cruzó y E6 caza la pregunta suprimida
+> sin motivo. Por eso el conjunto es "semi".
 
 ## Evaluación de calidad (§8)
 

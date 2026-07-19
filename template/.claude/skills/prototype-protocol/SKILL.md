@@ -39,6 +39,9 @@ Este skill es **agnóstico al proyecto** y **autónomo**: su insumo es un archiv
    - **Tipo dominante (§3):** deseabilidad o factibilidad → decide *qué* se materializa.
    - **Medio del actor (§6):** app, web, notebook, CLI… → decide *en qué* se materializa.
    - **Hipótesis de valor (§2)** y **Gatekeeper (§7):** qué debe poder validar el prototipo.
+   - **Timebox (§8):** tu **presupuesto de construcción** — uno de los dos motivos de cierre (Paso 3).
+     Si §8 dice `sin acordar`, **acuérdalo con el humano antes de empezar** (NC-6): es una decisión de
+     alcance, no tuya. Si lo prefiere abierto, cerrarás **solo** por camino feliz cubierto.
    - **Exclusiones (§9):** qué queda **fuera**, sin excepción.
 3. Determinar el destino `<PROTOTYPE>` = `_prototype/prototype/` (hermana de `discovery.md`). Todo lo
    que construyas vive ahí dentro: el prototipo es **desechable** y no debe mezclarse con el código
@@ -80,8 +83,10 @@ Disciplina durante el bucle:
 
 ## Paso 3 — Feature freeze, informar y ceder el gate
 
-1. **Cerrar** al cubrir el camino feliz del generador **o** al agotar el **timebox** (§4.3) — lo que
-   ocurra primero. Al cerrar el timebox: **feature freeze** (se congela; mejoras secundarias se posponen).
+1. **Cerrar** al cubrir el camino feliz del generador **o** al agotar el **timebox** cargado en el
+   Paso 0 — lo que ocurra primero. Al cerrar por timebox: **feature freeze** (se congela; las mejoras
+   secundarias se posponen). Si el timebox quedó abierto por decisión del humano, el único motivo de
+   cierre es el camino feliz cubierto: **no inventes un tope** para justificar el cierre.
 2. **Informar** (narrativa, no evidencia §10): qué se construyó, en qué medio, qué parte se simula por
    mago de Oz, y **qué evidencia permite recoger** el prototipo frente al **Gatekeeper (§7)**.
 3. **No cruzar el gate (P5):** el paso Prototipo→MVP lo decide el **humano** con la evidencia. El
@@ -94,6 +99,9 @@ Disciplina durante el bucle:
 - **Desechable y mínimo:** sin tests, sin robustez, sin capas; lo justo para validar la hipótesis (§4.4).
 - **Solo el generador:** operador/administrador son bajo demanda (§4.3); no en secuencia inmediata.
 - **Respeta las exclusiones §9:** guarda anti-*scope creep*; nada de lo excluido se construye.
+- **El timebox se carga, no se supone:** sale de §8 del `discovery.md` en el Paso 0; si viene
+  `sin acordar`, se acuerda con el humano antes de construir. Cerrar alegando un tope que nadie fijó
+  es medir contra nada.
 - **Medio del actor + tecnología más barata:** materializa en el medio §6, con lo más barato que valide
   la hipótesis; el medio del prototipo ≠ el del producto final.
 - **Juicio de UX y mago de Oz son humanos (§4.2):** tú materializas; no decides el producto ni simulas

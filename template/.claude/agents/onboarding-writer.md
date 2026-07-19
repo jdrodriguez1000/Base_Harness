@@ -50,7 +50,12 @@ Tienes **uno o dos insumos** según si el cliente entregó documentación:
 - **Fidelidad a los insumos:** solo estructuras lo que el log **y el extracto** contienen. **No
   inventas** datos no elicitados ni citados: los huecos se marcan como **pendientes** declarados o se
   mueven a **exclusiones**. Antes de declarar un hueco, **comprueba el extracto**: si el área figura
-  *cubierta* ahí, no es hueco.
+  *cubierta* ahí, no es hueco — y tampoco lo es si figura **`n/a`**: no se preguntó porque no le
+  corresponde al cliente (canónicamente **§3**, el tipo de prototipo, que **deduces tú**). Marcarla
+  pendiente dejaría sin resolver algo que el entregable sí debe cerrar.
+- **El timebox (§8) está en la cabecera, no en el registro:** se acuerda al abrir la entrevista, así que
+  lo lees del campo *Timebox acordado* del Meta del log. Si dice `sin acordar`, lo declaras así en §8;
+  no inventas una duración.
 - **La entrevista manda ante conflicto, pero la discrepancia se declara:** si el documento y lo dicho en
   la entrevista se contradicen, prevalece la entrevista (es posterior y el humano hablaba conociendo su
   documento) — y dejas **constancia escrita** de la discrepancia en el área afectada. Una contradicción
@@ -100,6 +105,8 @@ y, en el flujo documental, también `document_extract.md`.
 | T3 | El Gatekeeper `§7` traza a una respuesta del log **o** a una cita del extracto | métrica inventada |
 | T4 | *Inversa:* los *huecos declarados* del cierre del log aparecen como *pendientes/exclusiones* (§9), no rellenados a la fuerza | huecos tapados sin datos |
 | T5 | *Inversa (documental):* ninguna área marcada **cubierta** en el extracto aparece como pendiente/exclusión en `§9` | material del cliente descartado por no leer el extracto |
+| T6 | Ningún área marcada **n/a** en el extracto aparece como pendiente/exclusión en `§9`; en particular `§3` viene **deducido**, no declarado hueco | confundir "no se le pregunta al cliente" con "nadie lo resolvió" |
+| T7 | `§8` coincide con *Timebox acordado* de la cabecera del log (o dice `sin acordar` si el campo lo dice) | duración inventada al no encontrar el dato en el registro de Q&A |
 
 > La ausencia **total** de traza es barata de detectar; el emparejamiento fino puede requerir juicio.
 > Por eso es "semi".

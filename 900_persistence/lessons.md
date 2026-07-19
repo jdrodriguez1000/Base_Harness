@@ -19,6 +19,9 @@
 | L-007 | Escribir el campo `Confirmado por el humano: sí` antes de pedir la confirmación falsea la traza | 2026-07-19 |
 | L-008 | La tabla de cobertura no tiene estado `n/a`: §3 y §10 se marcan `ausente` y el interviewer las pregunta | 2026-07-19 |
 | L-009 | "Commit por etapa" está en `methodology.md` pero ningún skill de etapa lo implementa (solo `closing-protocol` toca git) | 2026-07-19 |
+| L-010 | Editar una capa (mover un campo) sin recorrer las demás rompe silenciosamente al consumidor — mismo patrón que audita T-031, autogenerado en la misma sesión | 2026-07-19 |
+| L-011 | "Cubierta" significa cosas distintas en `ingest-protocol` y `discovery-protocol` para §7 (métrica+umbral vs. métrica+umbral+método): el mismo estado enumerado, dos contratos distintos | 2026-07-19 |
+| L-012 | Una regla anti-fabricación correcta al pie de la letra puede fallar su intención: el nombre de la empresa aparece literal en el brief pero no es el nombre del proyecto | 2026-07-19 |
 
 ## Formato
 
@@ -96,4 +99,25 @@
 - **Problema:** Dos reglas vinculantes lo exigen —`principles.md:37` (*"Git como registro de estado […] desde el principio debe estar enlazado a un repositorio remoto"*) y `methodology.md:515` §7 (*"**commit por etapa** con prefijo convencional; el push se hace en el cierre de sesión"*)— pero de los siete skills del molde **solo `closing-protocol` toca git** (su Paso 6). `ingest-protocol`, `interview-protocol`, `discovery-protocol` y `prototype-protocol` no mencionan git ni una vez. El `onboarding-reader` no incumplió nada: su skill nunca le pidió commitear. Además, el proyecto de prueba **no era un repo git en absoluto** (`fatal: not a git repository`) y nada en el arranque del estadio lo detecta, así que un proyecto puede recorrer el descubrimiento completo sin control de versiones y sin aviso hasta el cierre.
 - **Solución / aprendizaje:** Tercera aparición del patrón de L-004: regla documentada en la capa de método, no implementada en la capa operativa. Se confirma que la divergencia documentación↔ejecución es **sistemática** en este harness, no incidental — merece una verificación de cobertura, no parches caso a caso.
 - **Cómo aplicarlo:** Implementar el commit por etapa en los skills de etapa y un bootstrap de repo al inicio del estadio (T-030). Y de forma general: cuando `methodology.md` o `principles.md` impongan una conducta operativa, auditar **todos** los `SKILL.md` que deberían ejecutarla, en vez de asumir cobertura. Ver T-031.
+- **Fecha:** 2026-07-19
+
+### L-010 — Editar una capa sin recorrer las demás rompe silenciosamente al consumidor
+- **Contexto:** T-031 (auditoría), al implementar G7 (timebox acordado). El primer borrador movió el campo *Timebox acordado* a la cabecera Meta del log de entrevista (`interview_document.md`), separado del registro de Q&A.
+- **Problema:** El `onboarding-writer` (y cualquier lector del log) espera encontrar el material trazable en el cuerpo de Q&A, no en la cabecera. Al mover el campo ahí, el writer habría dejado de encontrarlo silenciosamente — un hueco nuevo, generado por la propia corrección, sin que ningún check existente lo detectara. Se descubrió y corrigió en la misma sesión, antes de propagarlo.
+- **Solución / aprendizaje:** Es el **mismo patrón exacto** que T-031 audita (regla en una capa, no implementada/consumida en otra) pero autogenerado por el propio equipo al editar el harness. Confirma empíricamente que la divergencia documentación↔ejecución no es solo un defecto heredado: es fácil de reintroducir al tocar una sola capa sin verificar las que dependen de ella.
+- **Cómo aplicarlo:** Al añadir o mover un campo en una plantilla/artefacto de traspaso, identificar explícitamente **quién lo consume** (qué otro skill lo lee) y verificar que ese consumidor sigue encontrándolo en el lugar nuevo, antes de dar el cambio por cerrado. No basta con revisar el productor.
+- **Fecha:** 2026-07-19
+
+### L-011 — "Cubierta" significa cosas distintas entre `ingest-protocol` y `discovery-protocol` para §7
+- **Contexto:** Detectado al revisar T-031/T-033. `ingest-protocol` marca §7 (Gatekeeper) como `cubierta` cuando el brief trae métrica+umbral. Pero `discovery-protocol` Paso 1.6 exige métrica+umbral+**método de medición** para dar el Gatekeeper por completo.
+- **Problema:** Un área que el reader entrega como `cubierta` puede llegar corta al writer, que necesita un dato más (el método) que el reader nunca pidió ni marcó como faltante. El estado enumerado `cubierta` no significa lo mismo para los dos skills que lo leen/escriben — mismo defecto de clase que L-008 (información que gobierna la conducta del consumidor no vive en el campo que el consumidor lee), pero aquí entre dos skills que ya usan el mismo campo con semántica distinta.
+- **Solución / aprendizaje:** Sin corregir aún; queda registrada para T-041. No se corrigió a ojo dentro de esta sesión para evitar tocar la definición de cobertura sin evidencia de una corrida real que confirme el impacto.
+- **Cómo aplicarlo:** Antes de dar una tarea de alineación por cerrada, verificar que el criterio de "completo" para cada estado enumerado sea **idéntico** en el productor y en el consumidor del campo, citando el paso exacto de cada `SKILL.md`. Ver T-041.
+- **Fecha:** 2026-07-19
+
+### L-012 — Una regla anti-fabricación correcta al pie de la letra puede fallar su intención
+- **Contexto:** Al escribir T-033 (procedimiento de repetición de T-027) se revisó el `client_brief.md` de reciclaje y se notó que "Recicladora Oriente Verde" aparece literalmente en el texto — pero es el **nombre de la empresa cliente**, no el nombre del proyecto/producto a construir (el hueco real que causó L-005).
+- **Problema:** Un `onboarding-reader` que aplique la regla anti-fabricación de L-005/T-028 al pie de la letra ("todo valor debe ser trazable a una cita") podría citar literalmente "Recicladora Oriente Verde" como si fuera el nombre del proyecto, porque la cadena de texto sí existe en el brief — y aun así estaría fallando la intención de la regla (evitar que se invente o confunda el dato pedido).
+- **Solución / aprendizaje:** La trazabilidad textual (¿la cadena aparece en el documento?) no es suficiente por sí sola; hace falta también que la cita responda a la **pregunta correcta** (¿es el nombre del proyecto o el de otra entidad mencionada?). No se generalizó una regla nueva sin evidencia de una corrida real (NC-1); se documentó como caso de "aprobado con reparo" en `T-027_procedimiento.md`, a vigilar en la próxima repetición.
+- **Cómo aplicarlo:** Al revisar la salida de un reader/extractor, no basta con verificar que cada valor tenga una cita de respaldo: verificar también que la cita responda al campo que se le pidió, especialmente cuando el documento nombra varias entidades similares (empresa vs. proyecto vs. producto).
 - **Fecha:** 2026-07-19

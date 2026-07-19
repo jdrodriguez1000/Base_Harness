@@ -37,7 +37,9 @@ comentarios al instanciar.
 - **Formato / extensión:** <md | pdf | docx | txt | …>
 - **Extraído por:** onboarding-reader
 - **Fecha:** <YYYY-MM-DD>
-- **Confirmado por el humano:** <sí | no> <!-- confirmación por bloque, antes de pasar al interviewer -->
+- **Confirmado por el humano:** no <!-- NACE en "no". Pasa a "sí" en una escritura POSTERIOR y
+     SEPARADA, solo cuando el humano ya confirmó por bloque. Adelantarlo vacía el campo de
+     significado: nadie aguas abajo podría distinguir un extracto revisado de uno que nadie miró. -->
 - **Estado:** borrador <!-- borrador | cerrado (listo para el interviewer) -->
 
 ## Cobertura
@@ -49,15 +51,22 @@ comentarios al instanciar.
        - cubierta — el documento trae material suficiente; el interviewer NO pregunta.
        - parcial  — hay material pero incompleto; el interviewer pregunta SOLO lo que falta
                     (detállalo en "Qué falta").
-       - ausente  — el documento no dice nada; el interviewer pregunta el área completa.
+       - ausente  — el documento no dice nada Y DEBERÍA decirlo; el interviewer pregunta el área
+                    completa.
+       - n/a      — el área NO se le pide al cliente: no es suya por diseño; el interviewer NO
+                    pregunta. Anota en "Qué falta" POR QUÉ no aplica.
      Ante la duda, marca PARCIAL o AUSENTE: repreguntar de más cuesta una pregunta;
-     dar por cubierto de menos mete un hueco silencioso en el discovery (NC-1). -->
+     dar por cubierto de menos mete un hueco silencioso en el discovery (NC-1).
+     OJO con n/a: suprime la pregunta igual que "cubierta", así que NO es un atajo. Se reserva a las
+     áreas que por diseño no vienen del cliente — el caso canónico es §3 (tipo de prototipo), que
+     DEDUCE el Descubridor; §10 (split) es n/a si el proyecto no lo justifica. Cualquier otra área en
+     n/a exige justificación. Entre n/a y ausente, gana AUSENTE. -->
 
 | Área | Tema | Estado | Qué falta (si parcial) |
 |---|---|---|---|
-| §1 | Objetivo y contexto | <cubierta \| parcial \| ausente> | <qué queda por elicitar, o —> |
+| §1 | Objetivo y contexto | <cubierta \| parcial \| ausente \| n/a> | <qué queda por elicitar, o —> |
 | §2 | Hipótesis de valor central | <…> | <…> |
-| §3 | Tipo de prototipo dominante | <…> | <…> |
+| §3 | Tipo de prototipo dominante | n/a | no se le pide al cliente: lo deduce el Descubridor |
 | §4 | Stakeholders | <…> | <…> |
 | §5 | Actores | <…> | <…> |
 | §6 | Camino feliz + medio por actor | <…> | <…> |
@@ -69,7 +78,7 @@ comentarios al instanciar.
 ## Extractos por área
 
 <!-- Una subsección por área con estado "cubierta" o "parcial". Las áreas
-     "ausente" se OMITEN aquí (ya constan en la tabla de arriba).
+     "ausente" o "n/a" se OMITEN aquí (ya constan en la tabla de arriba).
      Cada extracto es una CITA TEXTUAL del documento con su localización, para
      que el writer pueda trazar cada dato de discovery.md hasta el brief. -->
 
