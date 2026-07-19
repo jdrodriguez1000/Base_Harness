@@ -12,6 +12,7 @@
 |---|---|---|
 | L-001 | Duplicar `.claude/` (raíz vs `template/.claude/`) autocontiene el entregable pero crea riesgo de desincronización | 2026-07-17 |
 | L-002 | En opencode, skills y subagentes compiten por su `description`; el subagente no se activa si le faltan las frases naturales del usuario | 2026-07-17 |
+| L-003 | El inventario de agentes/skills de `register-harness` está hardcodeado y no crece solo cuando se añaden arquetipos nuevos al molde | 2026-07-19 |
 
 ## Formato
 
@@ -41,3 +42,10 @@
 - **Solución / aprendizaje:** Enriquecer la `description` de los agentes con las **frases naturales** que el usuario realmente dice ("iniciemos/cierra la sesión", etc.) y marcarlos como punto de entrada preferido. Alternativa siempre disponible en opencode: forzar el subagente con `@sesion-starter` / `@sesion-closer`.
 - **Cómo aplicarlo:** Al crear o traducir un agente cuya activación deba ganarle a un skill homónimo, front-loadear en su `description` los disparadores literales del usuario. La `description` no es decorativa: es el criterio de enrutamiento.
 - **Fecha:** 2026-07-17
+
+### L-003 — El inventario de `register-harness` está hardcodeado y no crece solo con nuevos arquetipos
+- **Contexto:** Durante T-025 (ruta documental del Descubridor, D-027) se añadió un tercer agente (`onboarding-reader`) y un tercer skill (`ingest-protocol`) al molde. Al revisar `register-harness` para planificar T-023 (re-sync a opencode/Gemini) se detectó que su lista de "qué auditar/provisionar" está **hardcodeada** en el propio `SKILL.md` y hoy solo enumera los agentes de sesión (`sesion-starter`/`sesion-closer`); nunca incluyó a `onboarding-interviewer`/`onboarding-writer`/`prototype-builder`, ni ahora a `onboarding-reader`.
+- **Problema:** Cada vez que se añade un arquetipo nuevo al molde (`template/.claude/agents` + `.../skills`), `register-harness` no lo detecta automáticamente: hay que acordarse de ampliar su inventario a mano. Si no se hace, el skill audita/provisiona de forma incompleta sin avisar que algo falta en su propia lista.
+- **Solución / aprendizaje:** Antes de re-ejecutar `register-harness` para sincronizar una herramienta destino, verificar que su inventario interno cubre **todos** los agentes/skills existentes en `template/.claude/`, no solo los de sesión. T-023 ya quedó ampliada para exigir esta revisión explícitamente.
+- **Cómo aplicarlo:** Al crear un agente/skill nuevo deliverable-only en `template/.claude/` (D-022), añadirlo también al inventario de `register-harness` en la misma sesión (o dejarlo anotado como deuda explícita en `tasks.md`), en vez de asumir que el skill los descubre solo.
+- **Fecha:** 2026-07-19

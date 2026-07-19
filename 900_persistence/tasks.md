@@ -57,9 +57,9 @@
 - [ ] T-023 — **[PRÓXIMA TAREA]** Re-sync a opencode/Gemini (vía `register-harness`) de los nuevos agentes/skills/plantillas del Descubridor Y del Prototipador: `onboarding-reader`, `onboarding-interviewer`, `onboarding-writer`, skills `ingest-protocol`/`interview-protocol`/`discovery-protocol`, plantillas `discovery_temp.md`/`interview_temp.md`/`document_extract_temp.md`, agente `prototype-builder`, skill `prototype-protocol`. **Ojo:** el inventario hardcodeado de `register-harness` hoy solo cubre los agentes de sesión (`sesion-starter`/`sesion-closer`) — hay que ampliarlo, no solo re-ejecutarlo.
       Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-021, D-026
 - [ ] T-024 — Probar `prototype-builder` end-to-end con un `discovery.md` real (usar el caso de reciclaje como fixture); sin esta evidencia el motor genérico de traza/conformidad y el juez LLM calibrado siguen diferidos por E4.
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-026
 - [ ] T-026 — Probar la **ruta documental** (D-027) end-to-end con un `client_brief` real: que el `onboarding-reader` marque bien la cobertura, que el `onboarding-interviewer` **no repregunte** lo cubierto, y —el fallo más caro— que el `discovery.md` **no pierda** el material que venía solo del documento (checks W0/T5). Encadena natural con T-024: mismo caso de reciclaje, brief → discovery → prototipo.
       Prioridad: alta · Responsable: — · Ref: [[decisions]] D-027
-      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-026
 - [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
 - [ ] T-003 — Rellenar `905_context/business.md` con los datos reales de la empresa.
