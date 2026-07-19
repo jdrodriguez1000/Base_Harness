@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-19 | Prueba end-to-end T-027 (modalidad observador): Etapa 1 (ingesta) evaluada contra `ingest-protocol`, 5 hallazgos registrados (L-005…L-009), modalidad observador y no-corrección del fixture (D-029), tareas T-028…T-033 abiertas | en progreso | `#2026-07-19--prueba-end-to-end-t-027-modalidad-observador-etapa-1-ingesta-evaluada-contra-ingest-protocol-5-hallazgos-registrados-l-005l-009-modalidad-observador-y-no-corrección-del-fixture-d-029-tareas-t-028t-033-abiertas` |
 | 2026-07-19 | Condición de entrada al estadio de Prototipo: ruta canónica `_prototype/` (D-028), detección de estadio en `startup-protocol` (Paso 4, propone-no-ejecuta), sección "Arranque de proyecto" en `AGENTS.md`, plantilla `client_brief_temp.md`, y corrección de dos gates documentados-pero-no-implementados (L-004) | completado | `#2026-07-19--condición-de-entrada-al-estadio-de-prototipo-ruta-canónica-prototype-d-028-detección-de-estadio-en-startup-protocol-paso-4-propone-no-ejecuta-sección-arranque-de-proyecto-en-agentsmd-plantilla-client_brief_tempmd-y-corrección-de-dos-gates-documentados-pero-no-implementados-l-004` |
 | 2026-07-19 | Ruta documental del Descubridor: tercer agente `onboarding-reader` + skill `ingest-protocol`, entrevista solo-huecos y writer con dos insumos (D-027) — T-025 completada | completado | `#2026-07-19--ruta-documental-del-descubridor-tercer-agente-onboarding-reader--skill-ingest-protocol-entrevista-solo-huecos-y-writer-con-dos-insumos-d-027--t-025-completada` |
 | 2026-07-18 | Prototipado Parte 2 (Prototipador): reubicación de la frontera humano↔agente (D-025) y materialización de `prototype-builder` + `prototype-protocol` con observabilidad §10 (D-026) — T-022 completada | completado | `#2026-07-18--prototipado-parte-2-prototipador-reubicación-de-la-frontera-humanoagente-d-025-y-materialización-de-prototype-builder--prototype-protocol-con-observabilidad-10-d-026--t-022-completada` |
@@ -42,6 +43,27 @@
 ---
 
 ## Historial
+
+### [2026-07-19] — Prueba end-to-end T-027 (modalidad observador): Etapa 1 (ingesta) evaluada contra `ingest-protocol`, 5 hallazgos registrados (L-005…L-009), modalidad observador y no-corrección del fixture (D-029), tareas T-028…T-033 abiertas
+
+**Contexto.** Sesión dedicada a ejecutar T-027 (prueba end-to-end del flujo completo de prototipado, caso de reciclaje "ReciclApp"). **Modalidad observador (D-029):** la prueba corre en una terminal aparte, en un proyecto separado (`Pruebas_Prototipado/App_Reciclaje`); esta sesión del harness **no ejecutó** la prueba, actuó como validador, contrastando el comportamiento reportado contra el contrato escrito de cada skill.
+
+**Etapa 1 (ingesta) evaluada.** Se revisó `document_extract.md` contra `client_brief.md`. **Conforme:** citas textuales fieles con elisiones `[...]` marcadas; 5 ambigüedades registradas sin resolver (A4 destaca: cruza bien la §10 "Dudas que tengo yo" del brief con el flujo de confirmación); fuera-de-alcance declarado conscientemente; §7 marcada `parcial` pese a tener métrica+umbral (el sesgo hacia el hueco funcionando tal como se diseñó); §5 correctamente `cubierta` (una sospecha inicial del validador de que faltaba identificar al generador se retiró tras verificar que el brief sí lo cubre).
+
+**Hallazgos (registrados como L-005…L-009 en `lessons.md`):**
+- **L-005:** el reader FABRICÓ el nombre del proyecto ("ReciclApp" no aparece en el brief; el título conservaba el marcador `<nombre-del-proyecto>` sin rellenar). La regla del skill prohíbe *citar* marcadores, pero no impide *rellenarlos* con una invención plausible.
+- **L-006 (el más caro):** contradicción interna del brief no detectada — su §5 pone la validación de correo en el camino feliz y su §8 la excluye explícitamente. El reader extrajo ambas citas correctamente pero nunca las cruzó: el bucle de extracción por área es ciego a contradicciones transversales.
+- **L-007:** escribió `Confirmado por el humano: sí` / `Estado: cerrado` antes de pedir la confirmación al humano.
+- **L-008:** §3 y §10 quedaron marcadas `ausente` por falta de un estado `n/a`; `interview-protocol` solo lee el estado de cobertura (regla: *ausente → preguntar el área completa*), así que §3 —que por diseño deduce el Descubridor, no el cliente— entrará indebidamente en la agenda de entrevista.
+- **L-009:** no hubo commit ni push durante la prueba. Verificado: el proyecto de prueba no es un repo git, y de los siete skills del molde solo `closing-protocol` toca git. "Commit por etapa" está documentado en `methodology.md:515` y `principles.md:37`, pero ningún skill de etapa lo implementa — el agente no incumplió su propio skill.
+
+**Observación estructural.** Tres de las cinco lecciones (L-004 previa, L-008, L-009) son el **mismo defecto**: una regla escrita en una capa (documentación/metodología) que la capa operativa (el `SKILL.md` que ejecuta) no implementa. La divergencia documentación↔ejecución parece sistemática, no incidental — de ahí T-031 (auditoría transversal) en vez de seguir parcheando skills uno a uno.
+
+**Decisiones de conducción (D-029).** El humano decidió explícitamente: **(1)** no corregir nada en el proyecto de prueba ReciclApp — queda intacto con sus defectos; **(2)** dejar correr §3/§10 sin corregir a propósito, para que la entrevista produzca evidencia observable del gap de L-008; **(3)** todos los ajustes se planifican como tareas en `Base_Harness` (T-028…T-033), para aplicarlos en la próxima sesión y repetir la prueba desde cero.
+
+**Estado y siguiente paso.** T-027 queda **en progreso**, con la Etapa 1 evaluada. Próxima sesión: aplicar T-028 (tres arreglos de `ingest-protocol`), T-029 (pasada de consistencia entre áreas) y T-030 (commit por etapa + bootstrap de repo) antes de repetir la prueba siguiendo el procedimiento de T-033. T-031 (auditoría documentación↔ejecución) y T-032 (fijar la ubicación del fixture de reciclaje) quedan abiertas, sin bloquear la repetición inmediata.
+
+Ref: [[tasks]] T-027, T-028, T-029, T-030, T-031, T-032, T-033 · [[decisions]] D-029 · [[lessons]] L-005, L-006, L-007, L-008, L-009
 
 ### [2026-07-19] — Condición de entrada al estadio de Prototipo: ruta canónica `_prototype/` (D-028), detección de estadio en `startup-protocol` (Paso 4, propone-no-ejecuta), sección "Arranque de proyecto" en `AGENTS.md`, plantilla `client_brief_temp.md`, y corrección de dos gates documentados-pero-no-implementados (L-004)
 

@@ -14,6 +14,11 @@
 | L-002 | En opencode, skills y subagentes compiten por su `description`; el subagente no se activa si le faltan las frases naturales del usuario | 2026-07-17 |
 | L-003 | El inventario de agentes/skills de `register-harness` está hardcodeado y no crece solo cuando se añaden arquetipos nuevos al molde | 2026-07-19 |
 | L-004 | Documentar un gate humano en `AGENTS.md` no lo implementa: hay que verificar el `SKILL.md` que lo ejecuta | 2026-07-19 |
+| L-005 | Prohibir *citar* un marcador de plantilla no impide *rellenarlo*: el reader inventó el nombre del proyecto | 2026-07-19 |
+| L-006 | La extracción área por área no detecta contradicciones **entre** áreas: falta un paso de cruce | 2026-07-19 |
+| L-007 | Escribir el campo `Confirmado por el humano: sí` antes de pedir la confirmación falsea la traza | 2026-07-19 |
+| L-008 | La tabla de cobertura no tiene estado `n/a`: §3 y §10 se marcan `ausente` y el interviewer las pregunta | 2026-07-19 |
+| L-009 | "Commit por etapa" está en `methodology.md` pero ningún skill de etapa lo implementa (solo `closing-protocol` toca git) | 2026-07-19 |
 
 ## Formato
 
@@ -56,4 +61,39 @@
 - **Problema:** Un gate humano descrito en la documentación de alto nivel (`AGENTS.md`) puede no existir en la práctica si el procedimiento operativo (`SKILL.md`) que lo ejecuta no lo implementa. La documentación y la ejecución pueden divergir silenciosamente incluso dentro de la misma sesión en que se escribió la documentación.
 - **Solución / aprendizaje:** Se corrigió `discovery-protocol` (su Paso 2.3 ahora pide aprobación explícita del humano y el entregable queda en borrador hasta obtenerla, + regla invariante nueva) y `interview-protocol` (propone el cierre y espera el OK del humano en vez de cerrar por su cuenta).
 - **Cómo aplicarlo:** Cada vez que se documente un "gate humano" (o cualquier paso de aprobación) en un archivo de alto nivel (`AGENTS.md`, `methodology.md`), verificar el `SKILL.md` operativo correspondiente para confirmar que efectivamente pide y espera esa aprobación, en vez de asumir que la mención documental basta.
+- **Fecha:** 2026-07-19
+
+### L-005 — Prohibir *citar* un marcador de plantilla no impide *rellenarlo*
+- **Contexto:** Prueba T-027, paso de ingesta. El `client_brief.md` del caso de reciclaje conservaba el título de plantilla sin rellenar: `# Qué quiero construir — <nombre-del-proyecto>`.
+- **Problema:** El `onboarding-reader` escribió en la cabecera del extracto `**Proyecto:** ReciclApp (Recicladora Oriente Verde)`. **"ReciclApp" no aparece en ninguna parte del brief**: el agente inventó un nombre comercial y lo registró como dato del cliente. `ingest-protocol` sí advierte que "plantilla sin rellenar ≠ contenido" y prohíbe **citar** un marcador como si fuera respuesta, pero no contempla el caso de **sustituirlo** por una invención plausible. Un dato fabricado en la cabecera se propaga al `discovery.md` y de ahí al prototipo, donde ya nadie recuerda que nadie lo decidió.
+- **Solución / aprendizaje:** Una prohibición redactada sobre un verbo concreto ("no cites") deja libre el resto del espacio de acciones sobre el mismo objeto. Los marcadores sin rellenar necesitan una regla sobre el **campo**, no sobre el verbo: un marcador vivo es un **hueco declarado**, y su valor de salida es `<sin dato en el brief>` o una pregunta para la entrevista.
+- **Cómo aplicarlo:** Al redactar una restricción anti-fabricación en un skill, formularla como invariante del campo de salida ("todo valor debe ser trazable a una cita; si no lo es, va como hueco"), no como prohibición de un verbo. Ver T-028.
+- **Fecha:** 2026-07-19
+
+### L-006 — La extracción área por área no detecta contradicciones entre áreas
+- **Contexto:** Prueba T-027, revisión del `document_extract.md` contra el `client_brief.md`.
+- **Problema:** El brief describe en su §5 (camino feliz del cliente) que el registro es *"por email **con validacion de correo** o … **gmail o de apple**"*, y en su §8 (qué NO hacer ahora) excluye explícitamente *"1. Validacion de correo electronico. 2. Tampoco validacion de correo con gmail o con apple"*. El camino feliz arranca con un paso que el propio documento declara fuera de alcance. El reader extrajo **las dos citas correctamente** (en §6 y §9 del extracto) pero marcó ambas áreas `cubierta` y no registró ninguna ambigüedad: nunca cruzó una con otra. Consecuencia en cadena: el interviewer no pregunta (áreas cubiertas), el writer redacta un camino feliz con validación de correo, y el prototipador construye un paso excluido — hueco silencioso detectado recién en el prototipo.
+- **Solución / aprendizaje:** El Paso 2 de `ingest-protocol` es un bucle **por área**: para cada área, busca material y clasifica cobertura. Ese diseño detecta bien ambigüedades **locales** (A1–A5 salieron todas correctas, incluida A4 que cruzaba la §10 del brief con el flujo) pero es estructuralmente ciego a las contradicciones **transversales**, porque ninguna iteración ve dos áreas a la vez. Faltaba un paso de cruce explícito después del bucle.
+- **Cómo aplicarlo:** Un protocolo de extracción por casilleros necesita una pasada final de **consistencia entre casilleros**, con los cruces de alto riesgo nombrados (camino feliz §6 vs. exclusiones §9; actores §5 vs. §6; Gatekeeper §7 vs. hipótesis §2). Ver T-029.
+- **Fecha:** 2026-07-19
+
+### L-007 — Escribir el campo de confirmación antes de pedirla falsea la traza
+- **Contexto:** Prueba T-027. El `document_extract.md` quedó escrito con `Confirmado por el humano: sí` y `Estado: cerrado` mientras el agente todavía preguntaba al humano si quería revisarlo.
+- **Problema:** El Paso 3 de `ingest-protocol` fija un orden explícito —escribir → presentar resumen → **pedir confirmación de bloque** → marcar `Confirmado: sí` y `cerrado`— y el agente lo colapsó, tomando la confirmación previa de *qué archivo ingerir* como si fuera la confirmación *del contenido resultante*. El artefacto queda declarando una validación humana que no ocurrió: cualquier agente aguas abajo lo lee como material validado. Es la misma familia de L-004 (gate documentado que no se ejecuta), pero aquí el gate **sí** está en el `SKILL.md` y aun así se saltó.
+- **Solución / aprendizaje:** Un campo de metadatos que registra un acto humano (`Confirmado por el humano`) es un **registro de evidencia**, no un campo más de la plantilla que se rellena al escribir el documento. Escribirlo en la misma pasada que el contenido invita a rellenarlo por defecto.
+- **Cómo aplicarlo:** Los campos que atestiguan un acto humano deben nacer con el valor negativo (`no` / `pendiente`) al crear el artefacto y modificarse **solo** en una escritura posterior y separada, disparada por la respuesta del humano. Ver T-028.
+- **Fecha:** 2026-07-19
+
+### L-008 — La tabla de cobertura carece de estado `n/a` y provoca preguntas indebidas
+- **Contexto:** Prueba T-027. El reader marcó §3 (tipo de prototipo dominante) y §10 (split por audiencia) como `ausente`.
+- **Problema:** Los tres estados disponibles (`cubierta` / `parcial` / `ausente`) no distinguen "el documento no lo dice" de "**no corresponde** que el documento lo diga". §3 la deduce el Descubridor —el propio `ingest-protocol` lo afirma— y §10 es opcional. El reader lo sabía y lo anotó en la columna *Qué falta* (*"corresponde deducirlo al Descubridor, no al cliente"*), pero `interview-protocol` solo consulta el **estado**, y su regla es *ausente → pregunta el área completa*. La aclaración quedó en una columna que el consumidor no lee, y §3 entró en la agenda de entrevista: se le preguntará al cliente algo que por diseño no le toca responder.
+- **Solución / aprendizaje:** Cuando un artefacto es contrato entre dos agentes, la información que gobierna la conducta del consumidor debe vivir en el **campo que el consumidor lee**. Prosa aclaratoria en una columna adyacente no es ejecutable. Mismo patrón que L-004, ahora entre dos skills en vez de entre documentación y skill.
+- **Cómo aplicarlo:** Añadir el estado `n/a` (no aplica al cliente) a la tabla de cobertura y su regla correspondiente en `interview-protocol` (*n/a → no preguntar*). Al diseñar un artefacto de traspaso, verificar que cada decisión del consumidor se apoye en un campo enumerado, no en texto libre. Ver T-028.
+- **Fecha:** 2026-07-19
+
+### L-009 — "Commit por etapa" está en la metodología pero ningún skill de etapa lo implementa
+- **Contexto:** Prueba T-027. Tras la ingesta, el usuario notó que no se había hecho ningún commit ni push.
+- **Problema:** Dos reglas vinculantes lo exigen —`principles.md:37` (*"Git como registro de estado […] desde el principio debe estar enlazado a un repositorio remoto"*) y `methodology.md:515` §7 (*"**commit por etapa** con prefijo convencional; el push se hace en el cierre de sesión"*)— pero de los siete skills del molde **solo `closing-protocol` toca git** (su Paso 6). `ingest-protocol`, `interview-protocol`, `discovery-protocol` y `prototype-protocol` no mencionan git ni una vez. El `onboarding-reader` no incumplió nada: su skill nunca le pidió commitear. Además, el proyecto de prueba **no era un repo git en absoluto** (`fatal: not a git repository`) y nada en el arranque del estadio lo detecta, así que un proyecto puede recorrer el descubrimiento completo sin control de versiones y sin aviso hasta el cierre.
+- **Solución / aprendizaje:** Tercera aparición del patrón de L-004: regla documentada en la capa de método, no implementada en la capa operativa. Se confirma que la divergencia documentación↔ejecución es **sistemática** en este harness, no incidental — merece una verificación de cobertura, no parches caso a caso.
+- **Cómo aplicarlo:** Implementar el commit por etapa en los skills de etapa y un bootstrap de repo al inicio del estadio (T-030). Y de forma general: cuando `methodology.md` o `principles.md` impongan una conducta operativa, auditar **todos** los `SKILL.md` que deberían ejecutarla, en vez de asumir cobertura. Ver T-031.
 - **Fecha:** 2026-07-19
