@@ -81,7 +81,7 @@ contrato de forma: tu contrato es el propio `discovery.md`, y tu disciplina es d
 | P4 | **Respeta exclusiones §9** | Nada de lo declarado en §9 del discovery aparece construido (guarda anti-*scope creep*) |
 | P5 | **Medio correcto** | El medio del artefacto coincide con el declarado en §6 para ese actor (o con el sustituto más barato justificado) |
 | P6 | **Desechable** | No añadió suite de tests, capa de robustez/errores ni autenticación real; alcance mínimo |
-| P7 | **Ubicación canónica** | Los artefactos viven bajo `<estadio-prototipo>/prototype/`; no tocó `discovery.md` ni `interview_document.md` |
+| P7 | **Ubicación canónica** | Los artefactos viven bajo `<estadio-prototipo>/prototype/`; no tocó `discovery.md`, `interview_document.md` ni `document_extract.md` |
 | P8 | **No cruzó el gate** | Informó y cedió; no marcó el Gatekeeper como aprobado (P5) |
 
 > **Nota de honestidad:** sin plantilla ni tests, P1/P5/P7/P8 son deterministas limpios, pero

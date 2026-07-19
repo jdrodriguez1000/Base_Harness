@@ -32,8 +32,10 @@
 | T-020 | Prototipado Parte 1 (método): taxonomía de actores por defecto (§4.3) y arquetipo Descubridor (§5) conectado con el Prototipador | completada | alta |
 | T-021 | Prototipado Parte 2 (Descubridor): plantilla `_templates/discovery_temp.md` + arquetipo Descubridor materializado como dos agentes (`onboarding-interviewer` + `onboarding-writer`), `_templates/interview_temp.md` | completada | alta |
 | T-022 | Prototipado Parte 2 (Prototipador): construir el agente+skill `prototype-builder`/`prototype-protocol` (patrón wrapper+skill), reubicación de la frontera §4.2 (D-025) y observabilidad §10 (D-026) | completada | alta |
-| T-023 | **[PRÓXIMA]** Re-sync a opencode/Gemini de los nuevos agentes/skills/plantillas del Descubridor y del Prototipador (`onboarding-interviewer`, `onboarding-writer`, `interview-protocol`, `discovery-protocol`, `prototype-builder`, `prototype-protocol`) vía `register-harness` | pendiente | media |
+| T-023 | **[PRÓXIMA]** Re-sync a opencode/Gemini de los nuevos agentes/skills/plantillas del Descubridor y del Prototipador (`onboarding-reader`, `onboarding-interviewer`, `onboarding-writer`, `ingest-protocol`, `interview-protocol`, `discovery-protocol`, `prototype-builder`, `prototype-protocol`) vía `register-harness` | pendiente | media |
 | T-024 | Probar `prototype-builder` end-to-end con un `discovery.md` real (usar el caso de reciclaje como fixture) | pendiente | alta |
+| T-025 | Ruta documental del Descubridor: agente `onboarding-reader` + skill `ingest-protocol` + plantilla `document_extract_temp.md`; interviewer entrevista solo los huecos; writer con dos insumos (D-027) | completada | alta |
+| T-026 | Probar la ruta documental end-to-end con un `client_brief` real: verificar que el interviewer no repregunta lo cubierto y que el `discovery.md` no pierde material del documento | pendiente | alta |
 
 ## Convención de ID
 
@@ -52,9 +54,11 @@
 
 ## Backlog
 
-- [ ] T-023 — **[PRÓXIMA TAREA]** Re-sync a opencode/Gemini (vía `register-harness`) de los nuevos agentes/skills/plantillas del Descubridor Y del Prototipador: `onboarding-interviewer`, `onboarding-writer`, skills `interview-protocol`/`discovery-protocol`, plantillas `discovery_temp.md`/`interview_temp.md`, agente `prototype-builder`, skill `prototype-protocol`.
+- [ ] T-023 — **[PRÓXIMA TAREA]** Re-sync a opencode/Gemini (vía `register-harness`) de los nuevos agentes/skills/plantillas del Descubridor Y del Prototipador: `onboarding-reader`, `onboarding-interviewer`, `onboarding-writer`, skills `ingest-protocol`/`interview-protocol`/`discovery-protocol`, plantillas `discovery_temp.md`/`interview_temp.md`/`document_extract_temp.md`, agente `prototype-builder`, skill `prototype-protocol`. **Ojo:** el inventario hardcodeado de `register-harness` hoy solo cubre los agentes de sesión (`sesion-starter`/`sesion-closer`) — hay que ampliarlo, no solo re-ejecutarlo.
       Prioridad: media · Responsable: — · Ref: [[progress]], [[decisions]] D-021, D-026
 - [ ] T-024 — Probar `prototype-builder` end-to-end con un `discovery.md` real (usar el caso de reciclaje como fixture); sin esta evidencia el motor genérico de traza/conformidad y el juez LLM calibrado siguen diferidos por E4.
+- [ ] T-026 — Probar la **ruta documental** (D-027) end-to-end con un `client_brief` real: que el `onboarding-reader` marque bien la cobertura, que el `onboarding-interviewer` **no repregunte** lo cubierto, y —el fallo más caro— que el `discovery.md` **no pierda** el material que venía solo del documento (checks W0/T5). Encadena natural con T-024: mismo caso de reciclaje, brief → discovery → prototipo.
+      Prioridad: alta · Responsable: — · Ref: [[decisions]] D-027
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-026
 - [ ] T-012 — Re-provisionar (`re-sync`) `proyecto_prueba` para recoger los cambios de T-008/T-009: modelos destino (`openai/gpt-5.6-luna` / `-terra`), nuevas `description` de agentes, autosuficiencia (`register-harness` nativo en `.opencode/`), sección de portabilidad en `AGENTS.md` y `README.md`.
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-005
@@ -106,5 +110,7 @@
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-021, D-022, D-023, D-024, [[assumptions]] A-002
 - [x] T-022 — Prototipado Parte 2 (Prototipador): reubicación de la frontera humano↔agente de *deseabilidad/factibilidad* a *juicio vs. materialización* (§4.2, D-025), con la "regla de medio" y el campo medio/canal por actor (§6 de `discovery_temp.md`, elicitado en `interview-protocol`/`discovery-protocol`); arquetipo Prototipador materializado como un solo agente `prototype-builder` + skill `prototype-protocol` (deliverable-only, autónomo pero agéntico, ramifica por §3 discovery, construye solo el camino feliz del generador, artefacto en `<estadio-prototipo>/prototype/`), con perfil de conformidad §10 (checks P1–P8), oráculo de trazabilidad discovery→prototype (T1–T2) y evaluación anclada al Gatekeeper humano (D-026).
       Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-025, D-026
+- [x] T-025 — Ruta documental del Descubridor (D-027): el arquetipo pasa de dos a **tres agentes**. Nuevo `onboarding-reader` + skill `ingest-protocol` + plantilla `_templates/document_extract_temp.md`: busca `_context/client_brief.*` (nombre fijo, extensión libre); si no existe no escribe nada y el flujo cae a la entrevista completa; si existe confirma el archivo, extrae **citas textuales localizadas** por área §1–§10 en `document_extract.md` con **tabla de cobertura** (cubierta/parcial/ausente), **ambigüedades sin resolver** y material fuera de alcance, y cierra con **confirmación por bloque**. El `onboarding-interviewer` entrevista **solo los huecos** (checks nuevos I8–I11) y no duplica el extracto en su log; el `onboarding-writer` pasa a **dos insumos** (check W0, universo de traza log ∪ extracto, nuevo T5) con regla de precedencia *la entrevista manda, la discrepancia se declara*. Observabilidad del reader: R1–R7 + oráculo brief→extract E1–E4. Actualizados también `methodology.md` §5 (tres agentes + flujo del estadio), `interview_temp.md` y `prototype-builder` (P7).
+      Prioridad: alta · Responsable: — · Ref: [[progress]], [[decisions]] D-027
 
 ## Bloqueadas

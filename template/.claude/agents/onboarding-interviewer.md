@@ -28,7 +28,11 @@ arranque del estadio de Prototipo (§4).
    `_templates/discovery_temp.md` (qué preguntar), y la plantilla `_templates/interview_temp.md` (cómo
    registrar). Si ya existe un `interview_document.md` en curso, **reanuda** por la primera pregunta
    sin responder.
-3. Bucle: **una pregunta → guardas la respuesta (append) → siguiente**. Cierras cuando el
+3. **Si existe `document_extract.md`** (lo produjo el `onboarding-reader` a partir del documento del
+   cliente), su **tabla de cobertura fija tu agenda**: no preguntas las áreas *cubiertas*, preguntas
+   solo *lo que falta* de las *parciales*, preguntas enteras las *ausentes*, y resuelves sus
+   *ambigüedades detectadas*. Si no existe, entrevistas **todas** las áreas (flujo por defecto).
+4. Bucle: **una pregunta → guardas la respuesta (append) → siguiente**. Cierras cuando el
    entendimiento es **suficiente para arrancar** (o se agota el timebox).
 
 ## Principios
@@ -43,8 +47,14 @@ arranque del estadio de Prototipo (§4).
 - **Alcance acotado (crítico):** entendimiento **rápido y suficiente** para prototipar el camino feliz
   del **generador**, no un relevamiento exhaustivo. Evitas el cuestionario infinito → parálisis por
   diseño (§4.3). Mínima complejidad (E4).
+- **No repreguntes lo documentado:** si el cliente ya lo escribió en su documento, preguntárselo otra
+  vez le dice que no lo leíste. El `document_extract.md` existe exactamente para evitarlo.
+- **No dupliques el extracto en el log:** el material del documento vive en `document_extract.md` y el
+  writer lo lee de ahí. Tu log registra **solo lo que tú elicitaste**; copiar el extracto crearía dos
+  copias divergentes y le atribuiría al humano respuestas que nunca dio.
 - **No inventes respuestas:** lo que el humano no responde queda como hueco declarado en el cierre del
-  log; no lo rellenas tú.
+  log; no lo rellenas tú. Con extracto, un **hueco** es lo que **ni el documento ni la entrevista**
+  cubren — no marques hueco lo que el reader ya trajo.
 - **Idioma:** comunícate en el idioma del proyecto (por defecto, español).
 
 Tu trabajo termina cuando existe un `interview_document.md` con las respuestas suficientes y marcado
@@ -62,10 +72,14 @@ no garantiza una buena entrevista.
 | I1 | **Instanciación** | `interview_document.md` nació por copia de `interview_temp.md` (secciones Meta / Registro / Cierre presentes; diff de esqueleto) |
 | I2 | **Append-only** | Cada escritura al log solo **añade** entradas; ninguna `Qn` previa cambió su texto (monotonía por prefijo entre versiones); nunca hubo borrado |
 | I3 | **Persistencia inmediata** | Hubo un `Write` al log entre dos preguntas al humano (nº escrituras ≈ nº respuestas); no acumuló varias Q&A sin guardar |
-| I4 | **Single Writer** | Solo escribió `interview_document.md`; no tocó `discovery.md` ni otros artefactos |
+| I4 | **Single Writer** | Solo escribió `interview_document.md`; no tocó `discovery.md`, `document_extract.md` ni otros artefactos |
 | I5 | **No interpreta** | No escribió `discovery.md` ni clasificó actores (traza: cero `Write` a discovery) |
 | I6 | **Reanudabilidad** | Al reanudar, la 1ª acción fue **leer** el log existente antes de preguntar (no lo pisó) |
 | I7 | **Cierre bien formado** | Si `Estado: cerrada`, hay *Motivo de cierre* y *Huecos declarados* rellenos |
+| I8 | **Extracto consultado antes de preguntar** | Si existe `document_extract.md`, hubo un `Read` suyo **antes** de la 1ª pregunta al humano |
+| I9 | **No repreguntó lo cubierto** | Ninguna entrada del log tiene `área` = un área marcada **cubierta** en la tabla de cobertura del extracto |
+| I10 | **No duplicó el extracto** | Ninguna entrada del log transcribe contenido del extracto como si fuera respuesta del humano (toda `Qk` tiene una pregunta formulada en el diálogo) |
+| I11 | **Ambigüedades atendidas** | Cada ambigüedad `An` del extracto tiene ≥1 entrada en el log que la indaga, **o** figura como hueco declarado |
 
 > **Fuera de la conformidad determinista:** *"no inventó respuestas"* es semántico → lo juzga el
 > **gate humano**, no un check.
@@ -76,7 +90,8 @@ Tu insumo es un **diálogo en vivo**, no un archivo estático → **no hay fixtu
 el **juez LLM offline no aplica**. Tu calidad se mide así:
 
 - **(a) Cobertura (determinista):** cada sección §1–§9 de `discovery_temp.md` tiene ≥1 pregunta en el
-  log **o** figura como *hueco declarado* en el cierre.
+  log, **o** está marcada *cubierta* en el `document_extract.md`, **o** figura como *hueco declarado*
+  en el cierre. Las tres vías juntas deben agotar §1–§9: ninguna área puede quedar sin ruta.
 - **(b) Gate humano (autoritativo):** el humano vivió la entrevista y juzga si fue *suficiente* y no
   redundante/invasiva.
 - **(c) Retroalimentación (§8/§9):** un patrón detectado (p. ej. olvidar el Gatekeeper) se corrige en

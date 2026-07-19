@@ -30,6 +30,12 @@ comentarios al instanciar.
 - **Inicio:** <YYYY-MM-DD>
 - **Estado:** en curso <!-- en curso | cerrada (suficiente para arrancar) -->
 - **Sección en curso:** <§n de discovery_temp.md> <!-- pista de reanudación: por dónde iba -->
+- **Extracto documental:** <ruta de document_extract.md | ninguno>
+  <!-- Si el cliente entregó un  _context/client_brief.* , el onboarding-reader produjo antes un
+       document_extract.md. En ese caso esta entrevista cubre SOLO los huecos (áreas parciales/
+       ausentes + ambigüedades); las áreas ya cubiertas por el documento NO se repreguntan y NO
+       aparecen en este log — viven en el extracto, y el onboarding-writer lee AMBOS archivos. -->
+- **Áreas cubiertas por el documento (no se preguntan):** <§n, §n… | ninguna>
 
 <!-- El "área" mapea a la sección de discovery_temp.md que la pregunta busca cubrir
      (§1 objetivo · §2 hipótesis · §3 tipo de prototipo · §4 stakeholders ·
@@ -56,3 +62,6 @@ comentarios al instanciar.
 
 - **Motivo de cierre:** <suficiente para el camino feliz del generador | timebox agotado>
 - **Huecos declarados:** <temas no cubiertos que el writer marcará como pendientes/exclusiones, o "ninguno">
+  <!-- OJO con el extracto: un hueco es un área que NI el documento NI la entrevista cubren. Un área
+       cubierta por  document_extract.md  NO es un hueco aunque no aparezca en este log; declararla
+       como tal haría que el writer la excluyera del discovery.md teniendo el material a mano. -->

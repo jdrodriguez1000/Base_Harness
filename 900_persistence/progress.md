@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-19 | Ruta documental del Descubridor: tercer agente `onboarding-reader` + skill `ingest-protocol`, entrevista solo-huecos y writer con dos insumos (D-027) — T-025 completada | completado | `#2026-07-19--ruta-documental-del-descubridor-tercer-agente-onboarding-reader--skill-ingest-protocol-entrevista-solo-huecos-y-writer-con-dos-insumos-d-027--t-025-completada` |
 | 2026-07-18 | Prototipado Parte 2 (Prototipador): reubicación de la frontera humano↔agente (D-025) y materialización de `prototype-builder` + `prototype-protocol` con observabilidad §10 (D-026) — T-022 completada | completado | `#2026-07-18--prototipado-parte-2-prototipador-reubicación-de-la-frontera-humanoagente-d-025-y-materialización-de-prototype-builder--prototype-protocol-con-observabilidad-10-d-026--t-022-completada` |
 | 2026-07-17 | Diseño de observabilidad/evaluación del Descubridor (perfiles de conformidad §10, D-023) y promoción de A-002 → D-024 (conservar `interview_document.md` como traza) | completado | `#2026-07-17--diseño-de-observabilidadevaluación-del-descubridor-perfiles-de-conformidad-10-d-023-y-promoción-de-a-002--d-024-conservar-interview_documentmd-como-traza` |
 | 2026-07-17 | Prototipado Parte 2: plantilla `discovery_temp.md` y arquetipo Descubridor materializado como dos agentes (`onboarding-interviewer` + `onboarding-writer`) (T-021) | completado | `#2026-07-17--prototipado-parte-2-plantilla-discovery_tempmd-y-arquetipo-descubridor-materializado-como-dos-agentes-onboarding-interviewer-onboarding-writer-t-021` |
@@ -40,6 +41,40 @@
 ---
 
 ## Historial
+
+### [2026-07-19] — Ruta documental del Descubridor: tercer agente `onboarding-reader` + skill `ingest-protocol`, entrevista solo-huecos y writer con dos insumos (D-027) — T-025 completada
+
+**Contexto.** El usuario planteó un caso real recurrente: el cliente **entrega un documento** describiendo la aplicación que quiere. El flujo saltaba directo al `onboarding-interviewer`, que entrevistaba las diez áreas aunque el cliente ya las hubiera redactado — quemando el timebox de §4.3 y comunicándole al cliente que no habían leído su documento. Petición: verificar primero si el documento existe y, si existe, preguntar **solo lo que falta**; si no, conservar el flujo actual.
+
+**Diseño (D-027).** El arquetipo Descubridor pasa de **dos a tres agentes**, separando *ingerir* / *elicitar* / *estructurar* (E4), con la ruta documental como **camino condicional**:
+
+```
+_context/client_brief.*  →  onboarding-reader  →  document_extract.md  ─┐
+                                                          ↓             │
+                                            onboarding-interviewer      │
+                                        (solo huecos + ambigüedades)    │
+                                                          ↓             │
+                                              interview_document.md  ───┤
+                                                                        ↓
+                                                          onboarding-writer  →  discovery.md
+```
+
+Sin `client_brief.*` el reader no escribe nada y el flujo cae a la entrevista completa: **la ausencia de documento es el caso normal, no un error**.
+
+**Decisiones de diseño relevantes** (varias tomadas por el usuario contra mi recomendación inicial, y mejor así):
+- **Tercer agente en vez de un paso 0.5 dentro de `interview-protocol`.** Yo recomendé el paso interno por E4; el usuario prefirió la frontera limpia *lectura ≠ elicitación*, con `document_extract.md` como **artefacto de primera clase**. Efecto lateral positivo: el check **I4 Single Writer** del interviewer queda **intacto** (cada artefacto conserva un solo autor), cosa que la alternativa de sembrar el log habría roto.
+- **El writer pasa a dos insumos** en vez de duplicar el extracto dentro del log. El material del documento **no se copia**: vive en el extracto y el writer lee ambos. Por eso leer el extracto es **obligatorio** (check W0) — ignorarlo produce un `discovery.md` mutilado justo en lo que el cliente se molestó en escribir.
+- **Sesgo deliberado hacia el hueco:** ante la duda el reader marca `parcial`/`ausente`, nunca `cubierta`. Repreguntar de más cuesta una pregunta; dar por cubierta un área que no lo está mete un **hueco silencioso** que nadie ve hasta el prototipo.
+- **El reader no resuelve ambigüedades:** lo contradictorio o vago del brief se registra para que **lo pregunte** el interviewer (NC-1).
+- **Precedencia ante conflicto:** manda la entrevista (es posterior y el humano hablaba conociendo su documento), pero la discrepancia se **declara** en el `discovery.md`, no se silencia.
+
+**Qué se creó.** `template/.claude/agents/onboarding-reader.md` (perfil de conformidad R1–R7 + oráculo brief→extract E1–E4 + política de evaluación), `template/.claude/skills/ingest-protocol/SKILL.md` (localizar con confirmación → extraer por áreas → confirmación por bloque) y `template/_templates/document_extract_temp.md` (Meta / Cobertura / Extractos citados / Ambigüedades / Fuera de alcance).
+
+**Qué se modificó.** `interview-protocol` e `onboarding-interviewer` (agenda fijada por la tabla de cobertura, prohibición de duplicar el extracto, redefinición de *hueco*, checks nuevos **I8–I11**); `discovery-protocol` e `onboarding-writer` (dos insumos, regla de precedencia, check **W0**, universo de traza ampliado a **log ∪ extracto** y nuevo **T5**); `_templates/interview_temp.md` (Meta con *Extracto documental* y *Áreas cubiertas*, aviso sobre huecos); `methodology.md` §5 (Descubridor = tres agentes + flujo del estadio); `prototype-builder` (P7 incluye el nuevo artefacto).
+
+**Estado y siguiente paso.** T-025 completada. **T-023 crece**: el re-sync a opencode/Gemini debe incluir `onboarding-reader` + `ingest-protocol`, y su inventario hardcodeado hoy solo cubre los agentes de sesión — hay que ampliarlo, no solo re-ejecutarlo. Nueva **T-026**: probar la ruta documental end-to-end con un `client_brief` real, encadenable con T-024 sobre el mismo caso de reciclaje (brief → discovery → prototipo). Todo el trabajo es **deliverable-only** en `template/.claude` (D-022): la raíz `.claude/` no se tocó.
+
+Ref: [[tasks]] T-025, T-026, T-023 · [[decisions]] D-027
 
 ### [2026-07-18] — Prototipado Parte 2 (Prototipador): reubicación de la frontera humano↔agente (D-025) y materialización de `prototype-builder` + `prototype-protocol` con observabilidad §10 (D-026) — T-022 completada
 - **Estado:** completado

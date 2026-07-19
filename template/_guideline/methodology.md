@@ -338,10 +338,13 @@ nombres y modelos— se define **al instanciar cada proyecto**, respetando estos
   (evaluación independiente de calidad/seguridad/diseño — §5.2).
 
 > **Descubridor (estadio de Prototipo, fuera del ciclo de incremento).** Antes de prototipar, alguien
-> tiene que **preguntar**. El *Descubridor* **conduce la entrevista con el humano/cliente** para elicitar
-> qué quiere el cliente, los **stakeholders**, los **actores** (taxonomía de §4.3) y el **camino feliz de
-> cada actor**. Se distingue del resto en que su insumo no es un artefacto previo sino el **diálogo con el
-> humano**. **Alcance acotado (crítico):** busca un entendimiento **rápido y suficiente para arrancar**
+> tiene que **preguntar** —pero solo lo que aún no se sabe—. El *Descubridor* elicita qué quiere el
+> cliente, los **stakeholders**, los **actores** (taxonomía de §4.3) y el **camino feliz de cada actor**.
+> Se distingue del resto en que su insumo principal no es un artefacto previo sino el **diálogo con el
+> humano**. **Aprovecha lo ya escrito (crítico):** cuando el cliente entrega un **documento** describiendo
+> lo que quiere, el Descubridor lo **lee primero** y entrevista **solo los huecos**; repreguntar lo que el
+> cliente ya redactó le dice que no lo leyeron y quema el timebox. Sin documento, la entrevista se conduce
+> completa. **Alcance acotado (crítico):** busca un entendimiento **rápido y suficiente para arrancar**
 > —lo justo para prototipar el camino feliz del **generador**—, no un relevamiento exhaustivo; evita el
 > cuestionario infinito que lleva a la **parálisis por diseño** (§4.3). **Produce** un *entregable de
 > descubrimiento* (actores clasificados con ausencias/colapsos declarados, camino feliz por actor,
@@ -350,12 +353,28 @@ nombres y modelos— se define **al instanciar cada proyecto**, respetando estos
 > rúbrica §8).
 
 > **Realización concreta del Descubridor (instanciación).** En el harness base el Descubridor se
-> materializa como **dos agentes** que separan *elicitar* de *estructurar* (E4): el
-> **`onboarding-interviewer`** conduce la entrevista y registra crudo cada pregunta/respuesta en
-> `interview_document.md` (append-only, por eso la entrevista es **reanudable**: el log es el estado);
-> el **`onboarding-writer`** sintetiza ese log en el `discovery.md` estructurado. El interviewer es
-> interactivo (dialoga con el humano); el writer es un **subagente autónomo** (su insumo es un archivo).
-> La flota real puede fundir o renombrar ambos al instanciar (§5).
+> materializa como **tres agentes** que separan *ingerir*, *elicitar* y *estructurar* (E4):
+>
+> 1. **`onboarding-reader`** *(condicional)* — busca `_context/client_brief.*`, el documento con que el
+>    cliente describe lo que quiere. Si existe, extrae **citas textuales** mapeadas a las áreas §1–§10 en
+>    `document_extract.md`, con una **tabla de cobertura** (*cubierta / parcial / ausente*) y las
+>    **ambigüedades** que no resuelve a propósito. Si no existe, **no produce nada** y el flujo sigue por
+>    la entrevista completa: la ausencia de documento es el caso normal, no un error.
+> 2. **`onboarding-interviewer`** — conduce la entrevista y registra crudo cada pregunta/respuesta en
+>    `interview_document.md` (append-only, por eso la entrevista es **reanudable**: el log es el estado).
+>    Si hay extracto, su tabla de cobertura **fija la agenda**: solo pregunta las áreas *parciales* y
+>    *ausentes* más las ambigüedades.
+> 3. **`onboarding-writer`** — sintetiza el `discovery.md` estructurado a partir de **ambos** artefactos
+>    (log + extracto, cuando este existe). Ante conflicto **manda la entrevista** —es posterior y el
+>    humano hablaba conociendo su documento—, pero la discrepancia se **declara**, no se silencia.
+>
+> El reader y el writer son **subagentes autónomos** (su insumo es un archivo; el reader solo dialoga en
+> un turno único de confirmación); el interviewer es **interactivo**. Cada artefacto tiene **un solo
+> autor**, y el material del documento **no se duplica** en el log: por eso el writer necesita leer los
+> dos. La flota real puede fundir o renombrar los tres al instanciar (§5).
+>
+> **Flujo del estadio:** `client_brief.*` → *(reader)* → `document_extract.md` → *(interviewer)* →
+> `interview_document.md` → *(writer)* → `discovery.md` → **Prototipador**.
 
 > **Prototipador (fuera del ciclo de incremento).** El **estadio de Prototipo de alto nivel** (§4) usa
 > un *Prototipador* que toma el *entregable de descubrimiento* y **materializa** el **camino feliz
