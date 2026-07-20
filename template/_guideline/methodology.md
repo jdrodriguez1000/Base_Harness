@@ -771,7 +771,7 @@ instrumentar nada: los **artefactos en disco** y el **`git log`**.
 | Familia | Responde |
 |---|---|
 | **A · Artefactos** | procedencia del nombre de proyecto; marcadores sin sustituir; tabla de cobertura completa y con vocabulario válido; `n/a` y `parcial` justificados; coherencia estado↔confirmación; Gatekeeper con umbral cuantitativo; timebox declarado y coherente con el motivo de cierre |
-| **B · Git** | commit por etapa con el mensaje canónico de `git-protocol.md` §4; artefacto materializado pero **sin confirmar**; doble escritura de la confirmación (borrador `[sin confirmar]` + commit de aprobación) |
+| **B · Git** | rama actual coherente con `repository.default_branch` de `project.yaml`; commit por etapa con el mensaje canónico de `git-protocol.md` §4; artefacto materializado pero **sin confirmar**; doble escritura de la confirmación (borrador `[sin confirmar]` + commit de aprobación) |
 | **C · Definiciones** | coherencia **agente↔skill**: si el skill que un agente invoca le exige confirmar en git, ese agente declara `Bash`; los skills referenciados existen |
 
 **Qué NO comprueba, por diseño.** Todo lo que exige saber *en qué orden ocurrieron las cosas dentro de

@@ -66,8 +66,9 @@ cambios de esta sesión. Correr sin recopiarlo mediría los skills viejos y la p
    **Qué observar en la corrida** (es una de las cosas que la corrida 4 mide, no un trámite):
    - ¿Algún agente detectó la ausencia de repo y ejecutó `git init`, **informando** al humano?
    - ¿Lo hizo el **primer** skill que necesitó confirmar, o se llegó a etapas avanzadas sin repo (L-009)?
-   - **¿En qué rama quedó?** `git init` toma `init.defaultBranch` de la máquina, así que puede quedar
-     en `master` o `main` según el entorno. `git-protocol.md` §2 no lo especifica (ver T-058).
+   - **¿En qué rama quedó?** Debe ser la de `repository.default_branch` de `project.yaml` (`main`),
+     **no** la que le dicte el `init.defaultBranch` de la máquina (T-058, ya corregido en
+     `git-protocol.md` §2). Si sale `master`, el bootstrap no leyó `project.yaml`.
 
 ---
 
@@ -86,9 +87,10 @@ Cada fila se evalúa sobre **el artefacto + la traza**, no sobre lo que el agent
 
 | | |
 |---|---|
-| **Pasa si** | `Meta · Proyecto` del extracto está en `<no declarado>`, **o** su valor aparece **literalmente** en el brief |
-| **Falla si** | Aparece cualquier nombre de aplicación que no esté en el brief (p. ej. `ReciclApp`) |
-| **Ojo** | `Recicladora Oriente Verde` **sí** está literal en §1, pero es el nombre de la **empresa**, no del proyecto. Ponerlo sin distinguirlo es aprobado con reparo: literal pero de referente equivocado |
+| **Pasa si** | `Meta · Proyecto` tiene **procedencia declarada y verificable**: o bien el valor de `project.yaml` (`project.name`) con su marca de fuente, o bien un valor literal del brief con su localización, o bien `<no declarado>` si ninguna fuente lo trae |
+| **Falla si** | Aparece un nombre que **no está en ninguna de las dos fuentes**, o uno que sí está pero **sin declarar de cuál viene**. Lo que se caza es la fabricación y la procedencia opaca, no el nombre en sí |
+| **Ojo** | `Recicladora Oriente Verde` está literal en §1 del brief, pero es el nombre de la **empresa**, no del proyecto: usarlo como nombre de proyecto es cruzar los carriles de §0.2 (aprobado con reparo) |
+| **Criterio corregido (T-052)** | La versión anterior exigía que el nombre apareciera **literalmente en el brief** y ponía `ReciclApp` como ejemplo de fallo. Se escribió **antes de T-044**. Hoy el fixture declara `name: ReciclApp` en `project.yaml` y el brief no lo menciona nunca: bajo aquel criterio, un agente que hiciera **lo correcto** —tomar el metadato de su carril y anotar la procedencia— habría sido puntuado como fabricación |
 
 ### L-006 — contradicción transversal no detectada
 
@@ -120,7 +122,7 @@ Cada fila se evalúa sobre **el artefacto + la traza**, no sobre lo que el agent
 |---|---|
 | **Pasa si** | `git log` muestra **≥1 commit por etapa** (ingesta, entrevista, discovery, prototipo) con la convención `tipo(<incremento>): descripción`, y el inicio de sesión **leyó** `git log` (G1) |
 | **Falla si** | La corrida termina con cero commits, o con un único commit al cierre, o con mensajes fuera de convención (G5) |
-| **Bootstrap (nuevo, corrida 4)** | El proyecto arranca **sin repo** (§2.5, D-035). **Pasa si** el primer skill que necesita confirmar detecta la ausencia, ejecuta `git init` e **informa** al humano. **Falla si** se alcanza cualquier etapa posterior a la ingesta sin repo, o si se inicializa **sin decirlo** (un `git init` silencioso cumple la letra y viola NC-6) |
+| **Bootstrap (nuevo, corrida 4)** | El proyecto arranca **sin repo** (§2.5, D-035). **Pasa si** el primer skill que necesita confirmar detecta la ausencia, inicializa **en la rama de `repository.default_branch`** (`main`) e **informa** al humano nombrando la rama. **Falla si** se alcanza cualquier etapa posterior a la ingesta sin repo, si se inicializa **sin decirlo** (un `git init` silencioso cumple la letra y viola NC-6), o si queda en `master` (señal de que no leyó `project.yaml`) |
 | **Ojo (T-042)** | El commit ya **no depende del gate**: una etapa cuyo gate se saltó debe confirmar igual, con `[sin confirmar]` al final del mensaje. Ese sufijo **es** la convención, no una violación. **Falla igual** si el gate se salta y la etapa queda sin commit — que es como reapareció L-009 en la corrida 2 (L-013) |
 
 ### G7 — timebox (nuevo, primera ejecución)

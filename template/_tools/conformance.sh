@@ -286,6 +286,27 @@ check_stage_commit() {
   fi
 }
 
+# --- B0 · la rama coincide con la declarada en project.yaml -------------------
+# `git init` a secas toma init.defaultBranch de la MÁQUINA, así que el harness
+# produciría `master` en un equipo y `main` en otro, y el push del cierre
+# publicaría la rama actual en un repo que declara otra (git-protocol.md §2).
+if [ -f "$PROJECT_YAML" ]; then
+  DECL_BRANCH=$(grep -m1 -E '^[[:space:]]*default_branch:' "$PROJECT_YAML" |
+    sed 's/.*default_branch:[[:space:]]*//' | sed 's/^["'\'']//' | sed 's/["'\'']*[[:space:]]*$//')
+  CUR_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+  if [ -z "$DECL_BRANCH" ]; then
+    warn "B0" "project.yaml no declara 'repository.default_branch'"
+  elif [ "$CUR_BRANCH" = "HEAD" ]; then
+    warn "B0" "HEAD desacoplado; no se puede comparar con '$DECL_BRANCH'"
+  elif [ "$CUR_BRANCH" = "$DECL_BRANCH" ]; then
+    pass "B0" "rama '$CUR_BRANCH' coincide con project.yaml"
+  else
+    fail "B0" "rama actual '$CUR_BRANCH' ≠ 'repository.default_branch' ('$DECL_BRANCH') — el repo se inicializó sin leer project.yaml, o se trabaja fuera de la rama declarada"
+  fi
+else
+  skip "B0" "no hay _context/project.yaml"
+fi
+
 check_stage_commit "B1" "$EXTRACT"   "$MSG_EXTRACT"
 check_stage_commit "B2" "$INTERVIEW" "$MSG_INTERVIEW"
 check_stage_commit "B3" "$DISCOVERY" "$MSG_DISCOVERY"

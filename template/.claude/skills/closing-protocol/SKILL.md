@@ -141,12 +141,18 @@ Este paso sincroniza el trabajo de la sesión con el repositorio remoto. Usa la 
    > mensajes libres, «¿qué se hizo en el incremento X?» deja de ser una consulta y pasa a ser una
    > lectura completa del log.
 
-4. **Push (según `repository.auto_push`):**
+4. **Comprobar la rama contra `repository.default_branch`:** si la rama actual **no coincide** con la
+   declarada en `project.yaml`, **avisar al humano antes de empujar** y no renombrar nada por cuenta
+   propia. Suele significar que el repo se inicializó sin leer `project.yaml` (ver `git-protocol.md`
+   §2) o que se trabaja en una rama de incremento. Empujar en silencio una rama distinta de la
+   declarada publica el trabajo donde nadie lo espera.
+
+5. **Push (según `repository.auto_push`):**
    - Si `auto_push: true` → `git push` a la rama actual.
    - Si `auto_push: false` o no está definido → **NO** empujar automáticamente. Informar al usuario
      que el commit quedó listo y **pedir confirmación explícita** antes de ejecutar `git push`.
 
-5. **Reportar el resultado:** hash del commit, rama, y si se empujó o quedó pendiente de confirmar.
+6. **Reportar el resultado:** hash del commit, rama, y si se empujó o quedó pendiente de confirmar.
 
 > Si el `push` falla por credenciales, informar al usuario: la autenticación con GitHub (PAT, SSH o
 > `gh auth login`) es configuración del entorno, no de este protocolo.

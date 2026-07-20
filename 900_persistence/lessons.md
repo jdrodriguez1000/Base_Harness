@@ -33,6 +33,7 @@
 | L-021 | El fixture fija el brief pero no la entrevista: dos corridas con el mismo `client_brief.md` no son la misma prueba y no son comparables | 2026-07-20 |
 | L-022 | La divergencia entre corridas no fue azar sino subdeterminación: `discovery.md` y `prototype-protocol` dan respuestas distintas sobre qué actores construir | 2026-07-20 |
 | L-023 | El `discovery.md` de la corrida 3 se confirmó en una sola escritura, sin el borrador `[sin confirmar]` previo: el historial no distingue un entregable aprobado de uno que nadie miró | 2026-07-20 |
+| L-024 | Un campo declarado en `project.yaml` y documentado en `AGENTS.md`, pero que ningún skill consume, es peor que no tenerlo: da falsa confianza (declarar ≠ consumir) | 2026-07-20 |
 
 ## Formato
 
@@ -225,4 +226,14 @@
 - **Problema:** `discovery.md` de la corrida 3 tiene **un solo commit**, ya como `Confirmado: sí` / `Estado: cerrado`, sin el borrador previo con el marcador `[sin confirmar]`. Verificado a mano contra `git log`. El protocolo (`discovery-protocol` Paso 3 + `git-protocol.md` §3) exige confirmar ANTES del gate con el marcador, y que la aprobación produzca un **segundo** commit sin él. Al hacerse en una sola escritura, en el historial un entregable aprobado por el humano es indistinguible de uno que nadie miró todavía — se pierde justo la distinción que el gate quiere preservar. No estaba entre los 10 hallazgos de las corridas 1–3: lo encontró la capa nueva de conformidad (check B6), no la inspección manual.
 - **Solución / aprendizaje:** Un mecanismo de dos escrituras (borrador con marcador → confirmación sin marcador) solo es evidencia de que el gate se cruzó si **ambas** escrituras ocurren y quedan en commits separados. Colapsarlas en una sola pasada cumple el contenido final pero destruye la traza intermedia, la misma clase de defecto que L-007 (confirmación adelantada) y L-013 (confirmación colgada del gate), aquí en su tercera variante: confirmación **colapsada**.
 - **Cómo aplicarlo:** Al cerrar un artefacto con gate, verificar en el `git log` que existen los dos commits (borrador `[sin confirmar]` → cierre sin marcador), no solo que el contenido final sea correcto. `conformance.sh` (T-057) lo automatiza como check B6.
+- **Fecha:** 2026-07-20
+
+### L-024 — Un campo declarado y documentado, pero sin consumidor, es peor que no tenerlo
+- **Contexto:** Cierre de la sesión anterior dejó T-058 planteada como "decisión de diseño pendiente del humano" sobre qué rama usar en el bootstrap de `git-protocol.md` §2. El humano señaló que la pregunta estaba mal planteada.
+- **Problema:** `_context/project.yaml` declara `repository.default_branch: main` desde el origen del proyecto — está incluso en la plantilla del molde — y `AGENTS.md` lo anuncia como campo que los agentes leen. Pero **ningún skill lo consumía**: era un campo muerto. No era una decisión pendiente, era un defecto ya resuelto por la fuente única de verdad. El agente lo presentó como si el humano tuviera que decidir algo que `project.yaml` ya respondía. Llevaba así desde la creación del campo y solo se destapó al retirar la precondición `git init` de `T-027_procedimiento.md` (D-035), porque hasta entonces la rama siempre venía dada desde fuera (el `git init` previo, manual).
+- **Solución / aprendizaje:** Un campo declarado en la fuente única de verdad y documentado como "algo que los agentes leen" da **falsa confianza** si en la práctica nadie lo consume — es más engañoso que no tenerlo, porque aparenta estar resuelto. Corregido cableando `repository.default_branch` en el bootstrap de `git-protocol.md` §2 (`git init -b "<rama>"`), un check nuevo (B0 en `conformance.sh`) y un aviso pre-push en `closing-protocol`. Ver D-036.
+- **Cómo aplicarlo:**
+  1. Patrón a vigilar: **declarar ≠ consumir**. Conviene un check que verifique que cada campo de `project.yaml` tiene al menos un consumidor real (relacionado con T-057, la capa de conformidad).
+  2. Fallo de conducción a evitar: ante un hueco aparente, comprobar primero si la fuente única de verdad ya lo responde, antes de escalarlo al humano como decisión. Consultar no es gratis si la consulta es innecesaria (NC-6 mal aplicado en la dirección contraria: consultar por consultar).
+  3. Relacionada con L-015 (procedencia/carriles: qué dato viene de qué fuente) y con la reserva de A-004/T-047 (esta sesión anterior también tocó el bootstrap sin cablear este campo).
 - **Fecha:** 2026-07-20

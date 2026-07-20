@@ -26,11 +26,27 @@ Se ejecuta **antes del commit de etapa** (§3), en cualquier skill que vaya a co
 **idempotente**: si el repo ya existe, no hace nada.
 
 1. Comprobar si el proyecto es repo git (`git rev-parse --git-dir`).
-2. **Si no lo es:** ejecutar `git init` e **informar al humano** en el resumen de la etapa
-   («repositorio inicializado»). No se detiene el flujo: un descubrimiento no debe quedar bloqueado
-   por infraestructura, pero tampoco correr entero sin control de versiones.
-3. **No se toca el remoto.** `origin` y `push` son competencia del cierre de sesión
+2. **Si no lo es:** leer `repository.default_branch` de `_context/project.yaml` e inicializar
+   **en esa rama** (si el campo no existe, `main`):
+
+   ```sh
+   git init -b "<default_branch>"
+   # git antiguo (< 2.28), que no acepta -b:
+   git init && git symbolic-ref HEAD "refs/heads/<default_branch>"
+   ```
+
+3. **Informar al humano** en el resumen de la etapa, nombrando la rama: «repositorio inicializado en
+   `main`». No se detiene el flujo: un descubrimiento no debe quedar bloqueado por infraestructura,
+   pero tampoco correr entero sin control de versiones —ni inicializarse **en silencio** (NC-6).
+4. **No se toca el remoto.** `origin` y `push` son competencia del cierre de sesión
    (`closing-protocol` Paso 6), que los deriva de `repository` en `project.yaml`.
+
+> **Por qué la rama es explícita.** `git init` a secas toma el nombre de `init.defaultBranch` de la
+> **máquina**, así que el mismo harness produce `master` en un equipo y `main` en otro. El proyecto
+> quedaría en una rama distinta de la que declara su propio `project.yaml`, y el `push` del cierre
+> —que empuja la rama actual— publicaría `master` en un repositorio cuya rama por defecto es `main`.
+> El dato ya está en la fuente única de verdad: leerlo cuesta una línea, y no leerlo hace que el
+> comportamiento del harness dependa de la configuración local de quien lo ejecute (E1).
 
 > **Motivo (L-009).** Una prueba end-to-end completa recorrió las cuatro etapas sobre un directorio
 > que ni siquiera era repo git, y ningún paso lo detectó. El bootstrap existe para que ese silencio
