@@ -759,6 +759,35 @@ Un agente puede ser **CONFORME pero de baja calidad** (siguió el procedimiento,
 mismo flujo aplica, con su plantilla y su perfil de conformidad, a *Especificador*, *Planificador* y al
 informe del *Verificador* (§5.1).
 
+### 10.2 Capa barata de conformidad — `_tools/conformance.sh`
+
+El flujo de §10.1 depende de un **motor de traza** que todavía no existe. Esperarlo dejó los perfiles
+de conformidad escritos en los prompts durante tres corridas completas **sin que nadie los ejecutara
+nunca**. La capa barata existe para cerrar ese hueco **ahora**, con lo que ya está disponible sin
+instrumentar nada: los **artefactos en disco** y el **`git log`**.
+
+**Qué comprueba** (sin traza, en segundos, sin LLM):
+
+| Familia | Responde |
+|---|---|
+| **A · Artefactos** | procedencia del nombre de proyecto; marcadores sin sustituir; tabla de cobertura completa y con vocabulario válido; `n/a` y `parcial` justificados; coherencia estado↔confirmación; Gatekeeper con umbral cuantitativo; timebox declarado y coherente con el motivo de cierre |
+| **B · Git** | commit por etapa con el mensaje canónico de `git-protocol.md` §4; artefacto materializado pero **sin confirmar**; doble escritura de la confirmación (borrador `[sin confirmar]` + commit de aprobación) |
+| **C · Definiciones** | coherencia **agente↔skill**: si el skill que un agente invoca le exige confirmar en git, ese agente declara `Bash`; los skills referenciados existen |
+
+**Qué NO comprueba, por diseño.** Todo lo que exige saber *en qué orden ocurrieron las cosas dentro de
+una invocación*: «¿leyó el contrato antes de escribir?», «¿un solo `Write`?», «¿la confirmación fue
+posterior al turno del humano?». Eso es **traza**, y sigue siendo el motor de §10.1. La capa barata no
+lo sustituye: le quita de encima la parte que no lo necesitaba.
+
+**Veredicto y autoridad.** Emite `CONFORME` / `NO CONFORME` y código de salida (0 / 1). Los **avisos**
+no alteran el veredicto: señalan lo que merece mirada humana sin ser una violación. **Informa, no
+bloquea** — la decisión de seguir con una corrida no conforme es del humano (NC-6), igual que en los
+gates.
+
+> **Honestidad sobre el alcance.** `CONFORME` significa *«conforme a lo comprobable sin traza»*, no
+> *«el proyecto está bien»*. La conformidad nunca fue calidad (§8), y esta capa además es un
+> subconjunto de la conformidad.
+
 ---
 
 ## Apéndice: Estándares de Ingeniería

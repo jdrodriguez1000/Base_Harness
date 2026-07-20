@@ -45,7 +45,10 @@ un **bucle agéntico**: escribes, ejecutas, observas y ajustas. Estás **fuera d
    **exclusiones** (§9).
 3. **Ramificas en §3** (deseabilidad → mockup/HTML clicable · factibilidad → spike/notebook/PoC) y
    construyes **en bucle** el camino feliz **solo del generador**, dentro de `_prototype/prototype/`.
-4. Al cerrar (timebox / feature freeze), **informas** qué construiste y qué evidencia permite recoger el
+4. **Confirmas en git durante el bucle** (cada iteración que deja algo que corre) y, tras el **feature
+   freeze**, ejecutas el commit de etapa **antes** de ceder el gate (Paso 4 del skill,
+   `_guideline/git-protocol.md` §2–§3).
+5. Al cerrar, **informas** qué construiste, el **hash y la rama**, y qué evidencia permite recoger el
    prototipo frente al Gatekeeper — **no cruzas el gate** (P5).
 
 ## Principios
@@ -65,6 +68,11 @@ un **bucle agéntico**: escribes, ejecutas, observas y ajustas. Estás **fuera d
   viene `sin acordar`, lo acuerdas con el humano **antes** de construir —es una decisión de alcance,
   no tuya (NC-6)—, y si lo prefiere abierto cierras solo por camino feliz cubierto. Alegar "timebox
   agotado" contra un número que nadie fijó es cerrar contra nada.
+- **Congelar es confirmar, y el commit precede al gate:** el disparador es el **feature freeze**, no la
+  aprobación humana. Colgar el commit del gate es exactamente el fallo de L-019: si el gate se salta o
+  se difiere, el prototipo entero queda fuera de git (L-009). **Desechable no significa no versionado**
+  — sin hash, «el prototipo que vi» no es un objeto al que se pueda volver. **Nunca `push`:** es del
+  cierre de sesión (D-033).
 - **No cruzas gates (P5):** el Gatekeeper (§7) lo cruza el **humano** con evidencia. Tu trabajo es
   producir el artefacto que **permite recoger** esa evidencia, no declararlo aprobado.
 - **Idioma:** comunícate en el idioma del proyecto (por defecto, español).
@@ -87,7 +95,8 @@ contrato de forma: tu contrato es el propio `discovery.md`, y tu disciplina es d
 | P6 | **Desechable** | No añadió suite de tests, capa de robustez/errores ni autenticación real; alcance mínimo |
 | P7 | **Ubicación canónica** | Los artefactos viven bajo `_prototype/prototype/`; no tocó `discovery.md`, `interview_document.md` ni `document_extract.md` |
 | P8 | **No cruzó el gate** | Informó y cedió; no marcó el Gatekeeper como aprobado (P5) |
-| P9 | **Timebox cargado, no supuesto** | Si el cierre alega *"timebox agotado"*, ese tope consta en §8 del discovery **o** en un acuerdo explícito con el humano en la traza; nunca es un número que aparece por primera vez en el informe de cierre |
+| P9 | **Commit de etapa ejecutado por ti, antes del gate** | En `git log` existe el commit `feat(prototipo): camino feliz del generador` que incluye `_prototype/prototype/`, en **tu** traza consta el `Bash` que lo produjo, y ese `Bash` es **anterior** al turno en que cediste el gate. El informe reporta hash y rama |
+| P10 | **Timebox cargado, no supuesto** | Si el cierre alega *"timebox agotado"*, ese tope consta en §8 del discovery **o** en un acuerdo explícito con el humano en la traza; nunca es un número que aparece por primera vez en el informe de cierre |
 
 > **Nota de honestidad:** sin plantilla ni tests, P1/P5/P7/P8 son deterministas limpios, pero
 > **P3/P4/P6** (solo generador · respeta §9 · desechable) son **semánticos**: exigen juzgar lo

@@ -44,6 +44,7 @@
 | D-032 | El procedimiento git se materializa como referencia única (`_guideline/git-protocol.md`) que los skills aplican, en vez de bloque duplicado por skill | aceptada | 2026-07-19 |
 | D-033 | Los checkpoints intra-etapa (T-045) quedan siempre locales; el push se hace solo al cerrar la sesión, respetando `auto_push` (resuelve A-003) | aceptada | 2026-07-19 |
 | D-034 | El contrato de entrada entre etapas (T-043) se integra como paso 0 de §5.1 de `methodology.md`, en vez de crear un archivo `_guideline/` nuevo | aceptada | 2026-07-19 |
+| D-035 | Retirar la precondición `git init` de `T-027_procedimiento.md` §2.5: el proyecto de prueba arranca sin repo git para ejercitar el bootstrap de `git-protocol.md` §2 | aceptada | 2026-07-20 |
 
 ## Formato
 
@@ -333,3 +334,11 @@
 - **Decisión:** En vez de crear un archivo `_guideline/` nuevo (p. ej. un hipotético `input-contract.md`), el contrato de entrada se añade como **paso 0** del §5.1 existente de `methodology.md`. Queda una sola definición del contrato de trabajo (entrada + salida) que los cuatro skills de etapa aplican, siguiendo el mismo patrón de referencia única que D-032 fijó para el procedimiento git.
 - **Alternativas consideradas:** Crear un archivo `_guideline/` nuevo dedicado al contrato de entrada — descartada: multiplicaría archivos de referencia por una regla que es, en esencia, la mitad que le faltaba a un contrato que ya existía; peor localidad para quien busca "qué debe cumplir un constructor de entregables" (tendría que mirar dos archivos en vez de uno).
 - **Consecuencias:** `methodology.md` §5.1 pasa a cubrir el contrato completo (entrada y salida) de un constructor de entregables. Los cuatro skills de etapa (`interview-protocol`, `discovery-protocol`, `prototype-protocol`; `ingest-protocol` queda fuera a propósito, su insumo es el brief del cliente sin campo de estado) aplican la regla con un paso corto + invariante que remite a §5.1, en vez de duplicar la lógica de verificación.
+
+### D-035 — Retirar la precondición `git init` de `T-027_procedimiento.md` §2.5
+- **Estado:** aceptada
+- **Fecha:** 2026-07-20
+- **Contexto:** `A-004` (registrada en la sesión anterior) dejaba sin decidir si la precondición de `T-027_procedimiento.md` §2.5 —`git init` + commit inicial ANTES de invocar al primer agente— se mantenía o se retiraba. Con ella, el bootstrap de `git-protocol.md` §2 (la pieza construida justamente para que L-009 no se repitiera) llevaba **tres corridas sin ejecutarse nunca**. La red de seguridad que hace viable retirarla ya existe: el primer check de `conformance.sh` (T-057) es si el proyecto es repo git, así que un bootstrap fallido se detecta y se distingue de un defecto de diseño del harness.
+- **Decisión:** El humano decidió retirar la precondición. El proyecto de prueba de T-027 arrancará **sin** repo git, para que el bootstrap se ejercite de verdad. `T-027_procedimiento.md` §2.5 queda invertida con su fundamento y con una nota de "qué observar en la corrida"; el criterio de aceptación de L-009 se extiende con una fila de bootstrap escrita ANTES de correr (conforme a D-030): un `git init` silencioso (que cumple la letra pero no deja traza verificable de que lo ejecutó el agente) cuenta como **FALLO**, porque cumple la letra y viola NC-6.
+- **Alternativas consideradas:** Mantener la precondición para no arriesgar que un fallo de infraestructura tumbe la prueba — descartada por el humano: sin `conformance.sh` como red de seguridad habría sido razonable, pero con ella un bootstrap fallido ya es distinguible y no tumba la prueba sin dejar lección.
+- **Consecuencias:** Resuelve `A-004` (queda confirmada). Precondición de la corrida 4 de T-027. Consecuencia lateral detectada en el smoke test parcial de la sesión (T-058): `git init` crea la rama `master`, no `main`, porque `git-protocol.md` §2 no especifica el nombre de rama — queda pendiente de decisión de diseño del humano.

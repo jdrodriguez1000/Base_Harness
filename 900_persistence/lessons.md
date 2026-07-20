@@ -32,6 +32,7 @@
 | L-020 | El reporte del subagente constructor no es verificación: solo al ejercitar el prototipo aparecieron comportamientos no declarados que violan las reglas duras | 2026-07-20 |
 | L-021 | El fixture fija el brief pero no la entrevista: dos corridas con el mismo `client_brief.md` no son la misma prueba y no son comparables | 2026-07-20 |
 | L-022 | La divergencia entre corridas no fue azar sino subdeterminación: `discovery.md` y `prototype-protocol` dan respuestas distintas sobre qué actores construir | 2026-07-20 |
+| L-023 | El `discovery.md` de la corrida 3 se confirmó en una sola escritura, sin el borrador `[sin confirmar]` previo: el historial no distingue un entregable aprobado de uno que nadie miró | 2026-07-20 |
 
 ## Formato
 
@@ -217,4 +218,11 @@
   1. El `discovery.md` declara el conjunto de actores como **campo cerrado y explícito**, y `prototype-protocol` obedece ese campo en vez de hardcodear "solo el generador". Una sola fuente de verdad. Ver T-054.
   2. Regla general: ante dos corridas que difieren, la primera hipótesis es **subdeterminación**, no aleatoriedad. Buscar las dos fuentes que se contradicen antes de aceptar "el modelo varía".
   3. El borde entre etapas necesita un contrato verificable, no solo prosa coincidente. Ver T-055.
+- **Fecha:** 2026-07-20
+
+### L-023 — La confirmación en una sola escritura borra la distinción que el gate quiere preservar
+- **Contexto:** Validación de `conformance.sh` (T-057) contra la corrida 3 de T-027. Check nuevo B6 sobre el historial git de `discovery.md`.
+- **Problema:** `discovery.md` de la corrida 3 tiene **un solo commit**, ya como `Confirmado: sí` / `Estado: cerrado`, sin el borrador previo con el marcador `[sin confirmar]`. Verificado a mano contra `git log`. El protocolo (`discovery-protocol` Paso 3 + `git-protocol.md` §3) exige confirmar ANTES del gate con el marcador, y que la aprobación produzca un **segundo** commit sin él. Al hacerse en una sola escritura, en el historial un entregable aprobado por el humano es indistinguible de uno que nadie miró todavía — se pierde justo la distinción que el gate quiere preservar. No estaba entre los 10 hallazgos de las corridas 1–3: lo encontró la capa nueva de conformidad (check B6), no la inspección manual.
+- **Solución / aprendizaje:** Un mecanismo de dos escrituras (borrador con marcador → confirmación sin marcador) solo es evidencia de que el gate se cruzó si **ambas** escrituras ocurren y quedan en commits separados. Colapsarlas en una sola pasada cumple el contenido final pero destruye la traza intermedia, la misma clase de defecto que L-007 (confirmación adelantada) y L-013 (confirmación colgada del gate), aquí en su tercera variante: confirmación **colapsada**.
+- **Cómo aplicarlo:** Al cerrar un artefacto con gate, verificar en el `git log` que existen los dos commits (borrador `[sin confirmar]` → cierre sin marcador), no solo que el contenido final sea correcto. `conformance.sh` (T-057) lo automatiza como check B6.
 - **Fecha:** 2026-07-20

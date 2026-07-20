@@ -14,7 +14,7 @@
 | A-001 | Si el bloque de agentes/evaluación/observabilidad de `methodology.md` supera ~250 líneas, se divide en `methodology.md` (proceso) + `agents-and-evaluation.md` | sin validar | 2026-07-17 |
 | A-002 | `interview_document.md` se conserva como traza junto a `discovery.md` tras la síntesis del writer (no se descarta) | confirmado → promovido a [[decisions]] D-024 | 2026-07-17 |
 | A-003 | Los checkpoints intra-etapa (T-045) empujan al remoto respetando `auto_push`, o se quedan locales y solo el cierre empuja | confirmado → promovido a [[decisions]] D-033 | 2026-07-19 |
-| A-004 | La precondición `git init` previa al primer agente en `T-027_procedimiento.md` §2.5 se mantiene o se retira | sin validar | 2026-07-19 |
+| A-004 | La precondición `git init` previa al primer agente en `T-027_procedimiento.md` §2.5 se mantiene o se retira | confirmado → promovido a [[decisions]] D-035 | 2026-07-19 |
 
 ## Formato
 
@@ -51,7 +51,8 @@
 - **Resolución:** El humano confirmó explícitamente: los checkpoints quedan **siempre locales**; el push se hace solo al cerrar la sesión, respetando `auto_push`. Ver `D-033`.
 
 ### A-004 — La precondición `git init` previa al primer agente en `T-027_procedimiento.md` §2.5 ¿se mantiene o se retira?
-- **Estado:** sin validar
+- **Estado:** confirmado → promovido a [[decisions]] D-035
 - **Impacto si es falso:** Si se mantiene la precondición pero el humano en realidad quería una corrida más fiel al caso real (proyecto que arranca sin repo git), el bootstrap de `git-protocol.md` §2 —el mecanismo diseñado justamente para que L-009 no se repita— nunca se ejercita en la prueba, dejando esa parte del harness sin evidencia empírica. Si se retira la precondición pero el bootstrap tiene un defecto no detectado, un fallo de infraestructura (en vez de un defecto de diseño) podría tumbar la corrida completa sin aportar una lección útil.
 - **Cómo validarlo:** Preguntar explícitamente al humano antes de la corrida 3 de T-027 si `T-027_procedimiento.md` §2.5 debe retirar la precondición de `git init`, para que el bootstrap de `git-protocol.md` §2 se ejercite de verdad.
 - **Fecha:** 2026-07-19
+- **Resolución:** El humano decidió retirar la precondición, viable porque `conformance.sh` (T-057) ya detecta un bootstrap fallido y lo distingue de un defecto de diseño. Ver `D-035`.

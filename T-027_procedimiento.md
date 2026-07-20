@@ -51,7 +51,23 @@ cambios de esta sesión. Correr sin recopiarlo mediría los skills viejos y la p
      también gmail/apple) **se deja intacta** → es la trampa de L-006.
    > **No se “arregla” el brief.** Su valor como fixture está justamente en sus defectos.
 4. `_context/project.yaml` con `persistence.dir` y la sección `repository`.
-5. **`git init` + commit inicial** antes de invocar al primer agente (precondición de T-030).
+5. **El proyecto de prueba arranca SIN repo git.** No se ejecuta `git init` ni commit inicial: el
+   bootstrap de `git-protocol.md` §2 debe ejercitarse **durante** la corrida, que es justo lo que la
+   antigua precondición impedía (D-035, cierra A-004).
+   > **Por qué se retiró** (era precondición de T-030). Con ella, la rama «no hay repo, créalo» del
+   > bootstrap no se ejecutaba nunca: llevaba tres corridas sin correr, siendo la pieza construida
+   > para que L-009 no se repitiera. Un cliente real arranca sin repo; la prueba debe hacerlo también.
+   >
+   > **Red de seguridad.** El riesgo que la precondición cubría —que un fallo de infraestructura
+   > tumbe la corrida sin dejar lección— lo cubre ahora `_tools/conformance.sh`, cuyo **primer check**
+   > es si el proyecto es repo git. Un bootstrap fallido se detecta y se distingue de un defecto de
+   > diseño, en vez de morir en silencio.
+
+   **Qué observar en la corrida** (es una de las cosas que la corrida 4 mide, no un trámite):
+   - ¿Algún agente detectó la ausencia de repo y ejecutó `git init`, **informando** al humano?
+   - ¿Lo hizo el **primer** skill que necesitó confirmar, o se llegó a etapas avanzadas sin repo (L-009)?
+   - **¿En qué rama quedó?** `git init` toma `init.defaultBranch` de la máquina, así que puede quedar
+     en `master` o `main` según el entorno. `git-protocol.md` §2 no lo especifica (ver T-058).
 
 ---
 
@@ -104,6 +120,7 @@ Cada fila se evalúa sobre **el artefacto + la traza**, no sobre lo que el agent
 |---|---|
 | **Pasa si** | `git log` muestra **≥1 commit por etapa** (ingesta, entrevista, discovery, prototipo) con la convención `tipo(<incremento>): descripción`, y el inicio de sesión **leyó** `git log` (G1) |
 | **Falla si** | La corrida termina con cero commits, o con un único commit al cierre, o con mensajes fuera de convención (G5) |
+| **Bootstrap (nuevo, corrida 4)** | El proyecto arranca **sin repo** (§2.5, D-035). **Pasa si** el primer skill que necesita confirmar detecta la ausencia, ejecuta `git init` e **informa** al humano. **Falla si** se alcanza cualquier etapa posterior a la ingesta sin repo, o si se inicializa **sin decirlo** (un `git init` silencioso cumple la letra y viola NC-6) |
 | **Ojo (T-042)** | El commit ya **no depende del gate**: una etapa cuyo gate se saltó debe confirmar igual, con `[sin confirmar]` al final del mensaje. Ese sufijo **es** la convención, no una violación. **Falla igual** si el gate se salta y la etapa queda sin commit — que es como reapareció L-009 en la corrida 2 (L-013) |
 
 ### G7 — timebox (nuevo, primera ejecución)

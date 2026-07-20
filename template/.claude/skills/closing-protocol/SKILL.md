@@ -97,6 +97,17 @@ Flujo de promoción entre archivos:
    ninguna entrada del cuerpo sin su fila en el índice, y viceversa).
 2. No reutilizar IDs; mantener las fechas en formato `YYYY-MM-DD`.
 3. Presentar al usuario un **resumen breve** de qué archivos se actualizaron y con qué entradas.
+4. **Ejecutar la capa de conformidad** si existe (`sh _tools/conformance.sh .`) e incluir su
+   **veredicto** en el resumen. Es barata (segundos) y no modifica nada: solo lee artefactos y
+   `git log`.
+   - **Informar, no bloquear.** Un veredicto `NO CONFORME` **no** detiene el cierre: se reporta al
+     humano con sus fallos, que decide. La autoridad es suya (NC-6).
+   - Los fallos que revelen un defecto del harness —y no del proyecto en curso— se registran como
+     **lección** en el Paso 4, que es lo que convierte el check en aprendizaje.
+
+> **Por qué aquí (L-019).** Los checks de conformidad llevaban tres corridas escritos en los prompts
+> **sin que nadie los ejecutara nunca**. Un check que depende de que alguien se acuerde de mirarlo no
+> es un control: engancharlo a un paso obligatorio es lo que lo vuelve real.
 
 ---
 

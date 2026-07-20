@@ -36,6 +36,14 @@ y el **estado por incremento** (`state.yaml`, §7.1; su plantilla en `_templates
 Mientras `principles.md` fija el **comportamiento** (vinculante), `methodology.md` fija el
 **procedimiento de construcción**. Consúltalo al planear o construir un incremento.
 
+### Conformidad ejecutable (`_tools/conformance.sh`)
+
+Los perfiles de conformidad de cada agente (§10) dejaron de ser solo texto: `sh _tools/conformance.sh .`
+verifica mecánicamente lo comprobable con **artefactos + `git log`** —commit por etapa, marcadores sin
+sustituir, tabla de cobertura, coherencia agente↔skill— y emite `CONFORME` / `NO CONFORME`. Solo lee;
+no modifica nada. Lo ejecuta el `closing-protocol` en cada cierre de sesión, y puedes lanzarlo cuando
+quieras. Alcance y límites en `methodology.md` §10.2: **informa, no bloquea** (NC-6).
+
 ---
 
 ## Contexto del proyecto (`_context/`)
