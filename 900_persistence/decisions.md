@@ -46,6 +46,15 @@
 | D-034 | El contrato de entrada entre etapas (T-043) se integra como paso 0 de §5.1 de `methodology.md`, en vez de crear un archivo `_guideline/` nuevo | aceptada | 2026-07-19 |
 | D-035 | Retirar la precondición `git init` de `T-027_procedimiento.md` §2.5: el proyecto de prueba arranca sin repo git para ejercitar el bootstrap de `git-protocol.md` §2 | aceptada | 2026-07-20 |
 | D-036 | El bootstrap de `git-protocol.md` §2 inicializa el repo con la rama de `repository.default_branch` (`project.yaml`), no con la config local de la máquina; `main` si el campo falta; avisa al humano la rama elegida (NC-6) | aceptada | 2026-07-20 |
+| D-037 | El criterio de cierre de una tarea de prueba/validación es el texto escrito en su procedimiento, no un número arbitrario de repeticiones no especificado | aceptada | 2026-07-21 |
+
+### D-037 — El criterio de cierre de una tarea de prueba es el texto de su procedimiento, no repeticiones no escritas
+- **Estado:** aceptada
+- **Fecha:** 2026-07-21
+- **Contexto:** Tras la corrida 4 de T-027 (exitosa de punta a punta, ningún hallazgo L-005…L-009 reaparecido), quedó abierta la pregunta de si una sola corrida limpia bastaba para cerrar T-027/T-024/T-026, o si hacía falta repetirla para confirmar que no fue casualidad.
+- **Decisión:** El criterio de cierre es el que está escrito en `Base_Harness/T-027_procedimiento.md` — §3 (criterios por hallazgo), §4 (criterios de la corrida completa) y §5 ("la corrida solo fracasa si reaparece algún hallazgo"). Ese documento nunca exigió repetir la corrida para darla por cerrada; exigir una repetición ahora habría sido una barra adicional inventada después de ver el resultado, no un criterio fijado de antemano (viola D-030: los criterios se escriben ANTES de correr la prueba, no se ajustan después). El humano decidió no exigirla e invertir el esfuerzo restante en pruebas de generalización multi-dominio (T-061) en vez de en repetir el mismo fixture.
+- **Alternativas consideradas:** (a) Exigir ≥2 corridas limpias consecutivas antes de cerrar — descartada por ser un criterio no escrito en el procedimiento y motivado únicamente por el resultado ya observado. (b) Dejar T-027 "en progreso" indefinidamente hasta acumular más evidencia — descartada porque el procedimiento ya define cuándo una corrida cuenta como éxito, y no hacerlo caso equivale a no confiar en el propio criterio escrito.
+- **Consecuencias:** T-027, T-024 y T-026 quedan cerradas en esta sesión. El patrón general aplica a cualquier tarea de prueba/validación futura (incluida T-061): el criterio de aceptación se fija por escrito antes de correr la prueba, y ese texto —no la sensación posterior de "convendría confirmarlo otra vez"— es lo que decide el cierre.
 
 ## Formato
 
