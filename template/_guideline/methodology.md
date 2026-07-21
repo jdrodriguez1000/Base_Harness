@@ -312,6 +312,10 @@ El prototipo se mantiene barato y rápido con reglas estrictas de alcance:
   explícitamente cuáles existen. **Prioridad no lineal:** el camino feliz del **generador es obligatorio**
   para arrancar el proyecto; los de operador y administrador se construyen **bajo demanda** (cuando la
   aplicación lo requiera —días o semanas después—), **no** en una secuencia inmediata tras el generador.
+  Esto es el **por defecto**, no una regla que el Prototipador infiera por su cuenta: el `discovery.md`
+  declara el conjunto exacto de actores a construir como **campo cerrado** en §5 (L-022), y el
+  Prototipador obedece ese campo — incluido el caso en que el humano prioriza explícitamente operador
+  o administrador junto al generador para una ronda concreta.
 - **Artefactos segmentados por audiencia (*split*).** En vez de un artefacto monolítico, generar
   validaciones **especializadas por audiencia** (p. ej. una para pruebas de usabilidad con usuarios y
   otra como herramienta de demostración para clientes/aliados), cada una enfocada en su objetivo.

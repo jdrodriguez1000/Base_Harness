@@ -42,8 +42,13 @@ Este skill es **agnóstico al proyecto** y **autónomo**: su insumo es un archiv
    de construir nada** —el prototipo heredaría material que nadie validó— y dejar constancia en el
    informe de cierre. **No bloquees ni lo cierres tú:** construir igual o esperar lo decide el humano
    (NC-6). Si no puedes leer esos campos, trátalo como **no confirmado**. De él se extrae:
-   - **Actor a construir:** por defecto el **generador** (§5/§6). Operador/administrador solo si la
-     invocación lo pide explícitamente (**bajo demanda**, §4.3).
+   - **Actores a construir:** leer el **campo cerrado** "Actores a construir en este prototipo" de §5
+     (L-022). Construir **exactamente** ese conjunto, ni más ni menos: el generador siempre figura y es
+     obligatorio; operador/administrador se construyen **solo si el campo los incluye explícitamente**,
+     aunque figuren "presentes" en la tabla de actores — presente ≠ a construir ahora. No asumas
+     "solo generador" por tu cuenta ni amplíes el alcance porque la invocación lo sugiera: el
+     `discovery.md` es la **única fuente** de esta decisión. Si el campo falta o es ambiguo, trátalo
+     como hueco de especificación y **pregunta** (NC-1/NC-6) antes de construir.
    - **Tipo dominante (§3):** deseabilidad o factibilidad → decide *qué* se materializa.
    - **Medio del actor (§6):** app, web, notebook, CLI… → decide *en qué* se materializa.
    - **Hipótesis de valor (§2)** y **Gatekeeper (§7):** qué debe poder validar el prototipo.
@@ -70,7 +75,8 @@ Este skill es **agnóstico al proyecto** y **autónomo**: su insumo es un archiv
   valor** sobre datos reales o de muestra, **sin robustez**. En DS/ML suele ser un notebook con un
   baseline que mide si la señal existe.
 
-En ambos casos: **solo el camino feliz del generador**, nada de lo excluido en §9.
+En ambos casos: **solo el camino feliz de los actores declarados a construir** (Paso 0), nada de lo
+excluido en §9.
 
 ---
 
@@ -133,7 +139,9 @@ informe. **No hacer `push`** y **no** cruzar el gate (P5).
   no se detecte, se materializa en código (L-014).
 - **Congelar es confirmar:** el feature freeze cierra con commit (`_guideline/git-protocol.md`) antes de
   ceder el gate; desechable no significa no versionado (L-009).
-- **Solo el generador:** operador/administrador son bajo demanda (§4.3); no en secuencia inmediata.
+- **El `discovery.md` declara el conjunto exacto de actores a construir** (§5, campo cerrado, L-022):
+  el generador siempre es obligatorio; operador/administrador se construyen únicamente si el campo los
+  incluye. Una sola fuente de verdad — no lo decides tú ni lo infieres de §6.
 - **Respeta las exclusiones §9:** guarda anti-*scope creep*; nada de lo excluido se construye.
 - **El timebox se carga, no se supone:** sale de §8 del `discovery.md` en el Paso 0; si viene
   `sin acordar`, se acuerda con el humano antes de construir. Cerrar alegando un tope que nadie fijó

@@ -86,6 +86,15 @@ al instanciar. Borra los ejemplos y los comentarios <!-- --> al rellenar.
 <!-- Colapsos/ausencias frecuentes: sin operador; sin administrador; los tres
      concentrados en el generador. Lo importante es DECLARARLO, no forzar tres actores. -->
 
+**Actores a construir en este prototipo:** <generador | generador, operador | generador, administrador | generador, operador, administrador>
+<!-- CAMPO CERRADO (L-022): el Prototipador construye EXACTAMENTE este conjunto, ni más ni menos —
+     no infiere el alcance por su cuenta ni asume "solo generador" por defecto. El generador es
+     SIEMPRE obligatorio (§4.3) y va siempre en la lista. Por defecto (§4.3) operador y administrador
+     quedan "bajo demanda" y NO entran aquí; inclúyelos solo si el humano los priorizó explícitamente
+     junto al generador PARA ESTA RONDA (p. ej. lo dijo en la entrevista, no que estén "presentes" en
+     la tabla de arriba — presente ≠ a construir ahora). Un actor puede estar presente y no entrar en
+     esta lista: se difiere. -->
+
 ## 6. Camino feliz por actor
 
 <!-- Solo el/los flujo(s) crítico(s) que validan la hipótesis de valor (§4.3).

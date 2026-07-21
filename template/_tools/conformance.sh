@@ -224,6 +224,17 @@ if [ -f "$DISCOVERY" ]; then
   umbral=$(strip_comments "$DISCOVERY" | grep -m1 -i -- '- \*\*Umbral de éxito:\*\*' |
     sed 's/.*\*\*[^*]*:\*\*[[:space:]]*//')
   if [ -z "$umbral" ]; then
+    # Un Gatekeeper con varias condiciones suele escribirse como encabezado +
+    # lista numerada en las líneas siguientes (L-026/T-060), no en la misma
+    # línea. Buscar el primer valor numérico ahí antes de declarar fallo.
+    umbral=$(strip_comments "$DISCOVERY" | awk '
+      /- \*\*Umbral de éxito:\*\*/ { found=1; next }
+      found && /^[[:space:]]*$/ { exit }
+      found && /^- \*\*/ { exit }
+      found && /[0-9]/ { print; exit }
+    ')
+  fi
+  if [ -z "$umbral" ]; then
     fail "A8" "discovery §7: falta 'Umbral de éxito'"
   elif printf '%s' "$umbral" | grep -q '[0-9]'; then
     pass "A8" "discovery §7: umbral cuantitativo ($(short "$umbral"))"

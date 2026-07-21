@@ -97,6 +97,17 @@ Flujo de promoción entre archivos:
    ninguna entrada del cuerpo sin su fila en el índice, y viceversa).
 2. No reutilizar IDs; mantener las fechas en formato `YYYY-MM-DD`.
 3. Presentar al usuario un **resumen breve** de qué archivos se actualizaron y con qué entradas.
+4. **Ejecutar la capa de conformidad** si existe (`sh _tools/conformance.sh .`) e incluir su
+   **veredicto** en el resumen. Es barata (segundos) y no modifica nada: solo lee artefactos y
+   `git log`.
+   - **Informar, no bloquear.** Un veredicto `NO CONFORME` **no** detiene el cierre: se reporta al
+     humano con sus fallos, que decide. La autoridad es suya (NC-6).
+   - Los fallos que revelen un defecto del harness —y no del proyecto en curso— se registran como
+     **lección** en el Paso 4, que es lo que convierte el check en aprendizaje.
+
+> **Por qué aquí (L-019).** Los checks de conformidad llevaban tres corridas escritos en los prompts
+> **sin que nadie los ejecutara nunca**. Un check que depende de que alguien se acuerde de mirarlo no
+> es un control: engancharlo a un paso obligatorio es lo que lo vuelve real.
 
 ---
 
@@ -130,12 +141,18 @@ Este paso sincroniza el trabajo de la sesión con el repositorio remoto. Usa la 
    > mensajes libres, «¿qué se hizo en el incremento X?» deja de ser una consulta y pasa a ser una
    > lectura completa del log.
 
-4. **Push (según `repository.auto_push`):**
+4. **Comprobar la rama contra `repository.default_branch`:** si la rama actual **no coincide** con la
+   declarada en `project.yaml`, **avisar al humano antes de empujar** y no renombrar nada por cuenta
+   propia. Suele significar que el repo se inicializó sin leer `project.yaml` (ver `git-protocol.md`
+   §2) o que se trabaja en una rama de incremento. Empujar en silencio una rama distinta de la
+   declarada publica el trabajo donde nadie lo espera.
+
+5. **Push (según `repository.auto_push`):**
    - Si `auto_push: true` → `git push` a la rama actual.
    - Si `auto_push: false` o no está definido → **NO** empujar automáticamente. Informar al usuario
      que el commit quedó listo y **pedir confirmación explícita** antes de ejecutar `git push`.
 
-5. **Reportar el resultado:** hash del commit, rama, y si se empujó o quedó pendiente de confirmar.
+6. **Reportar el resultado:** hash del commit, rama, y si se empujó o quedó pendiente de confirmar.
 
 > Si el `push` falla por credenciales, informar al usuario: la autenticación con GitHub (PAT, SSH o
 > `gh auth login`) es configuración del entorno, no de este protocolo.

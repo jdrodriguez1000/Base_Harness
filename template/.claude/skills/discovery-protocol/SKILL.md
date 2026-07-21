@@ -76,7 +76,12 @@ del documento + lo elicitado en la entrevista.
 2. **Tipo de prototipo (§3):** deducir si domina deseabilidad o factibilidad según lo elicitado.
 3. **Stakeholders (§4).**
 4. **Actores (§5):** **clasificar** cada actor mencionado en Generador/Operador/Administrador y
-   **declarar** cuáles existen, faltan o **colapsan** en otro. No forzar tres actores.
+   **declarar** cuáles existen, faltan o **colapsan** en otro. No forzar tres actores. **Rellenar el
+   campo cerrado "Actores a construir en este prototipo"** (L-022): el generador va siempre; añade
+   operador/administrador **solo** si el humano los priorizó explícitamente junto al generador para
+   esta ronda (algo que dijo en la entrevista, no la mera presencia en la tabla — "presente" ≠ "a
+   construir ahora"). Es la única fuente que leerá el Prototipador para decidir alcance; no dejes que
+   lo infiera de la prosa de §6.
 5. **Camino feliz por actor (§6):** redactar el flujo crítico de cada actor presente; marcar el del
    **generador** como el que construirá primero el Prototipador. Operador/administrador: **bajo demanda**.
    Registrar el **medio/canal de cada actor** (app, web, notebook, CLI…) en la cabecera de su flujo,

@@ -34,6 +34,8 @@
 | L-022 | La divergencia entre corridas no fue azar sino subdeterminación: `discovery.md` y `prototype-protocol` dan respuestas distintas sobre qué actores construir | 2026-07-20 |
 | L-023 | El `discovery.md` de la corrida 3 se confirmó en una sola escritura, sin el borrador `[sin confirmar]` previo: el historial no distingue un entregable aprobado de uno que nadie miró | 2026-07-20 |
 | L-024 | Un campo declarado en `project.yaml` y documentado en `AGENTS.md`, pero que ningún skill consume, es peor que no tenerlo: da falsa confianza (declarar ≠ consumir) | 2026-07-20 |
+| L-025 | El `prototype-builder` de la corrida 4 confirmó el prototipo en un solo commit: el bucle escribir→ejecutar→ajustar corrió sin los checkpoints intra-etapa que `git-protocol.md` §3.1 exige | 2026-07-21 |
+| L-026 | `conformance.sh` (check A8) solo lee el "Umbral de éxito" en la misma línea del encabezado: un Gatekeeper multi-condición escrito como lista numerada da falso negativo | 2026-07-21 |
 
 ## Formato
 
@@ -237,3 +239,22 @@
   2. Fallo de conducción a evitar: ante un hueco aparente, comprobar primero si la fuente única de verdad ya lo responde, antes de escalarlo al humano como decisión. Consultar no es gratis si la consulta es innecesaria (NC-6 mal aplicado en la dirección contraria: consultar por consultar).
   3. Relacionada con L-015 (procedencia/carriles: qué dato viene de qué fuente) y con la reserva de A-004/T-047 (esta sesión anterior también tocó el bootstrap sin cablear este campo).
 - **Fecha:** 2026-07-20
+
+### L-025 — El bucle de construcción del prototipo corrió sin checkpoints intra-etapa
+- **Contexto:** Corrida 4 de T-027 (`App_Reciclaje_4`), revisión del prototipo materializado por `prototype-builder` (camino feliz del Cliente/Generador, HTML clicable de una sola página).
+- **Problema:** El `git log` de la etapa de prototipo muestra **un solo commit** (`feat(prototipo): camino feliz del generador [sin confirmar]`) para los dos archivos entregados (`index.html` de 579 líneas + `README.md`). `prototype-protocol` Paso 2.4 y `git-protocol.md` §3.1 piden confirmar **cada iteración del bucle que deja algo ejecutable**, no solo al cierre — es la misma lógica que ya rige `interview-protocol` (checkpoint por bloque). El commit final en sí es correcto (etapa confirmada, marcador `[sin confirmar]` correcto porque el gate Prototipo→MVP no se ha cruzado), pero no hay evidencia de que el bucle escribir→ejecutar→ajustar dejara puntos de retorno intermedios: si un ajuste a mitad de la construcción hubiera roto el prototipo, no habría versión anterior funcional a la que volver.
+- **Solución / aprendizaje:** No reabre L-005…L-009 (el criterio de `T-027_procedimiento.md` §3 exige ≥1 commit por etapa, y ese mínimo se cumple), así que **no declara fracasada la corrida** — pero es un hallazgo nuevo de granularidad más fina: la disciplina de checkpoint intra-etapa (introducida esta sesión vía T-030/D-033 para resolver reanudabilidad) tiene un consumidor que no la ejerce en la práctica. Misma familia que L-024 (declarar ≠ consumir), aquí sobre una regla de proceso en vez de un campo de datos.
+- **Cómo aplicarlo:**
+  1. Al revisar una corrida futura, comprobar no solo que exista **el commit de etapa** (L-009) sino que existan **checkpoints intermedios** cuando el bucle de construcción tuvo más de una iteración observable — un solo commit con muchas líneas es la señal de que el checkpoint no se ejerció, no de que el bucle fue corto.
+  2. Si se repite en corridas futuras con prototipos más grandes/multi-archivo (donde el bucle sí tiene iteraciones claras), considerar añadir un check de conformidad barato (familia `conformance.sh`, T-057) que cuente commits de la etapa `prototype` y avise si es exactamente 1 con un diff grande.
+  3. No amerita todavía una tarea correctiva propia: es una observación de conducta a vigilar, no un defecto de especificación como L-019 (ahí el skill prohibía colgar el commit del gate y el agente lo hizo igual). Aquí la regla existe y no contradice nada; simplemente no se ejercitó.
+- **Fecha:** 2026-07-21
+
+### L-026 — El check A8 de `conformance.sh` exigía el umbral en la misma línea del encabezado
+- **Contexto:** Cierre de la corrida 4 de T-027 (`App_Reciclaje_4`): el `closing-protocol` corrió `conformance.sh` (Paso 5.4, T-057) y dio `NO CONFORME` (24 ok · 1 fallo) pese a que `_prototype/discovery.md` §7 declaraba un Gatekeeper completo y cuantitativo (60% de adopción, NPS > 85%, confirmación binaria de abandono de Excel).
+- **Problema:** El check A8 extraía el valor de "Umbral de éxito" con un `sed` que solo captura texto **en la misma línea** del encabezado (`template/_tools/conformance.sh` líneas 224-225). El discovery real, correctamente, escribió el encabezado seguido de una **lista numerada en las líneas siguientes** — el patrón natural cuando el Gatekeeper tiene varias condiciones (aquí, tres) y no cabe legible en una sola línea. El script leía una cadena vacía y marcaba `FALLO`, aunque el contenido del artefacto era correcto y completo. Es un falso negativo de formato del checker, no un defecto del discovery ni de `discovery-protocol`.
+- **Solución / aprendizaje:** Corregido el check A8 para que, si la misma línea viene vacía, busque el primer valor numérico en las líneas siguientes al encabezado (hasta línea en blanco o el siguiente campo `- **`). Verificado contra el `discovery.md` real de la corrida 4: el resumen pasó de 24 ok/1 fallo a **25 ok/0 fallos**.
+- **Cómo aplicarlo:**
+  1. Un checker barato (regex/sed sobre texto) es frágil ante variaciones de formato **legítimas** que el propio harness no prohíbe. Antes de aceptar un `FALLO` de `conformance.sh` como defecto del proyecto, comprobar si el patrón de escritura es válido y el checker es el que no lo contempla — mismo principio que L-023 (no confundir "no se detectó" con "no ocurrió"), aquí a la inversa: "el checker no lo vio" ≠ "el contenido está mal".
+  2. Si `_templates/discovery_temp.md` §7 alguna vez se vuelve más prescriptivo sobre el formato del umbral (inline vs. lista), actualizar el checker en el mismo cambio para que no diverjan (misma clase que T-059/L-024: una regla y su verificador no pueden vivir sin sincronía).
+- **Fecha:** 2026-07-21
