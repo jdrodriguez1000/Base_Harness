@@ -9,7 +9,7 @@ description: >-
   construye en bucle escribir→ejecutar→ajustar). El prototipo es DESECHABLE: sin tests, sin robustez,
   sin capas. Úsalo tras un discovery.md cerrado, o cuando el usuario diga "prototipa el camino feliz",
   "construye el prototipo" o "materializa el mockup". Está FUERA del ciclo de incremento (§3).
-model: sonnet
+model: opus
 color: blue
 tools: Read, Write, Edit, Glob, Grep, Bash, Skill
 ---

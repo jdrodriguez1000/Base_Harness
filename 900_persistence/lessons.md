@@ -40,6 +40,7 @@
 | L-028 | La conformidad no quedó registrada al cerrar la prueba de BanKApp_1 pese a ser un paso obligatorio de `closing-protocol` — mismo patrón que L-024 (declarar ≠ consumir), esta vez sobre un paso del skill y no un campo de `project.yaml` | 2026-07-22 |
 | L-029 | Un cambio de alcance pedido por el humano en vivo durante la entrevista (login demo + PDF ficticio) quedó solo como nota al pie del discovery, sin decisión registrada en `decisions.md` | 2026-07-22 |
 | L-030 | Una pregunta de la entrevista (Q11) no se preguntó realmente: el log la registra con la pregunta redactada a posteriori por el agente, declarado con honestidad pero inflando el conteo | 2026-07-22 |
+| L-031 | `model:` es frontmatter propietario de Claude Code; cablear modelos en `template/.claude/agents/` acopla el molde a un proveedor, y `register-harness` los mapea con una tabla hardcodeada (mismo patrón que L-003) | 2026-07-22 |
 
 ## Formato
 
@@ -297,4 +298,12 @@
 - **Cómo aplicarlo:**
   1. Si un agente sintetiza una pregunta que no se formuló literalmente (p. ej. para documentar una inferencia hecha a partir de otras respuestas), debería marcarse explícitamente como tal en el log (p. ej. "inferida, no preguntada"), no mezclarse sin distinción con las preguntas reales.
   2. Sin tarea correctiva propia todavía: no se ha repetido lo suficiente como para justificar un check de conformidad dedicado: si reaparece, considerar sumarlo al alcance de T-039 (motor de traza) o a un check nuevo de `conformance.sh`.
+- **Fecha:** 2026-07-22
+
+### L-031 — `model:` es frontmatter propietario de Claude Code; cablear modelos en el molde acopla a un proveedor
+- **Contexto:** Análisis de asignación de modelos a los cuatro agentes de etapa (D-039): `prototype-builder` sube a opus vía el campo `model:` de `template/.claude/agents/prototype-builder.md`.
+- **Problema:** `model:` es un campo de frontmatter propietario de Claude Code; no existe un equivalente universal en Codex/opencode/Gemini. `register-harness` ya traduce modelos por herramienta (p. ej. `openai/gpt-5.6-luna`/`-terra`, `gemini-3-flash`/`-pro`) pero lo hace con una **tabla hardcodeada** — el mismo patrón frágil que ya marcó **L-003** (el inventario de agentes/skills de `register-harness` no crece solo cuando se añaden arquetipos nuevos). Cambiar el modelo de un agente en el molde obliga a tocar tres sitios (el agente, la tabla de `register-harness`, y cualquier copia ya provisionada) y nada verifica que sigan alineados. Roza el requisito fundacional de este proyecto: "agnóstico al agente".
+- **Solución / aprendizaje:** No se corrigió en esta sesión (fuera de alcance, se registra como hallazgo). El diseño correcto probablemente separa "nivel de capacidad requerido" (una etiqueta agnóstica, p. ej. alto/medio/bajo) de "modelo concreto por herramienta" (la traducción, que sí puede vivir en una tabla, pero versionada y auditada, no hardcodeada sin verificación).
+- **Cómo aplicarlo:**
+  1. Nueva tarea (T-070): desacoplar la asignación de modelos del frontmatter propietario, o al menos verificar mecánicamente que el mapeo de `register-harness` sigue alineado con los agentes reales del molde cada vez que uno cambia de modelo.
 - **Fecha:** 2026-07-22

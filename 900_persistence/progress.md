@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-22 | Diagnóstico del hueco de observabilidad (la traza de ejecución no existe en absoluto, T-039 mal alcanzada) y diseño de `_trace/trace.md` (D-040); análisis de asignación de modelos a los cuatro agentes de etapa, `prototype-builder` sube a opus (D-039); hallazgo de acoplamiento a proveedor en `model:` (L-031) | completado | `#2026-07-22--diagnóstico-del-hueco-de-observabilidad-la-traza-de-ejecución-no-existe-en-absoluto-t-039-mal-alcanzada-y-diseño-de-_tracetracemd-d-040-análisis-de-asignación-de-modelos-a-los-cuatro-agentes-de-etapa-prototype-builder-sube-a-opus-d-039-hallazgo-de-acoplamiento-a-proveedor-en-model-l-031` |
 | 2026-07-22 | Primera evidencia de T-061 en dominio fintech (BanKApp_1): commit por etapa generaliza sin intervención (cierra L-009/L-013/L-019/L-023 con evidencia cruzada), cinco hallazgos nuevos H1-H5 (L-027…L-030), T-055 marcada bloqueante, deleción confirmada de `T-027_procedimiento.md` (D-038) | completado | `#2026-07-22--primera-evidencia-de-t-061-en-dominio-fintech-bankapp_1-commit-por-etapa-generaliza-sin-intervención-cierra-l-009l-013l-019l-023-con-evidencia-cruzada-cinco-hallazgos-nuevos-h1-h5-l-027l-030-t-055-marcada-bloqueante-deleción-confirmada-de-t-027_procedimientomd-d-038` |
 | 2026-07-21 | Cierre formal por decisión del humano de T-027/T-024/T-026 (D-037); T-050 cerrada como cubierta por T-057; T-056 degradada a en espera; nueva tarea T-061 (prueba de generalización multi-dominio) | completado | `#2026-07-21--cierre-formal-por-decisión-del-humano-de-t-027t-024t-026-d-037-t-050-cerrada-como-cubierta-por-t-057-t-056-degradada-a-en-espera-nueva-tarea-t-061-prueba-de-generalización-multi-dominio` |
 | 2026-07-21 | Corrida 4 de T-027 EXITOSA de punta a punta (primera en cerrar así, ningún hallazgo L-005…L-009 reaparece; campo cerrado de actores de T-054 usado en producción real por primera vez); T-059 y T-060 completadas (sincronización raíz↔molde de `closing-protocol`, bug real en check A8 de `conformance.sh`); T-054 completada (campo cerrado de actores); L-025 (checkpoints intra-etapa saltados) y L-026 (falso negativo del Gatekeeper multi-condición) registradas; T-056 suspendida | completado | `#2026-07-21--corrida-4-de-t-027-exitosa-de-punta-a-punta-primera-en-cerrar-así-ningún-hallazgo-l-005l-009-reaparece-campo-cerrado-de-actores-de-t-054-usado-en-producción-real-por-primera-vez-t-059-y-t-060-completadas-sincronización-raízmolde-de-closing-protocol-bug-real-en-check-a8-de-conformancesh-t-054-completada-campo-cerrado-de-actores-l-025-checkpoints-intra-etapa-saltados-y-l-026-falso-negativo-del-gatekeeper-multi-condición-registradas-t-056-suspendida` |
@@ -53,6 +54,36 @@
 ---
 
 ## Historial
+
+### [2026-07-22] — Diagnóstico de observabilidad, diseño de `_trace/trace.md` y análisis de modelos (prototype-builder sube a opus)
+
+- **Estado:** completado
+
+**Origen: dos preguntas del humano, sin código nuevo del harness todavía (una plantilla).** Sesión de análisis y diseño, no de implementación de los cuatro agentes de etapa. Se trabajó **solo observabilidad**, separada a propósito de evaluación (acordado con el humano).
+
+**1) Asignación de modelos a los agentes del molde (D-039).** El humano preguntó si `onboarding-reader` podía bajar a haiku y si `onboarding-writer`/`prototype-builder` podían subir a opus.
+- `onboarding-reader` **se queda en sonnet**: pese a la regla "cita, no interpretes", el cruce transversal (§6↔§9, §5↔§6, §7↔§2), la distinción `n/a`/`ausente`/`cubierta` y la regla anti-fabricación por intención (L-012) son razonamiento caro; es el agente autor de las lecciones más costosas (L-005, L-006, L-008, L-012, L-018) y sus errores son silenciosos y aguas arriba. En BanKApp_1 (T-061) L-005…L-009 no reaparecieron con sonnet.
+- `onboarding-writer` **se queda en sonnet**: opera en condiciones benignas (insumos estáticos, plantilla-esqueleto, 7+7 checks, gate humano inmediato); sus lecciones (L-011, L-023) son fallos de contrato/procedimiento, no de capacidad.
+- `prototype-builder` **sube a opus** — cambio ya aplicado por el humano en `template/.claude/agents/prototype-builder.md` durante esta sesión. Es el único agente agéntico (bucle escribir→ejecutar→ajustar); sus fallos (L-019, L-025, L-020) apuntan a capacidad, no a diseño.
+- Queda pendiente **validar el cambio como experimento controlado**: reejecutar la etapa de prototipado de BanKApp_1 con opus y comprobar si L-019/L-025 reaparecen (T-072). Si reaparecen, es fallo de diseño, no de modelo.
+- **Hallazgo lateral → L-031:** `model:` es frontmatter propietario de Claude Code; cablearlo en `template/.claude/agents/` acopla el molde a un proveedor, rozando el requisito fundacional de agnosticismo. `register-harness` mapea equivalentes por herramienta con una tabla hardcodeada — mismo patrón frágil que L-003.
+
+**2) Diagnóstico del hueco de observabilidad.** El humano señaló que hoy, para saber qué hizo un agente, siempre hay que volver a la terminal de `Base_Harness` en vez de encontrar la evidencia en la carpeta del proyecto ejecutado.
+- De las cuatro capas posibles, solo existen dos **en el proyecto ejecutado**: artefactos (`_prototype/*.md`, `_persistence/`) y conformidad mecánica (`_tools/conformance.sh` + `git log`), ambas implementadas y en uso desde `closing-protocol` Paso 5.4.
+- La **traza de ejecución** (¿qué leyó, en qué orden?) **no existe en absoluto** en el proyecto: cero código, cero formato. Solo vive en el transcript de la terminal (propietario, no versionable, se pierde al cerrar/compactar). Consecuencia: los checks R2, R8, W0, W1, P1 escritos en los prompts son hoy **inverificables**.
+- **T-039 estaba mal alcanzada:** se redactó como "motor de traza + checker" pero solo se pensó el checker; la pregunta de dónde sale la traza y dónde se persiste seguía sin responder. El propio encabezado de `conformance.sh` lo admite.
+- **Aclaración importante:** seguir usando la terminal de `Base_Harness` **no es deuda** — allí vive la comparación **entre** corridas; en la carpeta del proyecto ejecutado vive (o debería vivir) la evidencia de **una** corrida. Son capas distintas, no una sustituyendo a la otra.
+
+**3) Decisión de diseño: `_trace/trace.md` (D-040).** Un único archivo compartido, append-only, con esquema fijo (`# | agente | modelo | evento | objetivo | detalle | ts`, ocho tipos de evento: `start`/`read`/`write`/`ask`/`confirm`/`commit`/`close`/`end`), autodeclarado (contrastable contra `git log` y artefactos, no confiable per se), anexado **durante** la ejecución (no al cerrar — evita el fallo de L-030). Regla de oro: si el agente no puede observarlo, no va en la traza (`tokens` queda fuera por ahora; `modelo` sí y es lo más urgente, sin él el experimento de opus es infalsificable). **Conflicto pendiente, bloquea la primera corrida real:** los checks de Single Writer (R6/W4/P7) reprobarían falsamente a los cuatro agentes si todos escriben en `_trace/trace.md` — falta declarar la excepción en los tres checks y en `conformance.sh`.
+
+**Entregable de la sesión:** `template/_templates/trace_temp.md` (único archivo nuevo). El humano modificó `template/.claude/agents/prototype-builder.md` (model: sonnet → opus).
+
+**T-055 y T-061:** sin avance esta sesión (quedan como al cierre anterior); T-055 sigue bloqueante de la etapa de prototipado de BanKApp_1, T-061 sigue en progreso con evidencia parcial.
+
+**Conformidad:** no aplica ejecutar `conformance.sh` sobre `Base_Harness` (no es un proyecto instanciado del molde con `_prototype/`); no se ejecutó sobre ningún proyecto de prueba en esta sesión.
+
+- **Siguiente paso:** instrumentar los cuatro agentes de etapa para anexar a `_trace/trace.md` (T-067) y declarar la excepción a Single Writer antes de la próxima corrida sobre BanKApp_1 o cualquier proyecto nuevo.
+- **Referencias:** [[tasks]] T-066…T-072, T-039, T-055, T-061; [[decisions]] D-039, D-040; [[lessons]] L-031.
 
 ### [2026-07-22] — Primera evidencia de T-061 en dominio fintech (BanKApp_1): generalización confirmada con reservas, cinco hallazgos nuevos, T-055 bloqueante
 

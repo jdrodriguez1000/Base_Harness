@@ -48,7 +48,7 @@
 | T-036 | G4 — Procedimiento del gate de madurez Prototipo→MVP (evidencia contra el Gatekeeper, feature freeze, registro de la decisión) | pendiente | media |
 | T-037 | G6 — Implementar E12 (la sesión principal guarda su plan en memoria antes de crear subagentes) en `AGENTS.md` | pendiente | media |
 | T-038 | G8 — Reanudación (E5) de `prototype-protocol`: hoy el bucle agéntico no deja checkpoint | pendiente | media |
-| T-039 | G9 — Motor de traza + checker de conformidad determinista (E13/§10): los checks ya están escritos en los prompts pero nadie los ejecuta | pendiente | media |
+| T-039 | G9 — Motor de traza + checker de conformidad determinista (E13/§10): los checks ya están escritos en los prompts pero nadie los ejecuta | pendiente — mal alcanzada (solo tenía resuelto el checker, no de dónde sale la traza); depende ahora de T-066/D-040, reformulación en T-071 | media |
 | T-040 | G2 — Completar E10 en `startup-protocol` (verificar ambiente + prueba de sanidad) | pendiente | baja |
 | T-041 | Alinear la semántica de `cubierta` para §7 entre `ingest-protocol` (métrica+umbral) y `discovery-protocol` (métrica+umbral+método) (L-011) | completada (alcance ampliado a `interview-protocol`, tercer skill afectado) | alta |
 | T-042 | Desacoplar el commit de etapa del gate humano en `ingest-protocol` y `discovery-protocol`: el disparador es la salida de etapa, no la aprobación; si el artefacto está en borrador se confirma igual con `[sin confirmar]` en el mensaje (L-013). Reabre parcialmente T-030 | completada | alta |
@@ -75,6 +75,13 @@
 | T-063 | Check de conformidad B7: verificar que el cierre de sesión más reciente en `progress.md` deja traza del veredicto de `conformance.sh` (L-028) | pendiente | media |
 | T-064 | Corregir `interview-protocol` para que los ejemplos del Gatekeeper cuantitativo no traigan umbrales numéricos listos para firmar, solo la forma del umbral (L-027, riesgo de anclaje) | pendiente | media |
 | T-065 | Regla: todo cambio de alcance pedido por el humano durante la entrevista (excepción a una exclusión ya declarada, ampliación no prevista) se registra como decisión en `decisions.md`, no solo en prosa del discovery (L-029) | pendiente | media |
+| T-066 | Formato de traza normalizado + productor por herramienta (hooks en Claude Code, adaptadores en las demás, autodeclaración como fallback); precondición real de T-039 | pendiente — parcialmente arrancada, plantilla `template/_templates/trace_temp.md` ya existe (D-040) | alta |
+| T-067 | Instrumentar los cuatro agentes de etapa para anexar a `_trace/trace.md` durante la ejecución + declarar la excepción a Single Writer en R6 (reader)/W4 (writer)/P7 (prototipador) y en `conformance.sh` | pendiente — bloquea la primera corrida real con traza | alta |
+| T-068 | Ejecutar los oráculos de trazabilidad ya escritos y nunca corridos (E1–E6 del reader, T1–T7 del writer, T1–T2 del prototipador); empezar por E1/E2 (match de subcadena, deterministas y baratos) dentro de `conformance.sh` | pendiente — posible fusión con T-055 (el "reporte de conformidad regla dura → evidencia" que pide T-055 podría ser un oráculo ejecutado en el borde discovery→prototipo) | alta |
+| T-069 | Replay determinista de la entrevista: fijar la conversación completa (preguntas y respuestas), no solo el brief, para que dos corridas del mismo fixture sean comparables (cierra L-021) | pendiente | media |
+| T-070 | Desacoplar la asignación de modelos del frontmatter propietario (`model:`) o verificar mecánicamente que el mapeo hardcodeado de `register-harness` sigue alineado con los agentes reales del molde (L-031, mismo patrón que L-003) | pendiente | media |
+| T-071 | Reformular T-039 para que dependa explícitamente del formato de traza (T-066): hoy solo tenía resuelto el checker, no de dónde sale la traza ni dónde se persiste | pendiente | media |
+| T-072 | Validar el cambio a opus de `prototype-builder` (D-039) como experimento controlado: reejecutar la etapa de prototipado de BanKApp_1 y comprobar si L-019/L-025 reaparecen; si reaparecen, es fallo de diseño y toca construir el check, no subir más el modelo | pendiente | alta |
 
 ## Convención de ID
 
@@ -139,6 +146,20 @@
       Prioridad: media · Responsable: — · Ref: [[lessons]] L-027, [[tasks]] T-061
 - [ ] T-065 — Regla nueva: todo cambio de alcance pedido por el humano **durante la entrevista** (excepción a una exclusión ya declarada en el brief/discovery, ampliación no prevista) se registra como decisión en `decisions.md` del proyecto, además de citarse en el discovery. Motivo (L-029): en `BanKApp_1` la excepción de login demo + PDF ficticio (pedida en Q8) contradice la exclusión §9 y quedó solo como nota al pie, sin ADR.
       Prioridad: media · Responsable: — · Ref: [[lessons]] L-029, [[tasks]] T-061
+- [ ] T-066 — Diseñar el **formato de traza normalizado** y su productor por herramienta: hooks nativos en Claude Code, adaptadores equivalentes en Codex/opencode/Gemini, y autodeclaración (lo que ya hace `_trace/trace.md`) como fallback cuando no hay hooks disponibles. Es la precondición real de T-039 (sin esto, el checker no tiene qué leer). Enlaza con T-004 (evaluar hooks SessionStart/Stop). Parcialmente arrancada: la plantilla `template/_templates/trace_temp.md` ya define el esquema (D-040), falta el productor.
+      Prioridad: alta · Responsable: — · Ref: [[decisions]] D-040, [[tasks]] T-039, T-004, T-067
+- [ ] T-067 — Instrumentar los cuatro agentes de etapa (`onboarding-reader`, `onboarding-interviewer`, `onboarding-writer`, `prototype-builder`) para que anexen a `_trace/trace.md` durante la ejecución (no al cerrar), y declarar explícitamente la excepción a Single Writer en los checks R6 (reader), W4 (writer) y P7 (prototipador), más el check equivalente en `conformance.sh`. Motivo: hoy los cuatro agentes escribiendo en el mismo archivo compartido haría que `conformance.sh` los reprobara a todos con fallos falsos de Single Writer. Bloquea la primera corrida real con traza.
+      Prioridad: alta · Responsable: — · Ref: [[decisions]] D-040, [[tasks]] T-066, T-057
+- [ ] T-068 — Ejecutar los oráculos de trazabilidad ya escritos y hoy nunca corridos: E1–E6 del `onboarding-reader`, T1–T7 del `onboarding-writer`, T1–T2 del `prototype-builder`. Empezar por E1/E2 (match de subcadena, deterministas y baratos) dentro de `conformance.sh` — mejor relación evidencia/esfuerzo del backlog actual. Ojo: toca directamente T-055 (el "reporte de conformidad regla dura → evidencia" que pide T-055 podría ser, en esencia, un oráculo ejecutado en el borde discovery→prototipo; puede que no sean dos tareas distintas, decidir al implementar).
+      Prioridad: alta · Responsable: — · Ref: [[tasks]] T-055, T-057, [[decisiones]] D-023, D-026
+- [ ] T-069 — Replay determinista de la entrevista: fijar como fixture no solo el `client_brief.md` sino la conversación completa (preguntas y respuestas), para que dos corridas del mismo fixture sean comparables. Cierra L-021 (el fixture fija el brief pero no la entrevista, así que dos corridas no son comparables entre sí; sin corridas comparables no hay evaluación posible, solo anécdota).
+      Prioridad: media · Responsable: — · Ref: [[lessons]] L-021, [[tasks]] T-056, T-027
+- [ ] T-070 — Desacoplar la asignación de modelos del frontmatter propietario `model:` (Claude Code), o al menos verificar mecánicamente que el mapeo hardcodeado de `register-harness` (equivalentes por herramienta) sigue alineado con los agentes reales del molde cada vez que uno cambia de modelo. Motivo (L-031): cablear modelos en `template/.claude/agents/` roza el requisito fundacional de agnosticismo al agente; mismo patrón frágil que L-003.
+      Prioridad: media · Responsable: — · Ref: [[lessons]] L-031, L-003, [[decisions]] D-039
+- [ ] T-071 — Reformular T-039 para que dependa explícitamente del formato de traza (T-066): la redacción actual ("motor de traza + checker") solo tenía resuelto el checker; la pregunta de dónde sale la traza y dónde se persiste quedaba sin responder hasta el diseño de `_trace/trace.md` (D-040).
+      Prioridad: media · Responsable: — · Ref: [[tasks]] T-039, T-066, [[decisions]] D-040
+- [ ] T-072 — Validar el cambio a opus de `prototype-builder` (D-039) como experimento controlado: reejecutar la etapa de prototipado de `BanKApp_1` (o cualquier proyecto de T-061) con opus y comprobar si L-019/L-025 reaparecen. Si reaparecen, es fallo de diseño del skill y toca construir el check correspondiente, no seguir subiendo el modelo.
+      Prioridad: alta · Responsable: — · Ref: [[decisions]] D-039, [[lessons]] L-019, L-025, [[tasks]] T-061
 
 ## En progreso
 
