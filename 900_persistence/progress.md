@@ -11,6 +11,7 @@
 
 | Fecha | Hito | Estado | Ancla |
 |---|---|---|---|
+| 2026-07-22 | Diseño agnóstico de T-055 (contrato verificable de reglas duras discovery→prototipo): criterio y taxonomía de 5 formas verificables validados en papel contra dos dominios (D-042); riesgo de sobreajuste al dominio fintech registrado (L-035); plan de implementación en 5 puntos (T-077…T-081); hallazgos colaterales en T-062 (a reformular) y T-063 (colisión de ID) | completado (diseño; implementación pendiente) | `#2026-07-22--diseño-agnóstico-de-t-055-contrato-verificable-de-reglas-duras-discoveryprototipo-criterio-y-taxonomía-de-5-formas-verificables-validados-en-papel-contra-dos-dominios-d-042-riesgo-de-sobreajuste-al-dominio-fintech-registrado-l-035-plan-de-implementación-en-5-puntos-t-077t-081-hallazgos-colaterales-en-t-062-a-reformular-y-t-063-colisión-de-id` |
 | 2026-07-22 | Excepción a Single Writer + traza de ejecución instrumentada en los cuatro agentes de etapa (T-067); consumidor de la traza en la sección D de `conformance.sh` (T-071); corrección sobre versionado de la traza en `git-protocol.md`; BanKApp_1 cancelada, se abre BanKApp_2 (D-041) | completado | `#2026-07-22--excepción-a-single-writer--traza-de-ejecución-instrumentada-en-los-cuatro-agentes-de-etapa-t-067-consumidor-de-la-traza-en-la-sección-d-de-conformancesh-t-071-corrección-sobre-versionado-de-la-traza-en-git-protocolmd-bankapp_1-cancelada-se-abre-bankapp_2-d-041` |
 | 2026-07-22 | Diagnóstico del hueco de observabilidad (la traza de ejecución no existe en absoluto, T-039 mal alcanzada) y diseño de `_trace/trace.md` (D-040); análisis de asignación de modelos a los cuatro agentes de etapa, `prototype-builder` sube a opus (D-039); hallazgo de acoplamiento a proveedor en `model:` (L-031) | completado | `#2026-07-22--diagnóstico-del-hueco-de-observabilidad-la-traza-de-ejecución-no-existe-en-absoluto-t-039-mal-alcanzada-y-diseño-de-_tracetracemd-d-040-análisis-de-asignación-de-modelos-a-los-cuatro-agentes-de-etapa-prototype-builder-sube-a-opus-d-039-hallazgo-de-acoplamiento-a-proveedor-en-model-l-031` |
 | 2026-07-22 | Primera evidencia de T-061 en dominio fintech (BanKApp_1): commit por etapa generaliza sin intervención (cierra L-009/L-013/L-019/L-023 con evidencia cruzada), cinco hallazgos nuevos H1-H5 (L-027…L-030), T-055 marcada bloqueante, deleción confirmada de `T-027_procedimiento.md` (D-038) | completado | `#2026-07-22--primera-evidencia-de-t-061-en-dominio-fintech-bankapp_1-commit-por-etapa-generaliza-sin-intervención-cierra-l-009l-013l-019l-023-con-evidencia-cruzada-cinco-hallazgos-nuevos-h1-h5-l-027l-030-t-055-marcada-bloqueante-deleción-confirmada-de-t-027_procedimientomd-d-038` |
@@ -55,6 +56,38 @@
 ---
 
 ## Historial
+
+### [2026-07-22] — Diseño agnóstico de T-055 (contrato verificable discovery→prototipo): criterio + taxonomía de 5 formas validados en papel contra dos dominios (D-042)
+
+- **Estado:** completado (diseño; implementación pendiente)
+
+**Origen: continuación directa de la sesión anterior (commit `0a6ac44`), que dejó T-055 pendiente y bloqueante de la etapa de prototipado de BanKApp_2 (T-073).** Sesión de **diseño puro, sin cambios en el repo** — git quedó limpio al cierre, ningún archivo del molde se tocó. El humano planteó la pregunta crítica antes de tocar código: ¿el arreglo obvio para T-055 serviría para cualquier dominio futuro o solo para el caso fintech (BanKApp) que lo originó? Se acordó diseñar la solución de forma agnóstica y validarla en papel contra dos dominios ANTES de escribir una sola línea de implementación.
+
+**Hallazgo de partida.** `template/_templates/discovery_temp.md` no tiene sección de reglas duras como campo cerrado: hoy viven diluidas en la prosa de §1 y §6. Por eso "recálculo en tiempo real" (el hueco de BanKApp, H2/L-020) pudo cruzar el gate — no había casilla que rellenar mal, simplemente no había casilla.
+
+**Riesgo detectado.** El enunciado natural del arreglo ("toda regla dura numérica debe traer fórmula y cifras base") está sobreajustado al dominio fintech que lo originó. En un dominio sin cálculo (se probó con una app de aprendizaje de inglés, deliberadamente lejana), reglas duras perfectamente verificables no tienen fórmula alguna, y el check quedaría invertido: rechazaría reglas válidas (un umbral, una secuencia) y aceptaría por descarte la que sí era subdeterminada (una evaluación sin criterio de comparación).
+
+**Criterio agnóstico adoptado (D-042).** Una regla dura está CERRADA si existe un **ejercicio concreto** que la pone a prueba: un estado/entrada de partida y un resultado observable esperado. "Fórmula + cifras base" deja de ser el criterio general y pasa a ser la evidencia mínima de una sola forma entre cinco: **Cálculo** (entrada→salida por fórmula), **Umbral** (métrica+comparador+valor), **Invariante** (condición que nunca se viola), **Secuencia** (A precede/dispara a B), **Límite** (comportamiento al pasar el borde). Regla que no encaja en ninguna forma = discrepancia sin resolver, mismo tratamiento que L-006 (hueco declarado, nunca completado por el agente).
+
+**Validación en papel contra dos dominios (antes de construir, como pidió el humano).**
+- **Fintech (BanKApp):** "recálculo del plan de abonos en tiempo real" → forma Cálculo, pero la columna *ejercicio* es imposible de rellenar sin fórmula ni cifras base → hueco declarado en el discovery, antes de construir. El defecto aparece exactamente donde debía.
+- **Aprendizaje de inglés (contraejemplo deliberadamente lejano, sin ninguna regla de cálculo):** "no avanza de lección sin 3 aciertos" → Umbral (2→bloqueado, 3→avanza); "tras fallar se muestra la respuesta correcta" → Secuencia; "tarjeta fallada se reprograma a mañana" → Cálculo (día D→D+1); "la pronunciación se evalúa contra el audio de referencia" → no encaja en ninguna forma → hueco.
+- **Conclusión:** las tres primeras pasan sin fórmula alguna y la subdeterminada se rechaza en ambos dominios — la taxonomía no privilegia lo numérico. Diseño **terminado y validado**; la implementación **no se hizo** en esta sesión.
+
+**Plan de implementación en 5 puntos, ahora tareas propias (T-077…T-081), en este orden:** (1) `discovery_temp.md` gana la tabla de campo cerrado `RD-n · enunciado · forma · ejercicio · actor/paso de §6`; (2) `interview-protocol` elicita las reglas duras del camino feliz; (3) `discovery-protocol` rellena la tabla, regla sin forma/ejercicio → hueco declarado; (4) `prototype-protocol` emite `_prototype/rule_evidence.md` antes del gate, con veredicto por RD-n incluyendo **no ejercitada** (deliberado, hace visible L-020 en vez de taparlo); (5) `conformance.sh` gana check A11 (forma+ejercicio) y A12 (cobertura de `rule_evidence.md`).
+
+**Decisión abierta, sin resolver — pendiente del humano.** Dónde ubicar la sección nueva en `discovery_temp.md`. Conceptualmente va junto a §6 (camino feliz), pero insertarla ahí renumera §6–§10, numeración cableada en la tabla de cobertura de `ingest-protocol`, en la agenda de `interview-protocol` y en varios checks de `conformance.sh`. Recomendación dada (sin decidir): añadirla como **§11 al final** — cuesta coherencia narrativa, ahorra un refactor transversal con riesgo de referencias rotas. Bloquea T-077.
+
+**Hallazgos colaterales verificados en el código.** T-062 (check A11 tal como estaba enunciado, "verificar cifras/fórmula cuando se declara regla dura numérica") hereda el sesgo fintech y **debe reformularse**, no implementarse tal cual: A11 pasa a ser el consumidor de esta taxonomía (absorbido por T-081). T-063 pide un check nuevo "B7", pero ese ID **ya está ocupado** en `template/_tools/conformance.sh` (línea ~363: "el prototipo precede al gate", cubierto por D4) — colisión de ID, T-063 necesita otro identificador.
+
+**Lección registrada (L-035):** un arreglo derivado de un solo caso (fintech) tiende a codificar el accidente de ese dominio como si fuera el criterio general; la prueba honesta es un contraejemplo deliberadamente lejano, no el mismo dominio otra vez. Aplica directamente a T-061 (generalización multi-dominio), que hoy solo tiene evidencia de un dominio.
+
+**Conformidad de este repo (`Base_Harness`) en el cierre:** `sh template/_tools/conformance.sh .` → **CONFORME** (3 ok, 0 fallos, 0 avisos, 9 omitidos — el repo del harness no es un proyecto instanciado; C1/C2 sobre los agentes de sesión pasan; sección D omitida por no existir `_trace/trace.md` en este repo).
+
+**Sin archivos tocados** (sesión de diseño/conversación; `git status` limpio al cierre).
+
+- **Siguiente paso:** el humano decide la ubicación de la sección de reglas duras en `discovery_temp.md` (§11 recomendado); con esa decisión, implementar T-077…T-081 en orden antes de construir el prototipo de BanKApp_2 (T-073, sigue bloqueada por T-055).
+- **Referencias:** [[tasks]] T-055, T-062, T-063, T-077, T-078, T-079, T-080, T-081, T-061, T-073; [[decisions]] D-042; [[lessons]] L-035, L-020, L-006.
 
 ### [2026-07-22] — Excepción a Single Writer + traza instrumentada en los cuatro agentes (T-067), consumidor en `conformance.sh` (T-071), corrección de versionado en `git-protocol.md`, BanKApp_1 cancelada → BanKApp_2 (D-041)
 
