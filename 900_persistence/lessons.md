@@ -41,6 +41,9 @@
 | L-029 | Un cambio de alcance pedido por el humano en vivo durante la entrevista (login demo + PDF ficticio) quedó solo como nota al pie del discovery, sin decisión registrada en `decisions.md` | 2026-07-22 |
 | L-030 | Una pregunta de la entrevista (Q11) no se preguntó realmente: el log la registra con la pregunta redactada a posteriori por el agente, declarado con honestidad pero inflando el conteo | 2026-07-22 |
 | L-031 | `model:` es frontmatter propietario de Claude Code; cablear modelos en `template/.claude/agents/` acopla el molde a un proveedor, y `register-harness` los mapea con una tabla hardcodeada (mismo patrón que L-003) | 2026-07-22 |
+| L-032 | `conformance.sh` no implementaba ningún check de Single Writer; el riesgo anticipado de falsos fallos al instrumentar la traza en los cuatro agentes no existía — verificar antes de anticipar consecuencias | 2026-07-22 |
+| L-033 | Dos errores propios en la sección D de `conformance.sh`: un check se etiquetó R2 sin serlo (R2 es "confirmar antes de leer", no "leer antes de escribir") y otro pasaba por la razón equivocada hasta que un fixture con dos confirmaciones lo destapó | 2026-07-22 |
+| L-034 | Se anticipó que `_trace/trace.md` quedaría sin commitear por no figurar en la tabla de rutas canónicas de `git-protocol.md`; el `git add -A` del propio protocolo ya la arrastra — diagnóstico sobredimensionado, faltaba documentarlo, no corregirlo | 2026-07-22 |
 
 ## Formato
 
@@ -306,4 +309,25 @@
 - **Solución / aprendizaje:** No se corrigió en esta sesión (fuera de alcance, se registra como hallazgo). El diseño correcto probablemente separa "nivel de capacidad requerido" (una etiqueta agnóstica, p. ej. alto/medio/bajo) de "modelo concreto por herramienta" (la traducción, que sí puede vivir en una tabla, pero versionada y auditada, no hardcodeada sin verificación).
 - **Cómo aplicarlo:**
   1. Nueva tarea (T-070): desacoplar la asignación de modelos del frontmatter propietario, o al menos verificar mecánicamente que el mapeo de `register-harness` sigue alineado con los agentes reales del molde cada vez que uno cambia de modelo.
+- **Fecha:** 2026-07-22
+
+### L-032 — `conformance.sh` no tenía ningún check de Single Writer: el riesgo anticipado no existía
+- **Contexto:** Al diseñar la instrumentación de la traza (T-067), se anticipó que `conformance.sh` reprobaría falsamente a los cuatro agentes de etapa por escribir en el mismo archivo compartido (`_trace/trace.md`), violando en apariencia la regla de Single Writer.
+- **Problema:** Al inspeccionar `conformance.sh` para declarar ahí la excepción, se comprobó que el script **no implementa ningún check de Single Writer** — la regla solo vivía en los prompts de los agentes (R6, I4, W4, P7), evaluada por inspección humana/de agente, nunca por el script. El riesgo anticipado no existía; se había dado por hecho sin verificar.
+- **Solución / aprendizaje:** Se declaró la excepción igual, en los cuatro checks y en `methodology.md` §7 (por si en el futuro se construye un check mecánico de Single Writer, la excepción ya está escrita donde debe leerse). No hizo falta tocar `conformance.sh` para esto.
+- **Cómo aplicarlo:** Antes de "corregir" un conflicto anticipado entre dos reglas del harness, verificar que el conflicto es real inspeccionando el código que lo ejecutaría — un supuesto sin confirmar sobre el comportamiento de una herramienta propia es tan riesgoso como uno sobre el dominio del cliente.
+- **Fecha:** 2026-07-22
+
+### L-033 — Dos errores propios en la sección D de `conformance.sh`: etiqueta equivocada y fixture insuficiente
+- **Contexto:** Implementación de la sección D (consumidor de `_trace/trace.md`, T-071), diez checks D1-D8 que activan checks previamente inverificables de los cuatro agentes.
+- **Problema:** Dos errores detectados durante la propia implementación, no después: (1) se etiquetó como **R2** el check que verifica que el reader **lee después de escribir** en el orden correcto, cuando R2 en realidad es "el humano confirmó el archivo **antes** del primer Read" — un check distinto. Con la etiqueta equivocada, el check daba falsa cobertura: parecía verificar R2 sin hacerlo. (2) El check **D2c** (la escritura de cierre es posterior a la confirmación) pasaba, pero por la razón equivocada: comparaba la escritura de cierre contra la **primera** confirmación registrada en la traza (la de qué archivo ingerir), no contra la confirmación del **gate**. Con una sola confirmación en la traza el bug era invisible; solo se manifestó al construir un fixture con dos confirmaciones distintas.
+- **Solución / aprendizaje:** (1) se separó el check mal etiquetado en **D2b**, que sí implementa la definición real de R2. (2) se corrigió D2c para comparar contra la confirmación del gate específicamente, no la primera que aparezca.
+- **Cómo aplicarlo:** Al escribir un check de conformidad, releer la definición textual exacta del ID que se está activando antes de dar por buena la etiqueta. Al probarlo, construir al menos un fixture con **más de una** instancia del mismo tipo de evento (aquí, dos confirmaciones) — un fixture con una sola instancia de cada evento puede pasar un check por la razón equivocada sin que nada lo delate.
+- **Fecha:** 2026-07-22
+
+### L-034 — La traza sí se versiona: el diagnóstico sobre `git-protocol.md` estaba sobredimensionado
+- **Contexto:** Al revisar el punto de git de esta sesión, se afirmó que `_trace/trace.md` quedaría sin commitear porque no figura en la tabla de rutas canónicas de `git-protocol.md` §4.
+- **Problema:** Al verificarlo, el paso 1 del §3 de `git-protocol.md` es literalmente `git add -A` (y `closing-protocol` hace lo mismo) — así que la traza **sí** se versiona, sin necesitar ningún cambio de código. El diagnóstico inicial sobreestimó el problema; lo que faltaba de verdad era menor: documentar explícitamente que `git add -A` arrastra la traza y añadir el paso de anexar la fila `commit` con el hash, no arreglar una ausencia que no existía.
+- **Solución / aprendizaje:** Se documentó en `git-protocol.md` §3 (paso nuevo: anexar `commit` con el hash) y §4 (subsección "La traza viaja con la etapa": sin commit propio, entra en el de la etapa que la escribió, deliberado porque es evidencia DE la etapa). Se documentaron dos consecuencias inherentes para que nadie intente "corregirlas": la fila `commit` va siempre en el commit siguiente (como `ask`/`confirm`/`close`/`end`) porque necesita el hash para existir, y la cola de la última etapa queda en el árbol de trabajo hasta el cierre de sesión (razón práctica de por qué saltarse el cierre, L-028, deja la última etapa sin versionar).
+- **Cómo aplicarlo:** Antes de declarar un hueco de versionado en un protocolo existente, releer el paso de `git add`/`commit` real en vez de inferirlo de una tabla de rutas que puede estar incompleta por diseño (la tabla documenta rutas *nombradas*, no el alcance real del `add`).
 - **Fecha:** 2026-07-22

@@ -75,6 +75,11 @@ un **bucle agéntico**: escribes, ejecutas, observas y ajustas. Estás **fuera d
   cierre de sesión (D-033).
 - **No cruzas gates (P5):** el Gatekeeper (§7) lo cruza el **humano** con evidencia. Tu trabajo es
   producir el artefacto que **permite recoger** esa evidencia, no declararlo aprobado.
+- **Dejas traza mientras trabajas:** anexas a `_trace/trace.md` una fila por evento **en el momento en
+  que ocurre** (`methodology.md` §7.2; qué anexar y cuándo, en tu skill). Cada iteración del bucle deja
+  su `write` y su `commit`: una sola fila `commit` para todo el bucle es el fallo de **L-025**. Y el
+  `commit` de etapa va **antes** del `ask` del gate — el orden inverso es la firma de **L-019**, que ya
+  reapareció tres veces. Anexar ahí es la única excepción a Single Writer (P7).
 - **Idioma:** comunícate en el idioma del proyecto (por defecto, español).
 
 ## Perfil de conformidad (§10)
@@ -93,7 +98,7 @@ contrato de forma: tu contrato es el propio `discovery.md`, y tu disciplina es d
 | P4 | **Respeta exclusiones §9** | Nada de lo declarado en §9 del discovery aparece construido (guarda anti-*scope creep*) |
 | P5 | **Medio correcto** | El medio del artefacto coincide con el declarado en §6 para ese actor (o con el sustituto más barato justificado) |
 | P6 | **Desechable** | No añadió suite de tests, capa de robustez/errores ni autenticación real; alcance mínimo |
-| P7 | **Ubicación canónica** | Los artefactos viven bajo `_prototype/prototype/`; no tocó `discovery.md`, `interview_document.md` ni `document_extract.md` |
+| P7 | **Ubicación canónica** | Los artefactos viven bajo `_prototype/prototype/`; no tocó `discovery.md`, `interview_document.md` ni `document_extract.md`. **Excepción: `_trace/trace.md`** — log compartido de solo-anexado al que escriben todos los agentes de etapa (D-040); anexar ahí **no** viola Single Writer, pero **modificar o reescribir** filas ya anexadas sí |
 | P8 | **No cruzó el gate** | Informó y cedió; no marcó el Gatekeeper como aprobado (P5) |
 | P9 | **Commit de etapa ejecutado por ti, antes del gate** | En `git log` existe el commit `feat(prototipo): camino feliz del generador` que incluye `_prototype/prototype/`, en **tu** traza consta el `Bash` que lo produjo, y ese `Bash` es **anterior** al turno en que cediste el gate. El informe reporta hash y rama |
 | P10 | **Timebox cargado, no supuesto** | Si el cierre alega *"timebox agotado"*, ese tope consta en §8 del discovery **o** en un acuerdo explícito con el humano en la traza; nunca es un número que aparece por primera vez en el informe de cierre |

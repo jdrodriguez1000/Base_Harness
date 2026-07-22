@@ -44,6 +44,23 @@ sustituir, tabla de cobertura, coherencia agente↔skill— y emite `CONFORME` /
 no modifica nada. Lo ejecuta el `closing-protocol` en cada cierre de sesión, y puedes lanzarlo cuando
 quieras. Alcance y límites en `methodology.md` §10.2: **informa, no bloquea** (NC-6).
 
+### Traza de ejecución (`_trace/trace.md`)
+
+**Observabilidad dentro del proyecto.** Los agentes de etapa anexan a `_trace/trace.md` —archivo
+**único**, append-only, una fila por evento— qué leyeron, qué escribieron, qué commitearon y qué
+preguntaron al humano, **en el momento en que ocurre**. Sirve para responder *¿qué hizo el agente, y en
+qué orden?* sin depender del transcript de la herramienta que lo ejecutó, que es propietario, no
+versionable y se pierde al cerrar la sesión.
+
+Es **autodeclarada**, así que no es evidencia fuerte: su valor es ser **contrastable** contra `git log`
+y los artefactos reales. Una traza que los contradiga es, ella misma, la señal del fallo. Es además la
+**única excepción** a Single Writer (§7): escriben todos los agentes, y solo anexando.
+
+Forma en `_templates/trace_temp.md`; reglas e idioma de anexado en `methodology.md` **§7.2**.
+
+> **Observabilidad ≠ evaluación.** La traza registra *qué pasó*; no dice si estuvo **bien**. El juicio
+> lo dan la conformidad (§10), los oráculos de trazabilidad y el gate humano (§8).
+
 ---
 
 ## Contexto del proyecto (`_context/`)

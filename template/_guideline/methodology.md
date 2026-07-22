@@ -39,6 +39,7 @@ referencias cruzadas.
 | **6** | Gates de aprobación | Gates automáticos vs humanos (GateKeeper) |
 | **7** | Persistencia y trazabilidad | Filesystem como fuente de verdad; Single Writer |
 | 7.1 | · Estado por incremento (`state.yaml`) | Máquina de estado de la slice: espina única + capas etiquetadas |
+| 7.2 | · Traza de ejecución (`_trace/trace.md`) | Log único append-only: qué hizo cada agente y en qué orden |
 | **8** | Evaluación | Cómo se evalúa el **producto** según la naturaleza de la salida |
 | 8.1 | · Flujo de evaluación (ejemplo) | Las tres capas de evaluación de un entregable |
 | **9** | Evolución del harness | Mínima complejidad (E4) y prueba de remoción |
@@ -553,6 +554,11 @@ el trabajo entre sesiones y ante fallos (E1, E5).
 - **Single Writer Rule:** cada archivo de estado tiene **un único responsable de escritura** para evitar
   condiciones de carrera. El `state.yaml` lo escribe **solo el orquestador**; cada **artefacto**
   (`definition`, `spec`, `plan`, código, tests) lo escribe **solo su agente productor**.
+- **Excepción única: la traza de ejecución** (`_trace/trace.md`, §7.2). Es un **log compartido de
+  solo-anexado** al que escriben **todos** los agentes de etapa, y es la **única** excepción admitida a
+  Single Writer. No reintroduce condiciones de carrera porque (a) los agentes de etapa corren **uno a
+  la vez**, con gates humanos en medio, y (b) la operación permitida es **anexar**, nunca modificar ni
+  reordenar lo ya escrito. Un agente que **reescriba** filas ajenas —o propias— sí viola la regla.
 - **Git y reanudación:** commit por etapa con prefijo convencional; el **push** se hace en el cierre
   de sesión (agente *closer*, respetando `auto_push`). Para retomar un incremento interrumpido, la
   sesión principal lee su `state.yaml` y reinvoca al arquetipo del paso pendiente con contexto fresco.
@@ -620,6 +626,64 @@ verificar:                 # paso 10 — evaluadores transversales (por E4)
 
 > **Reanudación y git.** El `state.yaml` vive en la **rama de la slice**; al integrar se **archiva** como
 > registro de trazabilidad. Es el mecanismo que hace **reanudable** un incremento interrumpido (§7).
+
+### 7.2 Traza de ejecución (`_trace/trace.md`)
+
+Archivo **único por proyecto**, append-only, con una fila por evento y el agente declarado en cada
+fila. Responde *¿qué hizo el agente, y en qué orden?* **dentro de la carpeta del proyecto**, sin
+depender del transcript de la herramienta que lo ejecutó —que es propietario, no versionable y se
+pierde al cerrar la sesión—. Su forma la fija **`_templates/trace_temp.md`**.
+
+- **Un solo archivo, no uno por agente.** El **orden global entre etapas es en sí mismo la evidencia**:
+  checks como *"¿el writer leyó el extracto antes de escribir el discovery?"* solo son verificables si
+  todas las etapas viven en una misma secuencia. Un archivo por agente además se rompe cuando un mismo
+  agente se invoca varias veces a lo largo del proyecto.
+- **Se anexa durante la ejecución, no al cerrar.** Una traza redactada al final es el agente
+  reconstruyendo de memoria, no un registro. Si el agente muere a mitad, lo ya anexado sigue siendo
+  evidencia válida.
+- **Es autodeclarada, y por tanto evidencia débil.** El auto-reporte es narrativa, no evidencia (§10).
+  Su valor no es ser confiable sino ser **contrastable**: cada fila se coteja contra `git log` y los
+  artefactos reales, y una traza que los contradiga es, ella misma, la señal del fallo.
+- **Regla de admisión:** si el agente **no puede observarlo**, no va en la traza. Pedirle un dato que no
+  conoce —su consumo de tokens, la hora del reloj— produce un número inventado con apariencia de
+  medido, que es peor que no tenerlo. Los timestamps se obtienen con `date`, no los escribe el modelo.
+- **Única excepción a Single Writer (§7):** escriben todos los agentes de etapa, y solo **anexando**.
+
+> Habilita los checks de conformidad hoy **inverificables** por falta de traza (los del tipo *"¿leyó
+> antes de escribir?"*). La capa de evidencia **dura** —producida por hooks, no autodeclarada— es
+> posterior y reutiliza este mismo formato y esta misma carpeta.
+>
+> **Observabilidad ≠ evaluación.** La traza registra *qué pasó*; no dice si estuvo **bien**. Eso lo
+> deciden la conformidad (§10), los oráculos de trazabilidad y el gate humano (§8).
+
+**Cómo se anexa (idioma canónico).** Con `Bash` y redirección `>>`, **nunca** con `Edit`: editar exige
+releer el archivo entero y abre la puerta a reescribir lo ya anexado, que es justo lo que la regla
+prohíbe. El timestamp lo pone `date`, no el modelo. Los skills usan este idioma; no lo reimplementan:
+
+```sh
+# 1) ABRIR la traza si aún no existe (idempotente: la crea el primer agente que corra).
+#    Instancia desde la plantilla (§5.1) recortando de la cabecera al encabezado de la
+#    tabla — deja fuera las filas de EJEMPLO y las notas del final.
+[ -f _trace/trace.md ] || { mkdir -p _trace
+  sed -n '/^# Traza/,/^|---/p' _templates/trace_temp.md > _trace/trace.md; }
+#    Tras crearla: rellenar los <marcadores> de Meta y borrar el comentario guía
+#    de "## Registro" (única edición legítima del archivo; ver abajo).
+
+# 2) SIGUIENTE número de secuencia: se cuenta, no se recuerda.
+n=$(( $(grep -c '^| [0-9][0-9][0-9] |' _trace/trace.md) + 1 ))
+
+# 3) ANEXAR una fila (agente y modelo son los propios, del frontmatter).
+printf '| %03d | %s | %s | %s | %s | %s | %s |\n' \
+  "$n" "onboarding-reader" "sonnet" "read" "_context/client_brief.md" "12 páginas" "$(date +%H:%M:%S)" \
+  >> _trace/trace.md
+```
+
+El número de secuencia es **global y correlativo**, y se **cuenta del archivo** en cada anexado: un
+agente no puede llevarlo de memoria porque no sabe cuántas filas escribieron los anteriores. Si dos
+filas comparten número, el orden dejó de ser legible y la traza pierde su única función.
+
+**Única edición legítima:** rellenar la Meta al crear el archivo. Desde la primera fila anexada, el
+archivo es de solo-anexado para todos.
 
 ---
 

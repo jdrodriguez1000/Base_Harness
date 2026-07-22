@@ -29,6 +29,36 @@ humano. Antes actuaron el `onboarding-reader` (skill `ingest-protocol`, solo si 
 
 ---
 
+## Traza de ejecución (transversal, OBLIGATORIA)
+
+Antes del Paso 0 **abres la traza** (`_trace/trace.md`) y desde ahí **anexas una fila por evento, en el
+momento en que ocurre**. El idioma de anexado (crear si no existe, contar la secuencia,
+`printf … >>`) es el de `methodology.md` **§7.2**; no lo reimplementes.
+
+| Cuándo | evento | objetivo | detalle |
+|---|---|---|---|
+| Al arrancar | `start` | — | `invocación #n` |
+| Paso 0 | `read` | `_prototype/interview_document.md` | log de entrevista |
+| Paso 0 | `read` | `_prototype/document_extract.md` | extracto (o *no existe*) |
+| Paso 1, al escribir | `write` | `_prototype/discovery.md` | `borrador` |
+| Paso 3 | `commit` | `<hash>` | mensaje con `[sin confirmar]` |
+| Paso 2, al entregar | `ask` | humano | gate del entregable |
+| Respuesta | `confirm` | humano | aprobado / con cambios |
+| Al cerrar | `write` | `_prototype/discovery.md` | `cerrado` |
+| Paso 3 (2.º commit) | `commit` | `<hash>` | mensaje sin `[sin confirmar]` |
+| Al terminar | `close` + `end` | — | entregable cerrado |
+
+> **Las dos filas `read` del Paso 0 son la evidencia de tus checks W0 y W1.** Que aparezcan **antes** de
+> la primera fila `write` a `discovery.md` es lo que los vuelve verificables: hasta ahora nadie podía
+> comprobar si el extracto se había leído, y **ignorarlo es el fallo más caro del flujo documental**. Si
+> el extracto no existe, anexa igualmente la fila con detalle *"no existe"* — la ausencia declarada
+> distingue "no lo había" de "no lo leí".
+
+> **Excepción a Single Writer.** `_trace/trace.md` es un log compartido: anexar ahí no viola W4.
+> Reescribir filas ya anexadas —tuyas o ajenas— sí.
+
+---
+
 ## Paso 0 — Cargar insumos
 
 Puedes tener **uno o dos** insumos, según si el cliente entregó documentación:

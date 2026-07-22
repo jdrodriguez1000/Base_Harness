@@ -28,6 +28,38 @@ Este skill es **agnóstico al proyecto** y **autónomo**: su insumo es un archiv
 
 ---
 
+## Traza de ejecución (transversal, OBLIGATORIA)
+
+Antes del Paso 0 **abres la traza** (`_trace/trace.md`) y desde ahí **anexas una fila por evento, en el
+momento en que ocurre**. El idioma de anexado (crear si no existe, contar la secuencia,
+`printf … >>`) es el de `methodology.md` **§7.2**; no lo reimplementes.
+
+| Cuándo | evento | objetivo | detalle |
+|---|---|---|---|
+| Al arrancar | `start` | — | `invocación #n` · actor a construir |
+| Paso 0 | `read` | `_prototype/discovery.md` | tipo §3, medio §6, timebox §8 |
+| Paso 0, si §8 = `sin acordar` | `ask` + `confirm` | humano | timebox acordado en vivo |
+| Cada iteración del bucle | `write` | `_prototype/prototype/<archivo>` | qué quedó corriendo |
+| Cada checkpoint del bucle | `commit` | `<hash>` | checkpoint intra-etapa |
+| Paso 3, feature freeze | `close` | — | por qué congeló (camino cubierto / timebox) |
+| Paso 4 | `commit` | `<hash>` | commit de etapa |
+| Al ceder el gate | `ask` | humano | gate del Gatekeeper §7 |
+| Al terminar | `end` | — | resultado de la invocación |
+
+> **El bucle deja varias filas, no una.** Cada iteración que deja algo que corre anexa su `write` y su
+> `commit`. Una traza con una sola fila `commit` para todo el bucle es el fallo de **L-025**: el
+> prototipo se construyó sin los checkpoints intra-etapa que `git-protocol.md` §3.1 exige, y sin ellos
+> no hay puntos de retorno intermedios.
+
+> **`close` antes que el `ask` del gate.** El orden de esas dos filas es la evidencia de tu check **P9**
+> —el commit de etapa precede al gate— y de **P8** —informaste y cediste, no cruzaste—. Un `ask` de gate
+> anexado **antes** del `commit` es la firma exacta de **L-019**, el fallo que ya reapareció tres veces.
+
+> **Excepción a Single Writer.** `_trace/trace.md` es un log compartido: anexar ahí no viola P7.
+> Reescribir filas ya anexadas —tuyas o ajenas— sí.
+
+---
+
 ## Paso 0 — Cargar contexto e insumos
 
 0. **Leer `_context/project.yaml`** — insumo declarado: nombre del proyecto y repositorio. Rige la

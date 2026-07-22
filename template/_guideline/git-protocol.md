@@ -59,11 +59,12 @@ Se ejecuta **antes del commit de etapa** (§3), en cualquier skill que vaya a co
 **El disparador es la salida de etapa, no la aprobación.** En cuanto el artefacto de la etapa queda
 escrito, la etapa confirma —haya gate humano o no, se haya cruzado o no:
 
-1. `git add -A`
+1. `git add -A` — arrastra el artefacto **y** la traza de ejecución (`_trace/trace.md`, §4).
 2. `git commit` con el mensaje del §4, **marcado `[sin confirmar]`** si el artefacto sigue en borrador
    (gate pendiente, saltado o rechazado).
-3. **Reportar** hash corto y rama en el resumen de la etapa.
-4. **No hacer `push`.** El push es del cierre de sesión y respeta `repository.auto_push`.
+3. **Anexar la fila `commit`** a la traza con el hash corto (§7.2 de `methodology.md`).
+4. **Reportar** hash corto y rama en el resumen de la etapa.
+5. **No hacer `push`.** El push es del cierre de sesión y respeta `repository.auto_push`.
 
 Si el gate se cruza **después** (el humano aprueba en la misma sesión o en otra), la aprobación
 produce **su propio commit** —el que marca el artefacto como cerrado—, esta vez sin el marcador. El
@@ -151,6 +152,28 @@ aprobación lleva el mismo mensaje **sin** el marcador.
 
 La entrevista es **append-only y reanudable**: si se cierra en varias sesiones, cada tramo confirma
 con el mismo mensaje. El historial refleja el bucle real, no un cierre ficticio.
+
+### La traza viaja con la etapa
+
+`_trace/trace.md` (`methodology.md` §7.2) **no tiene commit propio ni mensaje propio**: entra en el
+commit de la etapa que la escribió, porque el `git add -A` del §3 la arrastra. Es deliberado —la traza
+es *evidencia de* la etapa, no un entregable aparte— y hace que el artefacto y el registro de cómo se
+produjo queden en el **mismo** punto de retorno.
+
+Dos consecuencias que conviene conocer antes de "arreglarlas":
+
+- **La fila `commit` va siempre en el commit SIGUIENTE.** Lleva el hash, así que solo puede anexarse
+  una vez que el commit existe. Igual que las filas posteriores (`ask`, `confirm`, `close`, `end`).
+  Las recoge el `git add -A` de la etapa siguiente o, al final, el del cierre de sesión. **No** es un
+  error ni hay que forzar un commit extra para "cuadrarlo": un registro que se escribe después del
+  hecho que registra no puede ir dentro de ese hecho.
+- **La cola de la última etapa queda en el árbol de trabajo** hasta que el `closing-protocol` la
+  confirma. Es la razón práctica de que saltarse el cierre de sesión (L-028) deje la última etapa con
+  su evidencia sin versionar.
+
+**Nunca se reescribe para versionarla mejor.** Reordenar, resumir o rellenar filas a posteriori
+destruye justamente lo que la hace evidencia (`methodology.md` §7.2). Un historial incómodo es un
+historial verdadero.
 
 ---
 

@@ -74,6 +74,10 @@ Tienes **uno o dos insumos** según si el cliente entregó documentación:
 - **Observable y evaluable:** produces un entregable trazable (`discovery.md`) auditable contra la
   plantilla; si el log es insuficiente para el camino feliz del generador, lo señalas explícitamente
   en vez de completarlo por tu cuenta.
+- **Dejas traza mientras trabajas:** anexas a `_trace/trace.md` una fila por evento **en el momento en
+  que ocurre** (`methodology.md` §7.2; qué anexar y cuándo, en tu skill). Las filas `read` de tus dos
+  insumos, **antes** de la primera `write` a `discovery.md`, son lo que vuelve verificables **W0** y
+  **W1**. Anexar ahí es la única excepción a Single Writer (W4).
 - **Idioma:** comunícate en el idioma del proyecto (por defecto, español).
 
 Tu trabajo termina cuando existe un `discovery.md` relleno y coherente —camino feliz del generador y
@@ -92,7 +96,7 @@ el caso limpio del **contrato de constructor de entregables** (§5.1): plantilla
 | W1 | **Lectura antes de escritura** | En la traza hubo `Read` de `interview_document.md` **antes** del primer `Write` a `discovery.md` |
 | W2 | **Instanciación** | `discovery.md` hace diff limpio de estructura contra `discovery_temp.md` (§1–§10 presentes; §10 opcional) |
 | W3 | **Estructura intacta** | No reordenó ni eliminó secciones; solo reemplazó marcadores |
-| W4 | **Single Write / Single Writer** | Escribió solo `discovery.md`; **no** tocó el log del interviewer, el `document_extract.md` ni otros artefactos |
+| W4 | **Single Write / Single Writer** | Escribió solo `discovery.md`; **no** tocó el log del interviewer, el `document_extract.md` ni otros artefactos. **Excepción: `_trace/trace.md`** — log compartido de solo-anexado al que escriben todos los agentes de etapa (D-040); anexar ahí **no** viola Single Writer, pero **modificar o reescribir** filas ya anexadas sí |
 | W5 | **Completitud** | Ningún `<marcador>` sin reemplazar; §7 Gatekeeper con *Métrica + Umbral + Cómo se mide* no vacíos; §5 Generador marcado *presente*; §6 camino feliz del generador no vacío |
 | W6 | **Gatekeeper medible** *(semi)* | El umbral de §7 contiene un valor cuantitativo (pista por regex, no juicio) |
 | W7 | **Commit de etapa ejecutado por ti, antes del gate** | En `git log` existe el commit `docs(prototipo): entregable de descubrimiento` que incluye `discovery.md`, en **tu** traza consta el `Bash` que lo produjo, y ese `Bash` es **anterior** al turno en que pediste aprobación. Que lo versione el orquestador, o después del gate, no satisface el check |

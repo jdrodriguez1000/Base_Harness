@@ -26,6 +26,34 @@ Este skill es **agnóstico al proyecto**. Su única salida es el **log crudo**; 
 
 ---
 
+## Traza de ejecución (transversal, OBLIGATORIA)
+
+Antes del Paso 0 **abres la traza** (`_trace/trace.md`) y desde ahí **anexas una fila por evento, en el
+momento en que ocurre**. El idioma de anexado (crear si no existe, contar la secuencia,
+`printf … >>`) es el de `methodology.md` **§7.2**; no lo reimplementes.
+
+| Cuándo | evento | objetivo | detalle |
+|---|---|---|---|
+| Al arrancar | `start` | — | `invocación #n` |
+| Paso 0 | `read` | `_prototype/document_extract.md` | cobertura cargada (o *no existe*) |
+| Paso 0 | `ask` | humano | acordar timebox de la entrevista |
+| Respuesta | `confirm` | humano | timebox acordado |
+| Cada pregunta del bucle | `ask` | humano | `Qn — <tema, una línea>` |
+| Cada respuesta | `confirm` | humano | respondida / no sabe / aplazada |
+| Cada guardado | `write` | `_prototype/interview_document.md` | `append Qn` |
+| Paso 3 | `commit` | `<hash>` | mensaje del commit |
+| Al terminar | `close` + `end` | — | motivo de cierre |
+
+> **Una fila `ask` por pregunta REALMENTE formulada.** No anexes la fila al planear la pregunta ni la
+> redactes a posteriori al cerrar: es exactamente el fallo de **L-030**, donde una pregunta llegó al log
+> con la redacción hecha después y el conteo quedó inflado. La secuencia `ask` → `confirm` → `write`
+> repetida es lo que permite contrastar el número de preguntas del log contra las que ocurrieron.
+
+> **Excepción a Single Writer.** `_trace/trace.md` es un log compartido: anexar ahí no viola I4.
+> Reescribir filas ya anexadas —tuyas o ajenas— sí.
+
+---
+
 ## Paso 0 — Cargar contexto, extracto documental y detectar reanudación
 
 0. **Leer `_context/project.yaml`** — insumo declarado. De ahí, y **solo** de ahí, salen los metadatos

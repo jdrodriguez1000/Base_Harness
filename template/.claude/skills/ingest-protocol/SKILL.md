@@ -32,6 +32,38 @@ Prototipo (§4), **antes** de la entrevista. Este skill es **agnóstico al proye
 
 ---
 
+## Traza de ejecución (transversal, OBLIGATORIA)
+
+Antes del Paso 0 **abres la traza** (`_trace/trace.md`) y desde ahí **anexas una fila por evento, en el
+momento en que ocurre**. No al cerrar: una traza redactada al final es reconstrucción de memoria, no
+registro. El idioma de anexado (crear si no existe, contar la secuencia, `printf … >>`) es el de
+`methodology.md` **§7.2**; no lo reimplementes.
+
+| Cuándo | evento | objetivo | detalle |
+|---|---|---|---|
+| Al arrancar | `start` | — | `invocación #n` |
+| Paso 0.0 | `read` | `_context/project.yaml` | metadatos del proyecto |
+| Paso 0.3 | `ask` | humano | confirmar qué brief ingerir |
+| Respuesta del humano | `confirm` | humano | brief elegido |
+| Paso 0.3, tras confirmar | `read` | `_context/client_brief.*` | formato y tamaño |
+| Paso 2, al escribir | `write` | `_prototype/document_extract.md` | `borrador` |
+| Paso 5 | `commit` | `<hash>` | mensaje del commit |
+| Paso 4, al presentar | `ask` | humano | confirmación de cobertura por bloque |
+| Respuesta del humano | `confirm` | humano | aprobado / con correcciones |
+| Paso 4, al cerrar | `write` | `_prototype/document_extract.md` | `cerrado` |
+| Paso 5 (2.º commit) | `commit` | `<hash>` | mensaje sin `[sin confirmar]` |
+| Al terminar | `close` + `end` | — | por qué terminó |
+
+> **Ruta sin documento.** Si no hay `client_brief.*` y terminas en el Paso 0.2, anexas igualmente
+> `start` y `end` (detalle: *"sin client_brief; entrevista completa"*). Esa pareja **sin ninguna fila
+> `write` entre medias** es la evidencia que verifica tu check **R1** (ruta condicional respetada):
+> demuestra que corriste y que, correctamente, no escribiste nada.
+
+> **Excepción a Single Writer.** `_trace/trace.md` es un log compartido: anexar ahí no viola R6.
+> Reescribir filas ya anexadas —tuyas o ajenas— sí.
+
+---
+
 ## Paso 0 — Localizar el documento
 
 0. **Leer `_context/project.yaml`** — es insumo declarado, no un archivo opcional. De ahí salen los
@@ -248,4 +280,6 @@ Reportar hash y rama junto al resumen de cobertura. **No hacer `push`.**
   rellenando sus secciones; no se reordena ni se elimina estructura (§5.1).
 - **Single Writer:** escribes **solo** `document_extract.md`. No tocas `interview_document.md` ni
   `discovery.md` ni el propio `client_brief.*` (el documento del cliente es **de solo lectura**).
+  **Única excepción:** `_trace/trace.md`, el log compartido de solo-anexado de la traza de ejecución
+  (`methodology.md` §7.2). Anexar ahí no viola la regla; reescribir filas ya anexadas sí.
 - **Idioma:** comunicarse en el idioma del proyecto (por defecto, español).

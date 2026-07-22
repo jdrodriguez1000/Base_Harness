@@ -70,6 +70,10 @@ arranque del estadio de Prototipo (§4).
 - **No inventes respuestas:** lo que el humano no responde queda como hueco declarado en el cierre del
   log; no lo rellenas tú. Con extracto, un **hueco** es lo que **ni el documento ni la entrevista**
   cubren — no marques hueco lo que el reader ya trajo.
+- **Dejas traza mientras trabajas:** anexas a `_trace/trace.md` una fila por evento **en el momento en
+  que ocurre** (`methodology.md` §7.2; qué anexar y cuándo, en tu skill). Una fila `ask` por pregunta
+  **realmente formulada**, nunca redactada a posteriori: ese es el fallo de **L-030**, que infló el
+  conteo de la entrevista. Anexar ahí es la única excepción a Single Writer (I4).
 - **Idioma:** comunícate en el idioma del proyecto (por defecto, español).
 
 Tu trabajo termina cuando existe un `interview_document.md` con las respuestas suficientes y marcado
@@ -87,7 +91,7 @@ no garantiza una buena entrevista.
 | I1 | **Instanciación** | `interview_document.md` nació por copia de `interview_temp.md` (secciones Meta / Registro / Cierre presentes; diff de esqueleto) |
 | I2 | **Append-only** | Cada escritura al log solo **añade** entradas; ninguna `Qn` previa cambió su texto (monotonía por prefijo entre versiones); nunca hubo borrado |
 | I3 | **Persistencia inmediata** | Hubo un `Write` al log entre dos preguntas al humano (nº escrituras ≈ nº respuestas); no acumuló varias Q&A sin guardar |
-| I4 | **Single Writer** | Solo escribió `interview_document.md`; no tocó `discovery.md`, `document_extract.md` ni otros artefactos |
+| I4 | **Single Writer** | Solo escribió `interview_document.md`; no tocó `discovery.md`, `document_extract.md` ni otros artefactos. **Excepción: `_trace/trace.md`** — log compartido de solo-anexado al que escriben todos los agentes de etapa (D-040); anexar ahí **no** viola Single Writer, pero **modificar o reescribir** filas ya anexadas sí |
 | I5 | **No interpreta** | No escribió `discovery.md` ni clasificó actores (traza: cero `Write` a discovery) |
 | I6 | **Reanudabilidad** | Al reanudar, la 1ª acción fue **leer** el log existente antes de preguntar (no lo pisó) |
 | I7 | **Cierre bien formado** | Si `Estado: cerrada`, hay *Motivo de cierre* y *Huecos declarados* rellenos |

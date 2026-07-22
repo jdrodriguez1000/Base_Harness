@@ -6,9 +6,12 @@
 # los agentes y que nadie ejecutaba. NO juzga calidad (§8): responde "¿se siguió
 # el procedimiento?", no "¿el resultado es bueno?".
 #
-# Alcance deliberado (E4): solo lo comprobable con  artefactos + git log .
-# Los checks del tipo "¿leyó antes de escribir?" necesitan traza de ejecución y
-# quedan fuera — son del motor de traza (T-039).
+# Alcance (E4): lo comprobable con  artefactos + git log + _trace/trace.md .
+# La sección D lee la TRAZA DE EJECUCIÓN (methodology.md §7.2) y con ella activa
+# los checks del tipo "¿leyó antes de escribir?" (R2/R8, W0/W1, P1/P9), que
+# antes estaban escritos en los prompts y nadie podía ejecutar.
+# La traza es AUTODECLARADA: no es evidencia fuerte, es evidencia CONTRASTABLE
+# (D3 la enfrenta a git log). La capa dura, por hooks, es posterior.
 #
 # Dependencias: git, grep, sed, awk. Nada más. Agnóstico al lenguaje del proyecto.
 #
@@ -37,6 +40,7 @@ INTERVIEW="_prototype/interview_document.md"
 DISCOVERY="_prototype/discovery.md"
 PROTOTYPE="_prototype/prototype"
 PROJECT_YAML="_context/project.yaml"
+TRACE="_trace/trace.md"
 
 MSG_EXTRACT="docs(prototipo): extracto del documento del cliente"
 MSG_INTERVIEW="docs(prototipo): log de entrevista de descubrimiento"
@@ -357,7 +361,7 @@ if [ -f "$DISCOVERY" ]; then
 fi
 
 # --- B7 · el prototipo precede al gate ---------------------------------------
-# No verificable sin traza: queda anotado para T-039.
+# Ya verificable: lo cubre D4 (sección D), que lee la traza de ejecución.
 
 # =============================================================================
 section "C · Definiciones (lint agente↔skill)"
@@ -419,6 +423,276 @@ if [ -d ".claude/agents" ] && [ -d ".claude/skills" ]; then
 fi
 
 # =============================================================================
+section "D · Traza de ejecución (methodology.md §7.2)"
+
+# La traza es AUTODECLARADA: la escribe el propio agente sobre sí mismo, así que
+# NO es evidencia fuerte (§10: el auto-reporte es narrativa). Su valor es ser
+# CONTRASTABLE — D3 la enfrenta a `git log`, que el agente no controla. Una
+# contradicción entre ambos ES el hallazgo, sin importar cuál de los dos falle.
+#
+# Estos checks activan lo que hasta ahora estaba escrito en los prompts y era
+# imposible de ejecutar: R2/R8 (reader), W0/W1 (writer), P1/P9 (prototipador).
+
+if [ ! -f "$TRACE" ]; then
+  skip "D1-D8" "no hay $TRACE (proyecto anterior a la traza, o ninguna etapa ejecutada)"
+else
+  # Filas de datos: '| 001 | agente | modelo | evento | objetivo | detalle | ts |'
+  ROWS_TMP=$(mktemp)
+  grep -E '^\|[[:space:]]*[0-9]{3}[[:space:]]*\|' "$TRACE" > "$ROWS_TMP" 2>/dev/null || true
+  NROWS=$(grep -c . "$ROWS_TMP" 2>/dev/null || echo 0)
+
+  # Nº de secuencia de la primera fila que cumple: agente=$1, evento=$2, objetivo~$3.
+  # Vacío si no hay ninguna. ($3 vacío = cualquier objetivo.)
+  seq_of() {
+    awk -F'|' -v ag="$1" -v ev="$2" -v ob="$3" '
+      { for (i = 2; i <= 8; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i) }
+      $3 == ag && $5 == ev && (ob == "" || index($6, ob) > 0) { print $2; exit }
+    ' "$ROWS_TMP"
+  }
+  # Igual, pero la ÚLTIMA coincidencia.
+  seq_last() {
+    awk -F'|' -v ag="$1" -v ev="$2" -v ob="$3" '
+      { for (i = 2; i <= 8; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i) }
+      $3 == ag && $5 == ev && (ob == "" || index($6, ob) > 0) { last = $2 }
+      END { if (last != "") print last }
+    ' "$ROWS_TMP"
+  }
+  count_rows() {
+    awk -F'|' -v ag="$1" -v ev="$2" '
+      { for (i = 2; i <= 8; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i) }
+      $3 == ag && (ev == "" || $5 == ev) { n++ }
+      END { print n + 0 }
+    ' "$ROWS_TMP"
+  }
+  # Agentes distintos que aparecen en la traza.
+  AGENTS_SEEN=$(awk -F'|' '{ gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3); if ($3 != "") print $3 }' \
+    "$ROWS_TMP" | sort -u)
+
+  if [ "$NROWS" -eq 0 ]; then
+    fail "D1" "la traza existe pero no tiene ninguna fila de evento"
+  else
+
+  # --- D1 · traza bien formada ------------------------------------------------
+  # Sin secuencia legible el archivo pierde su única función: el ORDEN.
+  D1_BAD=$(awk -F'|' 'NF != 9 { print NR }' "$ROWS_TMP" | wc -l | tr -d ' ')
+  D1_DUP=$(awk -F'|' '{ gsub(/[[:space:]]/, "", $2); print $2 }' "$ROWS_TMP" | sort | uniq -d)
+  D1_GAP=$(awk -F'|' '{ gsub(/[[:space:]]/, "", $2); if ($2 + 0 != ++n) { print n; exit } }' "$ROWS_TMP")
+
+  if [ "$D1_BAD" -ne 0 ]; then
+    fail "D1" "$D1_BAD fila(s) con número de columnas incorrecto (se esperan 7)"
+  elif [ -n "$D1_DUP" ]; then
+    fail "D1" "secuencia duplicada ($(printf '%s' "$D1_DUP" | tr '\n' ' ')) — el orden deja de ser legible"
+  elif [ -n "$D1_GAP" ]; then
+    fail "D1" "secuencia no correlativa: se esperaba $D1_GAP y no está — ¿se reescribió o se borró una fila?"
+  else
+    pass "D1" "traza bien formada: $NROWS evento(s), secuencia correlativa"
+  fi
+
+  # --- D2 · leer antes de escribir (R2 · W0 · W1 · P1) ------------------------
+  # El check que la traza vino a habilitar. Hasta ahora "¿leyó el extracto antes
+  # de escribir el discovery?" solo podía responderlo un humano mirando.
+  # Formato: agente : insumo : artefacto propio : etiqueta del check original
+  D2_SPEC=$(mktemp)
+  cat > "$D2_SPEC" <<'EOF'
+onboarding-reader:client_brief:document_extract.md:§5.1
+onboarding-writer:interview_document.md:discovery.md:W1
+onboarding-writer:document_extract.md:discovery.md:W0
+prototype-builder:discovery.md:prototype:P1
+EOF
+  while IFS=: read -r ag insumo art orig; do
+    [ -n "$ag" ] || continue
+    s_write=$(seq_of "$ag" write "$art")
+    [ -n "$s_write" ] || continue          # esa etapa no llegó a escribir: nada que ordenar
+    s_read=$(seq_of "$ag" read "$insumo")
+    if [ -z "$s_read" ]; then
+      fail "D2" "$ag escribió $art sin ninguna lectura de $insumo en la traza ($orig)"
+    elif [ "$s_read" -lt "$s_write" ]; then
+      pass "D2" "$ag: leyó $insumo (#$s_read) antes de escribir $art (#$s_write) — $orig"
+    else
+      fail "D2" "$ag: leyó $insumo en #$s_read, DESPUÉS de escribir $art en #$s_write ($orig)"
+    fi
+  done < "$D2_SPEC"
+  rm -f "$D2_SPEC"
+
+  # --- D2b · confirmación previa a la ingesta (R2) ----------------------------
+  # NC-6: nada de ingerir en silencio un archivo equivocado. El humano elige el
+  # brief ANTES de que se lea, no después.
+  r_read=$(seq_of onboarding-reader read client_brief)
+  if [ -z "$r_read" ]; then
+    skip "D2b" "el reader no leyó ningún brief en esta traza"
+  else
+    r_conf=$(seq_of onboarding-reader confirm "")
+    if [ -z "$r_conf" ]; then
+      fail "D2b" "el reader leyó el brief (#$r_read) sin ninguna confirmación humana previa (R2/NC-6)"
+    elif [ "$r_conf" -lt "$r_read" ]; then
+      pass "D2b" "reader: el humano confirmó el brief (#$r_conf) antes de leerlo (#$r_read) — R2"
+    else
+      fail "D2b" "reader: leyó el brief en #$r_read y el humano lo confirmó en #$r_conf — ingesta en silencio (R2)"
+    fi
+  fi
+
+  # --- D2c · la confirmación no se adelantó (R8/L-007/L-023) ------------------
+  # El artefacto nace en borrador y pasa a cerrado en una escritura POSTERIOR a
+  # que el humano confirme. Un único `write` significa que nadie pudo distinguir
+  # el estado revisado del que nadie miró.
+  for pair in "onboarding-reader|document_extract.md|R8" "onboarding-writer|discovery.md|L-023"; do
+    _ag=${pair%%|*}; _rest=${pair#*|}; _art=${_rest%%|*}; _orig=${_rest#*|}
+    n_w=$(awk -F'|' -v ag="$_ag" -v art="$_art" '
+      { for (i = 2; i <= 8; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i) }
+      $3 == ag && $5 == "write" && index($6, art) > 0 { n++ } END { print n + 0 }' "$ROWS_TMP")
+    [ "$n_w" -gt 0 ] || continue
+    # La ÚLTIMA confirmación, no la primera: en el reader la primera es la del
+    # archivo a ingerir (R2), y comparar el cierre contra ella daría un ok por
+    # la razón equivocada. La que cierra el artefacto es la de cobertura/gate.
+    _conf=$(seq_last "$_ag" confirm "")
+    _last_w=$(seq_last "$_ag" write "$_art")
+    if [ -z "$_conf" ]; then
+      warn "D2c" "$_ag: escribió $_art pero la traza no registra confirmación humana ($_orig)"
+    elif [ "$_last_w" -gt "$_conf" ]; then
+      pass "D2c" "$_ag: la escritura de cierre (#$_last_w) es posterior a la confirmación (#$_conf) — $_orig"
+    else
+      fail "D2c" "$_ag: su última escritura de $_art (#$_last_w) precede a la confirmación (#$_conf) — el cierre se adelantó al gate ($_orig)"
+    fi
+  done
+
+  # --- D3 · la traza contra git log (el contraste duro) -----------------------
+  # Único check que enfrenta lo autodeclarado con evidencia que el agente no
+  # controla. Si discrepan, algo falló — da igual cuál de los dos mienta.
+  D3_TMP=$(mktemp)
+  awk -F'|' '
+    { for (i = 2; i <= 8; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i) }
+    $5 == "commit" { print $2 "\t" $6 }
+  ' "$ROWS_TMP" > "$D3_TMP"
+  N_CROWS=$(grep -c . "$D3_TMP" 2>/dev/null || echo 0)
+
+  D3_ORPHAN=0
+  while IFS="$(printf '\t')" read -r cseq chash; do
+    [ -n "$chash" ] || continue
+    if ! git rev-parse --verify --quiet "${chash}^{commit}" >/dev/null 2>&1; then
+      fail "D3" "fila #$cseq declara el commit '$chash', que NO existe en el repo"
+      D3_ORPHAN=$((D3_ORPHAN + 1))
+    fi
+  done < "$D3_TMP"
+  rm -f "$D3_TMP"
+
+  if [ "$N_CROWS" -eq 0 ]; then
+    warn "D3" "la traza no declara ningún commit"
+  elif [ "$D3_ORPHAN" -eq 0 ]; then
+    pass "D3" "los $N_CROWS commit(s) declarados existen en git"
+  fi
+
+  # Inversa: un commit de etapa en git que la traza no menciona significa que el
+  # agente commiteó sin dejar rastro, o que otro lo hizo por él (L-017).
+  # El bucle NO puede colgar de una tubería: correría en un subshell y los
+  # contadores de warn/fail se perderían al salir de él.
+  D3_INV=$(mktemp)
+  for pair in "$EXTRACT|$MSG_EXTRACT" "$INTERVIEW|$MSG_INTERVIEW" \
+              "$DISCOVERY|$MSG_DISCOVERY" "$PROTOTYPE|$MSG_PROTOTYPE"; do
+    _p=${pair%%|*}; _m=${pair#*|}
+    [ -e "$_p" ] || continue
+    git log --format='%h %s' -- "$_p" 2>/dev/null | grep -F -- "$_m" >> "$D3_INV" || true
+  done
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    h=${line%% *}
+    grep -qF -- "$h" "$TRACE" || \
+      warn "D3" "commit de etapa $h ($(short "${line#* }")) no aparece en la traza — ¿commiteó otro por él? (L-017)"
+  done < "$D3_INV"
+  rm -f "$D3_INV"
+
+  # --- D4 · el commit de etapa precede al gate (B7 · P9 · L-019) --------------
+  # Tercera reaparición de L-009: colgar el commit del gate deja el prototipo
+  # fuera de git si el gate se salta o se difiere.
+  for ag in onboarding-writer prototype-builder; do
+    s_gate=$(seq_last "$ag" ask humano)
+    s_commit=$(seq_of "$ag" commit "")
+    if [ -z "$s_gate" ]; then
+      skip "D4" "$ag: no cedió gate en esta traza"
+    elif [ -z "$s_commit" ]; then
+      fail "D4" "$ag: pidió el gate (#$s_gate) sin ningún commit previo en la traza (L-009/L-019)"
+    elif [ "$s_commit" -lt "$s_gate" ]; then
+      pass "D4" "$ag: commit (#$s_commit) antes del gate (#$s_gate)"
+    else
+      fail "D4" "$ag: el commit (#$s_commit) es POSTERIOR al gate (#$s_gate) — el commit colgó del gate (L-019)"
+    fi
+  done
+
+  # --- D5 · checkpoints intra-etapa del bucle (L-025) -------------------------
+  # git-protocol.md §3.1 exige confirmar cada iteración que deja algo que corre.
+  P_WRITES=$(count_rows prototype-builder write)
+  P_COMMITS=$(count_rows prototype-builder commit)
+  if [ "$P_WRITES" -eq 0 ]; then
+    skip "D5" "el prototipador no construyó en esta traza"
+  elif [ "$P_COMMITS" -gt 1 ]; then
+    pass "D5" "prototipo: $P_COMMITS commits para $P_WRITES escritura(s) — hubo checkpoints"
+  elif [ "$P_WRITES" -gt 1 ]; then
+    fail "D5" "prototipo: $P_WRITES escrituras y $P_COMMITS commit — el bucle corrió sin checkpoints intra-etapa (L-025)"
+  else
+    pass "D5" "prototipo: una escritura, un commit"
+  fi
+
+  # --- D6 · toda invocación cierra --------------------------------------------
+  # Un `start` sin `end` es un agente que murió o que se olvidó de cerrar: en
+  # ambos casos, lo que sigue en la traza no es interpretable.
+  for ag in $AGENTS_SEEN; do
+    n_start=$(count_rows "$ag" start)
+    n_end=$(count_rows "$ag" end)
+    if [ "$n_start" -eq "$n_end" ] && [ "$n_start" -gt 0 ]; then
+      pass "D6" "$ag: $n_start invocación(es), todas cerradas"
+    elif [ "$n_start" -eq 0 ]; then
+      fail "D6" "$ag: tiene eventos pero ningún 'start' — la invocación no se delimitó"
+    else
+      fail "D6" "$ag: $n_start 'start' y $n_end 'end' — invocación sin cerrar"
+    fi
+  done
+
+  # --- D7 · ninguna confirmación sin pregunta previa (L-007/L-016) ------------
+  # L-007 fue escribir "confirmado: sí" antes de preguntar. Aquí se ve directo:
+  # un `confirm` sin `ask` pendiente del mismo agente es una confirmación
+  # adelantada, o inventada.
+  D7_BAD=$(awk -F'|' '
+    { for (i = 2; i <= 8; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i) }
+    $5 == "ask"     { pend[$3]++ }
+    $5 == "confirm" { if (pend[$3] > 0) pend[$3]--; else print $2 }
+  ' "$ROWS_TMP")
+  if [ -n "$D7_BAD" ]; then
+    fail "D7" "confirmación sin pregunta previa en la(s) fila(s): $(printf '%s' "$D7_BAD" | tr '\n' ' ')"
+  else
+    pass "D7" "toda confirmación tiene su pregunta previa"
+  fi
+
+  # --- D8 · el modelo declarado es el real (D-039/T-072) ----------------------
+  # Sin esto, atribuir el resultado de una corrida a un modelo es indemostrable
+  # y el experimento controlado de T-072 no es falsable.
+  if [ -d ".claude/agents" ]; then
+    for ag in $AGENTS_SEEN; do
+      adef=".claude/agents/$ag.md"
+      [ -f "$adef" ] || { warn "D8" "$ag: aparece en la traza pero no existe $adef"; continue; }
+      declared=$(grep -m1 '^model:' "$adef" | sed 's/^model:[[:space:]]*//' | tr -d '\r')
+      intrace=$(awk -F'|' -v ag="$ag" '
+        { for (i = 2; i <= 8; i++) gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i) }
+        $3 == ag { print $4 }
+      ' "$ROWS_TMP" | sort -u)
+      n_models=$(printf '%s\n' "$intrace" | grep -c .)
+      if [ -z "$declared" ]; then
+        warn "D8" "$ag: su definición no declara 'model:'"
+      elif [ "$n_models" -gt 1 ]; then
+        warn "D8" "$ag: la traza mezcla modelos ($(printf '%s' "$intrace" | tr '\n' ' ')) — ¿corridas de distintas sesiones?"
+      elif [ "$intrace" = "$declared" ]; then
+        pass "D8" "$ag: modelo de la traza coincide con su definición ($declared)"
+      else
+        fail "D8" "$ag: la traza dice '$intrace' y su definición declara '$declared'"
+      fi
+    done
+  else
+    skip "D8" "no hay .claude/agents/ para contrastar el modelo"
+  fi
+
+  fi  # NROWS > 0
+  rm -f "$ROWS_TMP"
+fi
+
+# =============================================================================
 printf '\n=== Resumen: %s ok · %s fallo(s) · %s aviso(s) · %s omitido(s) ===\n' \
   "$N_PASS" "$N_FAIL" "$N_WARN" "$N_SKIP"
 
@@ -427,5 +701,5 @@ if [ "$N_FAIL" -gt 0 ]; then
   exit 1
 fi
 
-printf 'Veredicto: CONFORME (a lo comprobable sin traza de ejecución)\n'
+printf 'Veredicto: CONFORME (artefactos + git log + traza autodeclarada)\n'
 exit 0

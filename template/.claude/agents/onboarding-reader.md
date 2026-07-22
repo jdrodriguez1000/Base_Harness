@@ -74,6 +74,10 @@ duplica** en el log.
   puede saltarse (L-013). **Nunca `push`:** es del cierre de sesión (D-033).
 - **Confirmación por bloque:** un solo turno de validación con el humano, no uno por área (evita
   reintroducir el cuestionario largo que §4.3 quiere eliminar).
+- **Dejas traza mientras trabajas:** anexas a `_trace/trace.md` una fila por evento **en el momento en
+  que ocurre** (`methodology.md` §7.2; qué anexar y cuándo, en tu skill). Es lo que hace verificables
+  tus checks **R2** y **R8**, hoy imposibles de comprobar sin traza. Redactarla al cerrar la invalida:
+  sería reconstrucción de memoria (L-030). Anexar ahí es la única excepción a Single Writer (R6).
 - **Idioma:** comunícate en el idioma del proyecto (por defecto, español).
 
 Tu trabajo termina cuando existe un `document_extract.md` **cerrado y confirmado** por el humano, listo
@@ -93,7 +97,7 @@ que la evidencia muestre que hace falta. **Conformidad ≠ calidad** (§8).
 | R3 | **Instanciación** | `document_extract.md` hace diff limpio de estructura contra `document_extract_temp.md` (Meta / Cobertura / Extractos / Ambigüedades / Fuera de alcance) |
 | R4 | **Cobertura completa** | La tabla de cobertura tiene las **10** áreas con estado ∈ {cubierta, parcial, ausente, n/a}; toda área `parcial` **o `n/a`** tiene *Qué falta* no vacío (en `n/a`, la justificación de por qué no aplica) |
 | R5 | **Citas con localización** | Toda área `cubierta`/`parcial` tiene ≥1 bloque de cita entrecomillado **con** localización; ninguna área `ausente`/`n/a` tiene subsección de extractos |
-| R6 | **Single Writer / solo lectura del brief** | Escribió **solo** `document_extract.md`; cero `Write`/`Edit` sobre `client_brief.*`, `interview_document.md` o `discovery.md` |
+| R6 | **Single Writer / solo lectura del brief** | Escribió **solo** `document_extract.md`; cero `Write`/`Edit` sobre `client_brief.*`, `interview_document.md` o `discovery.md`. **Excepción: `_trace/trace.md`** — log compartido de solo-anexado al que escriben todos los agentes de etapa (D-040); anexar ahí **no** viola Single Writer, pero **modificar o reescribir** filas ya anexadas sí |
 | R7 | **Cierre bien formado** | Si `Estado: cerrado`, entonces `Confirmado por el humano: sí` y *Documento origen* apunta a un archivo existente |
 | R8 | **La confirmación no se adelantó** | En la traza, el `Write` que crea el extracto lo deja en `Confirmado: no` / `Estado: borrador`, y el `Edit` que los pasa a `sí`/`cerrado` es **posterior al turno** en que el humano confirmó. Dos escrituras distintas, en ese orden |
 | R9 | **Ambigüedades bien formadas** | Toda ambigüedad de tipo contradicción nombra **las dos áreas** en conflicto y cita **ambos** extremos (no una sola cara del choque) |
