@@ -36,6 +36,10 @@
 | L-024 | Un campo declarado en `project.yaml` y documentado en `AGENTS.md`, pero que ningún skill consume, es peor que no tenerlo: da falsa confianza (declarar ≠ consumir) | 2026-07-20 |
 | L-025 | El `prototype-builder` de la corrida 4 confirmó el prototipo en un solo commit: el bucle escribir→ejecutar→ajustar corrió sin los checkpoints intra-etapa que `git-protocol.md` §3.1 exige | 2026-07-21 |
 | L-026 | `conformance.sh` (check A8) solo lee el "Umbral de éxito" en la misma línea del encabezado: un Gatekeeper multi-condición escrito como lista numerada da falso negativo | 2026-07-21 |
+| L-027 | Los ejemplos del interviewer para el Gatekeeper cuantitativo traen umbrales ya redactados (≥6/8, ≥7/10…): el humano los adopta verbatim aunque sean incoherentes entre sí — riesgo de anclaje | 2026-07-22 |
+| L-028 | La conformidad no quedó registrada al cerrar la prueba de BanKApp_1 pese a ser un paso obligatorio de `closing-protocol` — mismo patrón que L-024 (declarar ≠ consumir), esta vez sobre un paso del skill y no un campo de `project.yaml` | 2026-07-22 |
+| L-029 | Un cambio de alcance pedido por el humano en vivo durante la entrevista (login demo + PDF ficticio) quedó solo como nota al pie del discovery, sin decisión registrada en `decisions.md` | 2026-07-22 |
+| L-030 | Una pregunta de la entrevista (Q11) no se preguntó realmente: el log la registra con la pregunta redactada a posteriori por el agente, declarado con honestidad pero inflando el conteo | 2026-07-22 |
 
 ## Formato
 
@@ -258,3 +262,39 @@
   1. Un checker barato (regex/sed sobre texto) es frágil ante variaciones de formato **legítimas** que el propio harness no prohíbe. Antes de aceptar un `FALLO` de `conformance.sh` como defecto del proyecto, comprobar si el patrón de escritura es válido y el checker es el que no lo contempla — mismo principio que L-023 (no confundir "no se detectó" con "no ocurrió"), aquí a la inversa: "el checker no lo vio" ≠ "el contenido está mal".
   2. Si `_templates/discovery_temp.md` §7 alguna vez se vuelve más prescriptivo sobre el formato del umbral (inline vs. lista), actualizar el checker en el mismo cambio para que no diverjan (misma clase que T-059/L-024: una regla y su verificador no pueden vivir sin sincronía).
 - **Fecha:** 2026-07-21
+
+### L-027 — Los ejemplos del interviewer para el Gatekeeper traen umbrales listos para firmar (riesgo de anclaje)
+- **Contexto:** Prueba de generalización T-061 sobre `Pruebas_Prototipado/BanKApp_1` (dominio fintech). En Q6 de la entrevista, el `onboarding-interviewer` ofreció al humano tres métricas candidatas para el Gatekeeper **con umbrales numéricos ya redactados** (≥6/8, ≥7/10, ≥5/8), y el humano los adoptó tal cual, sin modificarlos.
+- **Problema:** Las tres bases numéricas son incoherentes entre sí (8, 10 y 8 personas en el grupo de referencia) y el propio `discovery.md` §7 lo admite explícitamente y difiere la corrección. Un Gatekeeper que hay que ajustar antes de poder medirlo no es un gate cerrado — es un borrador con apariencia de cerrado. Había presupuesto de sobra en la entrevista (11 de 12 preguntas) para pedirle al humano que propusiera él mismo los números, en vez de dárselos hechos. El patrón es de anclaje: cuando un ejemplo trae la cifra exacta, la persona tiende a aceptarla en vez de generar la suya, incluso si las cifras del ejemplo no son coherentes entre sí.
+- **Solución / aprendizaje:** No es un defecto de fabricación (los umbrales no se inventaron sin que el humano los viera y aprobara) ni de procedencia (quedan trazados a la respuesta de Q6). Es un defecto de **diseño del estímulo**: el interviewer debe ilustrar la **forma** de un umbral cuantitativo verificable (p. ej. "≥ X de Y participantes", "NPS > Z"), no proponer valores concretos listos para copiar. La responsabilidad de fijar el número es del humano, no del agente que hace la pregunta.
+- **Cómo aplicarlo:**
+  1. Revisar `interview-protocol` (o el prompt del `onboarding-interviewer`) en los pasos que elicitan el Gatekeeper cuantitativo (§7 del discovery): los ejemplos deben mostrar la plantilla del umbral con placeholders, no cifras concretas (T-064).
+  2. Si el discovery resultante trae un Gatekeeper con bases numéricas incoherentes entre condiciones, tratarlo como una discrepancia sin resolver (mismo tratamiento que L-006), no como un gate cerrado — el writer/discovery debería señalarlo, no solo heredarlo.
+- **Fecha:** 2026-07-22
+
+### L-028 — La conformidad no quedó registrada al cerrar la prueba de BanKApp_1
+- **Contexto:** Prueba de generalización T-061 sobre `Pruebas_Prototipado/BanKApp_1`. `closing-protocol` Paso 5.4 exige ejecutar `_tools/conformance.sh` en cada cierre e incluir su veredicto en el resumen de la sesión.
+- **Problema:** No hay rastro en la `_persistence/` de esa carpeta de que la capa de conformidad se haya ejecutado o de que su veredicto quedara registrado al cerrar. Esta sesión (`Base_Harness`) lo ejecutó desde fuera, a posteriori, sobre esa carpeta, y obtuvo CONFORME (24 ok, 0 fallos, 0 avisos, 1 omitido) — pero eso no sustituye a que el propio cierre de esa sesión lo hubiera dejado escrito.
+- **Solución / aprendizaje:** Mismo patrón que **L-024** (un campo/paso declarado y documentado, pero que nadie consume, es peor que no tenerlo: da falsa confianza), aquí aplicado a un **paso de un skill** en vez de a un campo de `project.yaml`. Un check de conformidad que depende de que el agente que cierra se acuerde de correrlo y de escribirlo no es un control fiable.
+- **Cómo aplicarlo:**
+  1. Nuevo check de conformidad **B7**: verificar que el cierre más reciente en `progress.md` deja traza del veredicto de `conformance.sh` (T-063) — así el propio checker se audita a sí mismo, como ya hace C1/C2 con otros pasos obligatorios.
+  2. Ante un cierre de sesión sin veredicto de conformidad en el resumen, tratarlo como un cierre incompleto, no como una omisión menor.
+- **Fecha:** 2026-07-22
+
+### L-029 — Un cambio de alcance pedido por el humano en la entrevista quedó sin decisión registrada
+- **Contexto:** Prueba de generalización T-061 sobre `Pruebas_Prototipado/BanKApp_1`. En Q8 de la entrevista, el humano pidió explícitamente una excepción: login demo + carga de PDF ficticia para poder mostrar el Motor de Abonos sin depender de infraestructura de autenticación real.
+- **Problema:** Esa petición contradice la exclusión de alcance ya declarada en §9 del discovery ("autenticación real" fuera de alcance) y en la práctica **amplía** el alcance del prototipo (ahora incluye login simulado + ingestión de un archivo). Quedó registrada solo como nota al pie dentro de `discovery.md`, sin un ADR correspondiente en `decisions.md` de ese proyecto (que llega hasta D-008 sin cubrir este cambio).
+- **Solución / aprendizaje:** Un cambio de alcance pedido en vivo por el humano durante la entrevista es una decisión de proyecto, no un detalle de redacción del discovery. Dejarlo solo en prosa dentro del discovery lo hace difícil de encontrar y de honrar más adelante (p. ej. al construir el prototipo o al evaluar el Gatekeeper), y rompe la trazabilidad que `decisions.md` existe para dar.
+- **Cómo aplicarlo:**
+  1. Regla nueva (T-065): todo cambio de alcance pedido por el humano durante la entrevista (excepción a una exclusión ya declarada, ampliación no prevista en el brief) se registra como decisión en `decisions.md`, además de quedar citado en el discovery.
+  2. El `onboarding-interviewer`/`onboarding-writer` deberían poder distinguir "excepción aceptada y trazada como decisión" de "nota al pie que alguien podría no leer".
+- **Fecha:** 2026-07-22
+
+### L-030 — Una pregunta de la entrevista se registró sin haberse preguntado realmente
+- **Contexto:** Prueba de generalización T-061 sobre `Pruebas_Prototipado/BanKApp_1`. El log de la entrevista (`interview_document.md`) registra Q11 como un par pregunta/respuesta.
+- **Problema:** La pregunta de Q11 fue redactada por el agente **a posteriori**, no formulada realmente al humano durante la conversación. El log lo declara con honestidad (no es una fabricación silenciosa), pero el efecto práctico es que el conteo de preguntas efectivas de la entrevista queda inflado en uno, y roza el problema de procedencia de L-015 (atribuir a una interacción real algo que no lo fue).
+- **Solución / aprendizaje:** Es un hallazgo menor —declarado, no oculto— pero vale la pena vigilarlo: si el patrón se repite, el conteo de "preguntas efectuadas" deja de ser una métrica confiable de cuánto se indagó realmente.
+- **Cómo aplicarlo:**
+  1. Si un agente sintetiza una pregunta que no se formuló literalmente (p. ej. para documentar una inferencia hecha a partir de otras respuestas), debería marcarse explícitamente como tal en el log (p. ej. "inferida, no preguntada"), no mezclarse sin distinción con las preguntas reales.
+  2. Sin tarea correctiva propia todavía: no se ha repetido lo suficiente como para justificar un check de conformidad dedicado: si reaparece, considerar sumarlo al alcance de T-039 (motor de traza) o a un check nuevo de `conformance.sh`.
+- **Fecha:** 2026-07-22
